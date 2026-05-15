@@ -4,9 +4,76 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Project Hail Mary : Breakout</title>
+    <link rel="stylesheet" href="./styles/reset.css" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Noto+Sans+KR:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./src/index.js" defer></script>
   </head>
   <body>
-    <section id="menu-screen" class="screen"></section>
+    <section id="menu-screen" class="screen">
+      <div class="start-ship">
+        <img src="./assets/images/sprites/start-ship.png" alt="start ship" />
+      </div>
+      <div class="start-title-box">
+        <p class="start-main-title">PROJECT HAIL MARY</p>
+        <p class="start-sub-title">: BREAKOUT</p>
+      </div>
+      <div class="main-menu-box">
+        <button id="game-start-btn" class="main-menu-btn">
+          <p class="main-menu-btn-text">게임 시작</p>
+          <img
+            src="./assets/images/sprites/play-icon.png"
+            alt="game start icon"
+            class="main-menu-btn-icon"
+          />
+        </button>
+        <button id="stage-select-btn" class="main-menu-btn">
+          <p class="main-menu-btn-text">스테이지 선택</p>
+          <img
+            src="./assets/images/sprites/rocket-icon.png"
+            alt="stage select icon"
+            class="main-menu-btn-icon"
+          />
+        </button>
+        <button id="settings-btn" class="main-menu-btn">
+          <p class="main-menu-btn-text">설정</p>
+          <img
+            src="./assets/images/sprites/setting-icon.png"
+            alt="settings icon"
+            class="main-menu-btn-icon"
+          />
+        </button>
+        <button id="how-to-play-btn" class="main-menu-btn">
+          <p class="main-menu-btn-text">게임 방법</p>
+          <img
+            src="./assets/images/sprites/book-icon.png"
+            alt="how to play icon"
+            class="main-menu-btn-icon"
+          />
+        </button>
+        <button id="credit-btn" class="main-menu-btn">
+          <p class="main-menu-btn-text">크레딧</p>
+          <img
+            src="./assets/images/sprites/people-icon.png"
+            alt="credit icon"
+            class="main-menu-btn-icon"
+          />
+        </button>
+      </div>
+      <div class="main-system-box">
+        <p class="main-system-title">[ SYSTEM ]</p>
+        <p class="main-system-description">
+          Solar dimming detected.<br />
+          Astrophage contamination spreading...<br />
+          Mission Ready. |
+        </p>
+      </div>
+    </section>
     <section id="stage01-screen" class="screen"></section>
     <section id="stage02-screen" class="screen"></section>
     <section id="stage03-screen" class="screen"></section>
