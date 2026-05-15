@@ -1,0 +1,50 @@
+/* 모든 요소 기본 여백 제거 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* html, body 전체 화면 사용 */
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  font-family: sans-serif;
+  background: #060b16;
+  color: #eaf4ff;
+}
+
+/* 리스트 스타일 제거 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 링크 기본 스타일 제거 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 버튼 기본 스타일 제거 */
+button {
+  border: none;
+  outline: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* 이미지 드래그 방지 */
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* canvas 블록 처리 */
+canvas {
+  display: block;
+}
