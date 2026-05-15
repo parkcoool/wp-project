@@ -12,7 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Noto+Sans+KR:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <script src="./src/index.js" defer></script>
+    <script src="./src/index.js"></script>
   </head>
   <body>
     <section id="menu-screen" class="screen">
@@ -48,11 +48,11 @@
             class="main-menu-btn-icon"
           />
         </button>
-        <button id="how-to-play-btn" class="main-menu-btn">
+        <button id="help-btn" class="main-menu-btn">
           <p class="main-menu-btn-text">게임 방법</p>
           <img
             src="./assets/images/sprites/book-icon.png"
-            alt="how to play icon"
+            alt="help icon"
             class="main-menu-btn-icon"
           />
         </button>
@@ -71,6 +71,136 @@
           Solar dimming detected.<br />
           Astrophage contamination spreading...<br />
           Mission Ready. |
+        </p>
+      </div>
+      <div id="select-stage-box" class="main-menu-modal">
+        <button class="main-menu-modal-close-btn">
+          <img
+            src="./assets/images/sprites/x-icon.png"
+            alt="close icon"
+            class="main-menu-modal-close-icon"
+          />
+        </button>
+        <div class="main-menu-modal-title-box">
+          <img
+            src="./assets/images/sprites/rocket-icon.png"
+            alt="stage select icon"
+            class="main-menu-modal-title-icon"
+          />
+          <p class="main-menu-modal-title">스테이지 선택</p>
+        </div>
+        <p class="main-menu-modal-description">
+          헤일메리호의 항로를 선택하세요.
+        </p>
+        <div class="select-stage-box">
+          <div class="select-stage-item">
+            <p class="select-stage-number">STAGE 01</p>
+            <img
+              src="./assets/images/sprites/stage01-select.png"
+              alt="stage01 select"
+              class="select-stage-image"
+            />
+            <div class="select-stage-content">
+              <p class="select-stage-title">태양이 죽어가고 있다</p>
+              <p class="select-stage-description">
+                아스트로파지를 파괴하여 헤일메리호의 연료를 채집하세요.
+              </p>
+              <p class="select-stage-difficulty easy">난이도: EASY</p>
+              <p class="select-stage-skill">해금 스킬: 없음</p>
+            </div>
+            <button class="select-stage-btn">MISSION START</button>
+          </div>
+          <div class="select-stage-item">
+            <p class="select-stage-number">STAGE 02</p>
+            <img
+              src="./assets/images/sprites/stage02-select.png"
+              alt="stage02 select"
+              class="select-stage-image"
+            />
+            <div class="select-stage-content">
+              <p class="select-stage-title">타우 세티로, 로키와 함께</p>
+              <p class="select-stage-description">
+                미지의 생명체, 로키와 조우하고 협력해 항로를 개척하세요.
+              </p>
+              <p class="select-stage-difficulty normal">난이도: NORMAL</p>
+              <p class="select-stage-skill">해금 스킬: 슬로우</p>
+            </div>
+            <button class="select-stage-btn">MISSION START</button>
+          </div>
+          <div class="select-stage-item">
+            <p class="select-stage-number">STAGE 03</p>
+            <img
+              src="./assets/images/sprites/stage03-select.png"
+              alt="stage03 select"
+              class="select-stage-image"
+            />
+            <div class="select-stage-content">
+              <p class="select-stage-title">아스트로파지 파괴</p>
+              <p class="select-stage-description">
+                최후의 아스트로파지를 파괴하고, 인류의 마지막 희망을 완성하세요.
+              </p>
+              <p class="select-stage-difficulty hard">난이도: HARD</p>
+              <p class="select-stage-skill">해금 스킬: 레이저</p>
+            </div>
+            <button class="select-stage-btn">MISSION START</button>
+          </div>
+        </div>
+      </div>
+      <div id="settings-box" class="main-menu-modal">
+        <button class="main-menu-modal-close-btn">
+          <img
+            src="./assets/images/sprites/x-icon.png"
+            alt="close icon"
+            class="main-menu-modal-close-icon"
+          />
+        </button>
+        <div class="main-menu-modal-title-box">
+          <img
+            src="./assets/images/sprites/setting-icon.png"
+            alt="settings icon"
+            class="main-menu-modal-title-icon"
+          />
+          <p class="main-menu-modal-title">설정</p>
+        </div>
+        <p class="main-menu-modal-description">
+          당신의 우주 임무 환경을 구성하세요.
+        </p>
+      </div>
+      <div id="help-box" class="main-menu-modal">
+        <button class="main-menu-modal-close-btn">
+          <img
+            src="./assets/images/sprites/x-icon.png"
+            alt="close icon"
+            class="main-menu-modal-close-icon"
+          />
+        </button>
+        <div class="main-menu-modal-title-box">
+          <img
+            src="./assets/images/sprites/book-icon.png"
+            alt="help icon"
+            class="main-menu-modal-title-icon"
+          />
+          <p class="main-menu-modal-title">게임 방법</p>
+        </div>
+      </div>
+      <div id="credit-box" class="main-menu-modal">
+        <button class="main-menu-modal-close-btn">
+          <img
+            src="./assets/images/sprites/x-icon.png"
+            alt="close icon"
+            class="main-menu-modal-close-icon"
+          />
+        </button>
+        <div class="main-menu-modal-title-box">
+          <img
+            src="./assets/images/sprites/people-icon.png"
+            alt="credit icon"
+            class="main-menu-modal-title-icon"
+          />
+          <p class="main-menu-modal-title">크레딧</p>
+        </div>
+        <p class="main-menu-modal-description">
+          프로젝트 제작에 참여한 팀원들입니다.
         </p>
       </div>
     </section>
