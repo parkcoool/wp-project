@@ -5,9 +5,12 @@
 
 import { initStage, startPlaying, goToNextStage } from "./stageManager.js";
 import { showScreen } from "./screen.js";
+import { initEngine } from "./engine.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  initEngine();
   showScreen("menu-screen");
+
 
   // ── 메인 메뉴 모달 열기/닫기 ──
   const modalOpenBtn = document.querySelectorAll(".main-menu-btn");
@@ -91,3 +94,5 @@ function _resizeCanvas() {
     window.onCanvasResize(canvas.width, canvas.height);
   }
 }
+
+window.resizeCanvas = _resizeCanvas; // 외부에서 호출할 수 있도록 전역 함수로 등록
