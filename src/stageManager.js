@@ -1,6 +1,6 @@
 /**
  * @module stageManager
- * @description 스테이지 초기화, 복돌 배치, 게임 흐름(오버/클리어), 시스템 로그, 점수 UI를 담당.
+ * @description 스테이지 초기화, 벽돌 배치, 게임 흐름(오버/클리어), 시스템 로그, 점수 UI를 담당.
  */
 
 import { GameState, STAGE_CONFIG, CANVAS_LAYOUT } from "./state.js";
@@ -149,7 +149,7 @@ export function onBrickHit(brickIndex) {
 }
 
 /**
- * 복돌 타입과 스테이지에 따라 파괴 점수를 계산.
+ * 벽돌 타입과 스테이지에 따라 파괴 점수를 계산.
  * @param {{ type: string }} brick
  * @returns {number}
  */
@@ -163,7 +163,7 @@ function _getScoreForBrick(brick) {
 // ─────────────────────────────────────────────
 
 /**
- * 살아있는 복돌이 없으면 스테이지 또는 미션 클리어를 판정.
+ * 살아있는 벽돌이 없으면 스테이지 또는 미션 클리어를 판정.
  */
 function _checkStageClear() {
   const aliveCount = GameState.bricks.filter((b) => b.alive).length;
@@ -218,7 +218,7 @@ function _clearProliferateTimer() {
 }
 
 /**
- * 파괴된 복돌 중 1~2개를 무작위로 부활시켜 아스트로파지 증식을 구현.
+ * 파괴된 벽돌 중 1~2개를 무작위로 부활시켜 아스트로파지 증식을 구현.
  */
 function _proliferateAstrophage() {
   if (GameState.status !== "playing") return;
