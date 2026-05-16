@@ -43,14 +43,15 @@ export function initStage(stageNum) {
   GameState.activeSkills = { slow: false, laser: false };
   GameState.balls = [];
   GameState.items = [];
-  GameState.bricks = _generateBricks(stageNum);
-
+  
   // 증식 타이머 정리
   _clearProliferateTimer();
-
+  
   // 게임 화면으로 전환
   showScreen("game-screen");
-
+  window.resizeCanvas?.();  //resize 전에는 게임 화면이 display:none이므로 캔버스 크기가 0이었음. 강제 resize로 초기화.
+  GameState.bricks = _generateBricks(stageNum); //캔버스 크기를 확정한 후 벽돌 생성하도록 수정(canvas.width가 0이어서 벽돌 너비가 이상하게 계산되는 문제 해결)
+  
   // 스테이지별 배경 클래스 교체
   const gameScreen = document.getElementById("game-screen");
   gameScreen.className = `screen game-screen active ${config.backgroundClass}`;
@@ -86,9 +87,12 @@ export function initStage(stageNum) {
  */
 function _generateBricks(stageNum) {
   const config = STAGE_CONFIG[stageNum];
-  const { brickOffsetX, brickOffsetY, brickAreaWidth, brickHeight, brickGapX, brickGapY } =
+  const { brickOffsetX, brickOffsetY, brickHeight, brickGapX, brickGapY } =
     CANVAS_LAYOUT;
   const { rows, cols, rowHp } = config;
+
+  const canvas = document.getElementById("game-canvas");
+  const brickAreaWidth = canvas.width - brickOffsetX * 2; //하드 코딩되었던 brickAreaWidth를 캔버스 크기에 맞게 동적으로 계산하도록 수정
 
   const brickW = (brickAreaWidth - brickGapX * (cols - 1)) / cols; // ≈ 56.4px
 
