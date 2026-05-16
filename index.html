@@ -12,7 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Noto+Sans+KR:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <script src="./src/index.js"></script>
+    <script type="module" src="./src/index.js"></script>
   </head>
   <body>
     <section id="menu-screen" class="screen">
@@ -89,9 +89,7 @@
           />
           <p class="main-menu-modal-title">스테이지 선택</p>
         </div>
-        <p class="main-menu-modal-description">
-          헤일메리호의 항로를 선택하세요.
-        </p>
+        <p class="main-menu-modal-description">헤일메리호의 항로를 선택하세요.</p>
         <div class="select-stage-box">
           <div class="select-stage-item">
             <p class="select-stage-number">STAGE 01</p>
@@ -162,9 +160,7 @@
           />
           <p class="main-menu-modal-title">설정</p>
         </div>
-        <p class="main-menu-modal-description">
-          당신의 우주 임무 환경을 구성하세요.
-        </p>
+        <p class="main-menu-modal-description">당신의 우주 임무 환경을 구성하세요.</p>
       </div>
       <div id="help-box" class="main-menu-modal">
         <button class="main-menu-modal-close-btn">
@@ -199,13 +195,188 @@
           />
           <p class="main-menu-modal-title">크레딧</p>
         </div>
-        <p class="main-menu-modal-description">
-          프로젝트 제작에 참여한 팀원들입니다.
-        </p>
+        <p class="main-menu-modal-description">프로젝트 제작에 참여한 팀원들입니다.</p>
       </div>
     </section>
-    <section id="stage01-screen" class="screen"></section>
-    <section id="stage02-screen" class="screen"></section>
-    <section id="stage03-screen" class="screen"></section>
+    <!-- ══════════════════════════════════════════════════
+         게임 화면 (스테이지 1·2·3 공용 레이아웃)
+         담당: 시원 (구조/상태), 성화 (캔버스/물리), 찬형 (UI/스타일), 동규 (아이템/스킬)
+         ══════════════════════════════════════════════════ -->
+    <section id="game-screen" class="screen game-screen">
+      <!-- ── 스테이지 인트로 오버레이 ── -->
+      <div id="stage-intro-overlay" class="game-overlay stage-intro-overlay">
+        <div class="intro-content">
+          <p class="intro-stage-label">STAGE 01</p>
+          <div class="intro-text-box">
+            <p class="intro-text"></p>
+          </div>
+          <p class="intro-skill-unlock"></p>
+          <button id="intro-start-btn" class="intro-start-btn">MISSION START</button>
+        </div>
+      </div>
+
+      <!-- ── 게임 오버 오버레이 ── -->
+      <div id="game-over-overlay" class="game-overlay result-overlay">
+        <div class="result-content">
+          <p class="result-title result-fail">MISSION FAILED</p>
+          <p class="result-subtitle">연료가 고갈되었습니다.</p>
+          <div class="result-btn-group">
+            <button id="retry-btn" class="result-btn btn-primary">다시 시도</button>
+            <button id="gameover-menu-btn" class="result-btn btn-secondary">메인 메뉴</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 스테이지 클리어 오버레이 ── -->
+      <div id="stage-clear-overlay" class="game-overlay result-overlay">
+        <div class="result-content">
+          <p class="result-title result-success">STAGE CLEAR</p>
+          <p class="result-subtitle">아스트로파지를 제압했습니다.</p>
+          <div class="result-btn-group">
+            <button id="next-stage-btn" class="result-btn btn-primary">다음 스테이지</button>
+            <button id="stageclear-menu-btn" class="result-btn btn-secondary">메인 메뉴</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 미션 클리어 오버레이 (스테이지 3 클리어) ── -->
+      <div id="mission-clear-overlay" class="game-overlay result-overlay">
+        <div class="result-content">
+          <p class="result-title result-success">MISSION COMPLETE</p>
+          <p class="result-subtitle">지구를 구했습니다. 헤일메리 프로젝트 성공.</p>
+          <div class="result-btn-group">
+            <button id="mission-clear-menu-btn" class="result-btn btn-primary">메인 메뉴</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 메인 게임 레이아웃 ── -->
+      <div class="game-layout">
+        <!-- ── 좌측 패널 ── -->
+        <aside class="game-sidebar-left">
+          <!-- 스테이지 정보 카드 -->
+          <div class="game-info-card sidebar-card">
+            <div class="game-brand">
+              <p class="brand-title">PROJECT HAIL MARY</p>
+              <p class="brand-sub">: BREAKOUT</p>
+            </div>
+            <div class="game-stage-info">
+              <p class="game-stage-number">STAGE 01</p>
+              <p class="game-stage-name">태양이 죽어가고 있다</p>
+            </div>
+          </div>
+
+          <!-- 연료 게이지 카드 -->
+          <div class="fuel-card sidebar-card">
+            <div class="fuel-header">
+              <p class="fuel-title">FUEL LEVEL</p>
+              <p class="fuel-percent-text">100% REMAINING</p>
+            </div>
+            <div class="fuel-gauge-wrap">
+              <!-- SVG 반원 게이지 -->
+              <svg
+                id="fuel-gauge-svg"
+                class="fuel-gauge-svg"
+                viewBox="0 0 200 120"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <!-- 배경 호 -->
+                <path
+                  d="M 20 100 A 80 80 0 0 1 180 100"
+                  stroke="#2a3a4a"
+                  stroke-width="12"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+                <!-- 연료 호 (JS로 stroke-dasharray 제어) -->
+                <path
+                  id="fuel-arc"
+                  d="M 20 100 A 80 80 0 0 1 180 100"
+                  stroke="#FFC857"
+                  stroke-width="12"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-dasharray="251.3 251.3"
+                  style="transform-origin: center; transform-box: fill-box"
+                />
+                <!-- 눈금 (E·F 사이 5개) -->
+                <line x1="20" y1="100" x2="24" y2="88" stroke="#8E9BAA" stroke-width="2" />
+                <line x1="57" y1="33" x2="61" y2="44" stroke="#8E9BAA" stroke-width="2" />
+                <line x1="100" y1="20" x2="100" y2="32" stroke="#8E9BAA" stroke-width="2" />
+                <line x1="143" y1="33" x2="139" y2="44" stroke="#8E9BAA" stroke-width="2" />
+                <line x1="180" y1="100" x2="176" y2="88" stroke="#8E9BAA" stroke-width="2" />
+                <!-- 바늘 (JS로 rotate 제어) -->
+                <line
+                  id="fuel-needle"
+                  x1="100"
+                  y1="100"
+                  x2="100"
+                  y2="30"
+                  stroke="#EAF4FF"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  transform="rotate(0 100 100)"
+                />
+                <!-- 중심 점 -->
+                <circle cx="100" cy="100" r="6" fill="#EAF4FF" />
+                <!-- E / F 레이블 -->
+                <text
+                  x="8"
+                  y="118"
+                  font-family="Jersey 25, sans-serif"
+                  font-size="16"
+                  fill="#8E9BAA"
+                >
+                  E
+                </text>
+                <text
+                  x="182"
+                  y="118"
+                  font-family="Jersey 25, sans-serif"
+                  font-size="16"
+                  fill="#8E9BAA"
+                >
+                  F
+                </text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 스킬 카드 -->
+          <div class="skills-card sidebar-card">
+            <div class="skills-header">
+              <p class="skills-title">SKILLS</p>
+              <p class="skills-subtitle">연료를 소모하여 사용</p>
+            </div>
+            <div class="skills-list">
+              <!-- stageManager.js에서 동적 생성 -->
+              <p class="no-skill-text">해금된 스킬 없음</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ── 중앙 캔버스 영역 ── -->
+        <div class="game-canvas-container">
+          <canvas id="game-canvas"></canvas>
+        </div>
+
+        <!-- ── 우측 패널 ── -->
+        <aside class="game-sidebar-right">
+          <!-- 점수 카드 -->
+          <div class="score-card sidebar-card">
+            <p class="score-label">SCORE</p>
+            <p class="score-value">0000000</p>
+          </div>
+
+          <!-- 시스템 로그 카드 -->
+          <div class="system-log-card sidebar-card">
+            <p class="system-log-title">SYSTEM LOG</p>
+            <div class="system-log-list"></div>
+          </div>
+        </aside>
+      </div>
+      <!-- .game-layout -->
+    </section>
+    <!-- #game-screen -->
   </body>
 </html>
