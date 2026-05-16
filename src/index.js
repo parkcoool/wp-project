@@ -1,6 +1,6 @@
 /**
- * index.js — 메뉴 화면 진입점 및 화면 전환 관리
- * 담당: 시원 (showScreen export + 스테이지 시작 연결)
+ * @module index
+ * @description 애플리케이션 진입점. 메뉴 이벤트 바인딩, 화면 전환, 캔버스 리사이즈를 담당.
  */
 
 import { initStage, startPlaying, goToNextStage } from "./stageManager.js";
@@ -72,14 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", _resizeCanvas);
 });
 
-/**
- * 화면 전환 함수 — stageManager.js에서도 import해서 사용
- * @param {string} screenId
- */
 export { showScreen } from "./screen.js";
 
 /**
- * 캔버스를 컨테이너 크기에 맞게 리사이즈
+ * 게임 캔버스를 .game-canvas-container 크기에 맞게 리사이즈.
+ * 윈도우 resize 이벤트마다 호출.
  */
 function _resizeCanvas() {
   const container = document.querySelector(".game-canvas-container");
@@ -89,7 +86,7 @@ function _resizeCanvas() {
   canvas.width = container.clientWidth;
   canvas.height = container.clientHeight;
 
-  // 성화의 게임 루프에 리사이즈 알림
+  // 게임 루프에 리사이즈 알림 (외부 등록 콜백)
   if (typeof window.onCanvasResize === "function") {
     window.onCanvasResize(canvas.width, canvas.height);
   }

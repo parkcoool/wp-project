@@ -1,12 +1,7 @@
 /**
- * fuelSystem.js — 연료 시스템
- * 담당: 시원 (Stage & State Manager)
- *
- * 연료 감소/증가 로직을 중앙에서 관리.
- * 외부(성화, 동규)에서 아래 함수들을 호출하여 연료를 변경.
- *
- * stageManager와의 순환 참조를 막기 위해 콜백 패턴 사용.
- * stageManager.js의 initStage() 안에서 registerFuelCallbacks()를 호출해 주입.
+ * @module fuelSystem
+ * @description 연료의 증가·감소·UI 갱신을 중앙에서 관리.
+ *   stageManager와의 순환 참조를 막기 위해 콜백 주입(registerFuelCallbacks) 패턴을 사용.
  */
 
 import { GameState, FUEL_COSTS, FUEL_GAINS, FUEL_WARNING_THRESHOLD } from "./state.js";
@@ -21,7 +16,7 @@ const _cb = {
 };
 
 /**
- * stageManager.js의 initStage()에서 반드시 호출.
+ * stageManager가 스테이지 초기화 시 호출하는 콜백 주입 함수.
  * @param {{ addSystemLog: Function, triggerGameOver: Function }} callbacks
  */
 export function registerFuelCallbacks(callbacks) {
@@ -35,10 +30,16 @@ export function registerFuelCallbacks(callbacks) {
 
 let _lowFuelWarned = false;
 
+/**
+ * 연료를 [0, max] 범위로 제한.
+ */
 function _clampFuel() {
   GameState.fuel.current = Math.max(0, Math.min(GameState.fuel.max, GameState.fuel.current));
 }
 
+/**
+ * 연료 퍼센트를 계산하고 게이지 SVG 및 텍스트 UI를 갱신.
+ */
 function _updateFuelUI() {
   const pct =
     GameState.fuel.max > 0 ? Math.round((GameState.fuel.current / GameState.fuel.max) * 100) : 0;
@@ -80,6 +81,12 @@ function _updateFuelUI() {
 // 공개 API
 // ─────────────────────────────────────────────
 
+/**
+ * 연료를 감소시키고, 고갈 시 게임 오버를 트리거.
+ * @param {number} amount - 감소량 (양수)
+ * @param {string|null} [logMsg] - 시스템 로그 메시지
+ * @param {'normal'|'warning'|'danger'|'positive'} [logType]
+ */
 export function drainFuel(amount, logMsg = null, logType = "normal") {
   if (GameState.status !== "playing") return;
 
@@ -94,6 +101,10 @@ export function drainFuel(amount, logMsg = null, logType = "normal") {
   }
 }
 
+/**
+ * 연료를 충전.
+ * @param {number} amount - 충전량 (양수)
+ */
 export function addFuel(amount) {
   if (GameState.status !== "playing") return;
 
@@ -103,35 +114,55 @@ export function addFuel(amount) {
   _cb.addSystemLog(`Fuel +${amount}`, "positive");
 }
 
+/**
+ * 연료 경고 플래그를 초기화하고 UI를 현재 상태로 강제 갱신.
+ * 스테이지 초기화 시 호출.
+ */
 export function resetFuelUI() {
   _lowFuelWarned = false;
   _updateFuelUI();
 }
 
 // ─────────────────────────────────────────────
-// 이벤트 훅 — 성화(물리)가 호출
+// 이벤트 훅 — 물리 레이어
 // ─────────────────────────────────────────────
 
+/**
+ * 공 발사 시 물리 레이어에서 호출.
+ */
 export function onBallLaunch() {
   drainFuel(FUEL_COSTS.ballLaunch);
 }
 
+/**
+ * 공을 놓쳤을 때 물리 레이어에서 호출.
+ */
 export function onBallMiss() {
   drainFuel(FUEL_COSTS.ballMiss, "Energy Pulse Lost..", "warning");
 }
 
 // ─────────────────────────────────────────────
-// 이벤트 훅 — 동규(아이템/스킬)가 호출
+// 이벤트 훅 — 아이템/스킬 레이어
 // ─────────────────────────────────────────────
 
+/**
+ * 연료 아이템 획득 시 아이템 레이어에서 호출.
+ */
 export function onFuelItemPickup() {
   addFuel(FUEL_GAINS.fuelItem);
 }
 
+/**
+ * 우주 쓰레기 획득 시 아이템 레이어에서 호출.
+ */
 export function onDebrisPickup() {
   drainFuel(15, "Space Debris Impact!", "warning");
 }
 
+/**
+ * 스킬 사용 시 스킬 레이어에서 호출.
+ * @param {'slow'|'laser'} skillName - 사용할 스킬 이름
+ */
 export function onSkillUse(skillName) {
   const costs = { slow: FUEL_COSTS.skillSlow, laser: FUEL_COSTS.skillLaser };
   drainFuel(costs[skillName] ?? 10);

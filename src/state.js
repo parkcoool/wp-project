@@ -1,9 +1,6 @@
 /**
- * state.js — 전역 게임 상태 단일 객체
- * 담당: 시원 (Stage & State Manager)
- *
- * 팀 전체가 import해서 읽는 단일 진실의 원천.
- * 물리(성화), 아이템/스킬(동규), UI(찬형) 모두 이 파일을 참조.
+ * @module state
+ * @description 전역 게임 상태, 설정 상수, 레이아웃 상수를 한 곳에서 관리하는 단일 진실의 원천.
  */
 
 // ─────────────────────────────────────────────
@@ -82,7 +79,7 @@ export const FUEL_GAINS = {
 export const FUEL_WARNING_THRESHOLD = 25;
 
 // ─────────────────────────────────────────────
-// 캔버스 레이아웃 상수 (성화와 공유)
+// 캔버스 레이아웃 상수
 // ─────────────────────────────────────────────
 export const CANVAS_LAYOUT = {
   brickOffsetX: 51, // 벽돌 그리드 시작 X (캔버스 내부 기준)
@@ -104,14 +101,13 @@ export const GameState = {
   score: 0,
   systemLog: [],
 
-  // 연료 (시원 담당)
+  // 연료
   fuel: {
     current: 100,
     max: 100,
   },
 
   /**
-   * 벽돌 배열 — 시원이 초기화, 성화가 collision 처리에서 읽기
    * @type {Array<{
    *   row: number, col: number,
    *   x: number, y: number, w: number, h: number,
@@ -122,33 +118,24 @@ export const GameState = {
    */
   bricks: [],
 
-  /**
-   * 공 배열 — 성화가 관리
-   * @type {Array<{x: number, y: number, vx: number, vy: number, r: number}>}
-   */
+  /** @type {Array<{x: number, y: number, vx: number, vy: number, r: number}>} */
   balls: [],
 
-  /**
-   * 패들 — 성화가 관리
-   * @type {{x: number, y: number, w: number, h: number}}
-   */
+  /** @type {{x: number, y: number, w: number, h: number}} */
   paddle: { x: 0, y: 0, w: 160, h: 16 },
 
-  /**
-   * 낙하 아이템 — 동규가 관리
-   * @type {Array<{x: number, y: number, vy: number, type: 'fuel'|'debris', alive: boolean}>}
-   */
+  /** @type {Array<{x: number, y: number, vy: number, type: 'fuel'|'debris', alive: boolean}>} */
   items: [],
 
-  // 해금된 스킬 목록 (동규가 읽음)
+  // 해금된 스킬 목록
   unlockedSkills: [],
 
-  // 스킬 활성 상태 (동규가 관리)
+  // 스킬 활성 상태
   activeSkills: {
     slow: false,
     laser: false,
   },
 
-  // 증식 타이머 핸들 (시원 내부용)
+  // 증식 타이머 핸들 (내부용)
   _proliferateTimer: null,
 };

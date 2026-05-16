@@ -1,17 +1,20 @@
 /**
- * stageManager.js — 스테이지 및 상태 관리
- * 담당: 시원 (Stage & State Manager)
- *
- * 책임:
- *  - 스테이지 초기화 (벽돌 배치, 연료 설정, 스킬 해금)
- *  - 벽돌 피격/파괴 처리 (성화가 onBrickHit 호출)
- *  - 스테이지 3 증식 기믹
- *  - 게임 오버 / 스테이지 클리어 / 미션 클리어 판정
- *  - 시스템 로그 + 점수 UI 업데이트
+ * @module stageManager
+ * @description 스테이지 초기화, 복돌 배치, 게임 흐름(오버/클리어), 시스템 로그, 점수 UI를 담당.
  */
 
 import { GameState, STAGE_CONFIG, CANVAS_LAYOUT } from "./state.js";
-import { resetFuelUI, registerFuelCallbacks } from "./fuelSystem.js";
+import {
+  resetFuelUI,
+  registerFuelCallbacks,
+  onBallLaunch,
+  onBallMiss,
+  addFuel,
+  drainFuel,
+  onFuelItemPickup,
+  onDebrisPickup,
+  onSkillUse,
+} from "./fuelSystem.js";
 import { showScreen } from "./screen.js";
 
 // ─────────────────────────────────────────────
@@ -113,11 +116,11 @@ function _generateBricks(stageNum) {
 }
 
 // ─────────────────────────────────────────────
-// 벽돌 피격/파괴 — 성화(물리)가 호출
+// 별돌 피격/파괴
 // ─────────────────────────────────────────────
 
 /**
- * 공이 벽돌에 닿았을 때 성화가 호출.
+ * 공이 벽돌에 맞았을 때 물리 레이어에서 호출.
  * @param {number} brickIndex - GameState.bricks 배열 인덱스
  * @returns {boolean} 벽돌이 파괴되었으면 true
  */
@@ -134,7 +137,7 @@ export function onBrickHit(brickIndex) {
     _updateScoreUI();
     addSystemLog("Astrophage Destroyed!", "positive");
 
-    // 아이템 드롭 — 동규가 window.onBrickDestroyed를 등록해서 처리
+    // 아이템 드롭 (외부 등록 콜백)
     if (typeof window.onBrickDestroyed === "function") {
       window.onBrickDestroyed(brick);
     }
@@ -145,6 +148,11 @@ export function onBrickHit(brickIndex) {
   return false;
 }
 
+/**
+ * 복돌 타입과 스테이지에 따라 파괴 점수를 계산.
+ * @param {{ type: string }} brick
+ * @returns {number}
+ */
 function _getScoreForBrick(brick) {
   const base = { normal: 10, tough: 20, armored: 30 };
   return (base[brick.type] ?? 10) * GameState.currentStage;
@@ -154,6 +162,9 @@ function _getScoreForBrick(brick) {
 // 스테이지 클리어 / 게임 오버
 // ─────────────────────────────────────────────
 
+/**
+ * 살아있는 복돌이 없으면 스테이지 또는 미션 클리어를 판정.
+ */
 function _checkStageClear() {
   const aliveCount = GameState.bricks.filter((b) => b.alive).length;
   if (aliveCount > 0) return;
@@ -172,7 +183,7 @@ function _checkStageClear() {
 }
 
 /**
- * 연료 고갈 시 fuelSystem이 호출.
+ * 게임 오버를 트리거. 연료 고갈 시 fuelSystem에서 호출.
  */
 export function triggerGameOver() {
   if (GameState.status === "gameover") return;
@@ -186,6 +197,9 @@ export function triggerGameOver() {
 // 스테이지 3 증식 기믹
 // ─────────────────────────────────────────────
 
+/**
+ * 스테이지 설정에 증식(proliferate)가 활성화된 경우 증식 타이머를 시작.
+ */
 function _startProliferateTimer() {
   const config = STAGE_CONFIG[GameState.currentStage];
   if (!config.proliferate) return;
@@ -193,6 +207,9 @@ function _startProliferateTimer() {
   GameState._proliferateTimer = setInterval(_proliferateAstrophage, config.proliferateInterval);
 }
 
+/**
+ * 증식 타이머를 정리.
+ */
 function _clearProliferateTimer() {
   if (GameState._proliferateTimer) {
     clearInterval(GameState._proliferateTimer);
@@ -200,6 +217,9 @@ function _clearProliferateTimer() {
   }
 }
 
+/**
+ * 파괴된 복돌 중 1~2개를 무작위로 부활시켜 아스트로파지 증식을 구현.
+ */
 function _proliferateAstrophage() {
   if (GameState.status !== "playing") return;
 
@@ -228,7 +248,7 @@ function _proliferateAstrophage() {
 // ─────────────────────────────────────────────
 
 /**
- * 인트로 오버레이에서 "임무 시작" 버튼 클릭 시 호출.
+ * 인트로 오버레이에서 "임무 시작" 버튼 클릭 시 호출. 게임 상태를 playing으로 전환.
  */
 export function startPlaying() {
   GameState.status = "playing";
@@ -239,7 +259,7 @@ export function startPlaying() {
 
   addSystemLog("Mission Start", "normal");
 
-  // 게임 루프 시작 — 성화가 window.startGameLoop를 등록
+  // 게임 루프 시작 (외부 등록 콜백)
   if (typeof window.startGameLoop === "function") {
     window.startGameLoop();
   }
@@ -249,6 +269,9 @@ export function startPlaying() {
 // 다음 스테이지 진행
 // ─────────────────────────────────────────────
 
+/**
+ * 현재 스테이지의 다음 스테이지를 초기화. 스테이지 3 이후에는 아무 동작 없음.
+ */
 export function goToNextStage() {
   const next = GameState.currentStage + 1;
   if (next > 3) return;
@@ -287,11 +310,18 @@ export function addSystemLog(message, type = "normal") {
 // UI 업데이트 헬퍼
 // ─────────────────────────────────────────────
 
+/**
+ * 현재 점수를 7자리 0-패딩 형식으로 UI에 갱신.
+ */
 function _updateScoreUI() {
   const el = document.querySelector(".score-value");
   if (el) el.textContent = String(GameState.score).padStart(7, "0");
 }
 
+/**
+ * 좌측 사이드바의 스테이지 번호·이름을 갱신.
+ * @param {number} stageNum
+ */
 function _updateSidebarUI(stageNum) {
   const config = STAGE_CONFIG[stageNum];
   const numEl = document.querySelector(".game-stage-number");
@@ -300,6 +330,10 @@ function _updateSidebarUI(stageNum) {
   if (nameEl) nameEl.textContent = config.name;
 }
 
+/**
+ * 스킬 패널을 해당 스테이지의 해금 스킬로 갱신.
+ * @param {number} stageNum
+ */
 function _updateSkillsUI(stageNum) {
   const config = STAGE_CONFIG[stageNum];
   const skillsContainer = document.querySelector(".skills-list");
@@ -332,6 +366,10 @@ function _updateSkillsUI(stageNum) {
   });
 }
 
+/**
+ * 스테이지 인트로 오버레이를 텍스트와 함께 표시.
+ * @param {number} stageNum
+ */
 function _showIntroOverlay(stageNum) {
   const config = STAGE_CONFIG[stageNum];
   const overlay = document.getElementById("stage-intro-overlay");
@@ -349,42 +387,36 @@ function _showIntroOverlay(stageNum) {
   overlay.classList.add("active");
 }
 
+/**
+ * 지정한 오버레이를 표시.
+ * @param {string} id - 오버레이 요소의 id
+ */
 function _showOverlay(id) {
   document.getElementById(id)?.classList.add("active");
 }
 
+/**
+ * 지정한 오버레이를 숨김.
+ * @param {string} id - 오버레이 요소의 id
+ */
 function _hideOverlay(id) {
   document.getElementById(id)?.classList.remove("active");
 }
 
 // ─────────────────────────────────────────────
-// window.gameAPI — 팀원 통합용 글로벌 접근점
+// 전역 API
 // ─────────────────────────────────────────────
-// 성화, 동규가 import를 쓰지 않을 경우 window.gameAPI로 접근 가능.
-// 권장: 직접 import 사용.
-//   import { onBrickHit, addSystemLog } from './stageManager.js';
-//   import { onBallLaunch, onBallMiss, addFuel, drainFuel } from './fuelSystem.js';
-import {
-  onBallLaunch,
-  onBallMiss,
-  addFuel,
-  drainFuel,
-  onFuelItemPickup,
-  onDebrisPickup,
-  onSkillUse,
-} from "./fuelSystem.js";
 
+/**
+ * ES 모듈 import 없이 접근할 수 있는 전역 게임 API.
+ * ES 모듈로 직접 import하는 방식을 권장.
+ */
 window.gameAPI = {
-  // 상태 접근
   getState: () => GameState,
   getBricks: () => GameState.bricks,
-
-  // 시원 제공 훅 (성화가 호출)
   onBrickHit,
   triggerGameOver,
   addSystemLog,
-
-  // 연료 훅 (동규/성화가 호출)
   onBallLaunch,
   onBallMiss,
   addFuel,
