@@ -53,7 +53,7 @@ export function initStage(stageNum) {
 
   // 스테이지별 배경 클래스 교체
   const gameScreen = document.getElementById("game-screen");
-  gameScreen.className = `screen game-screen ${config.backgroundClass}`;
+  gameScreen.className = `screen game-screen active ${config.backgroundClass}`;
 
   // 좌측 패널 텍스트 업데이트
   _updateSidebarUI(stageNum);
