@@ -89,7 +89,9 @@
           />
           <p class="main-menu-modal-title">스테이지 선택</p>
         </div>
-        <p class="main-menu-modal-description">헤일메리호의 항로를 선택하세요.</p>
+        <p class="main-menu-modal-description">
+          헤일메리호의 항로를 선택하세요.
+        </p>
         <div class="select-stage-box">
           <div class="select-stage-item">
             <p class="select-stage-number">STAGE 01</p>
@@ -160,7 +162,55 @@
           />
           <p class="main-menu-modal-title">환경 설정</p>
         </div>
-        <p class="main-menu-modal-description">당신만의 우주 임무 환경을 구성하세요.</p>
+        <p class="main-menu-modal-description">
+          당신만의 우주 임무 환경을 구성하세요.
+        </p>
+        <div class="settings-body">
+          <div class="settings-menu">
+            <button class="settings-menu-btn active">AUDIO</button>
+            <button class="settings-menu-btn">GAMEPLAY</button>
+            <button class="settings-menu-btn">CONTROL</button>
+          </div>
+          <div class="settings-content active">
+            <div class="audio-settings">
+              <div class="audio-setting-item">
+                <p class="audio-setting-label">마스터 볼륨</p>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="50"
+                  class="audio-setting-slider"
+                />
+                <p class="audio-setting-value">50%</p>
+              </div>
+              <div class="audio-setting-item">
+                <p class="audio-setting-label">배경 음악</p>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="50"
+                  class="audio-setting-slider"
+                />
+                <p class="audio-setting-value">50%</p>
+              </div>
+              <div class="audio-setting-item">
+                <p class="audio-setting-label">효과음</p>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="50"
+                  class="audio-setting-slider"
+                />
+                <p class="audio-setting-value">50%</p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-content"></div>
+          <div class="settings-content"></div>
+        </div>
       </div>
       <div id="help-box" class="main-menu-modal">
         <button class="main-menu-modal-close-btn">
@@ -195,7 +245,9 @@
           />
           <p class="main-menu-modal-title">크레딧</p>
         </div>
-        <p class="main-menu-modal-description">프로젝트 제작에 참여한 팀원들입니다.</p>
+        <p class="main-menu-modal-description">
+          프로젝트 제작에 참여한 팀원들입니다.
+        </p>
       </div>
     </section>
     <!-- 게임 화면 (스테이지 1·2·3 공용 레이아웃) -->
@@ -208,7 +260,9 @@
             <p class="intro-text"></p>
           </div>
           <p class="intro-skill-unlock"></p>
-          <button id="intro-start-btn" class="intro-start-btn">MISSION START</button>
+          <button id="intro-start-btn" class="intro-start-btn">
+            MISSION START
+          </button>
         </div>
       </div>
 
@@ -218,8 +272,12 @@
           <p class="result-title result-fail">MISSION FAILED</p>
           <p class="result-subtitle">연료가 고갈되었습니다.</p>
           <div class="result-btn-group">
-            <button id="retry-btn" class="result-btn btn-primary">다시 시도</button>
-            <button id="gameover-menu-btn" class="result-btn btn-secondary">메인 메뉴</button>
+            <button id="retry-btn" class="result-btn btn-primary">
+              다시 시도
+            </button>
+            <button id="gameover-menu-btn" class="result-btn btn-secondary">
+              메인 메뉴
+            </button>
           </div>
         </div>
       </div>
@@ -230,8 +288,12 @@
           <p class="result-title result-success">STAGE CLEAR</p>
           <p class="result-subtitle">아스트로파지를 제압했습니다.</p>
           <div class="result-btn-group">
-            <button id="next-stage-btn" class="result-btn btn-primary">다음 스테이지</button>
-            <button id="stageclear-menu-btn" class="result-btn btn-secondary">메인 메뉴</button>
+            <button id="next-stage-btn" class="result-btn btn-primary">
+              다음 스테이지
+            </button>
+            <button id="stageclear-menu-btn" class="result-btn btn-secondary">
+              메인 메뉴
+            </button>
           </div>
         </div>
       </div>
@@ -240,9 +302,13 @@
       <div id="mission-clear-overlay" class="game-overlay result-overlay">
         <div class="result-content">
           <p class="result-title result-success">MISSION COMPLETE</p>
-          <p class="result-subtitle">지구를 구했습니다. 헤일메리 프로젝트 성공.</p>
+          <p class="result-subtitle">
+            지구를 구했습니다. 헤일메리 프로젝트 성공.
+          </p>
           <div class="result-btn-group">
-            <button id="mission-clear-menu-btn" class="result-btn btn-primary">메인 메뉴</button>
+            <button id="mission-clear-menu-btn" class="result-btn btn-primary">
+              메인 메뉴
+            </button>
           </div>
         </div>
       </div>
@@ -297,11 +363,46 @@
                   style="transform-origin: center; transform-box: fill-box"
                 />
                 <!-- 눈금 (E·F 사이 5개) -->
-                <line x1="20" y1="100" x2="24" y2="88" stroke="#8E9BAA" stroke-width="2" />
-                <line x1="57" y1="33" x2="61" y2="44" stroke="#8E9BAA" stroke-width="2" />
-                <line x1="100" y1="20" x2="100" y2="32" stroke="#8E9BAA" stroke-width="2" />
-                <line x1="143" y1="33" x2="139" y2="44" stroke="#8E9BAA" stroke-width="2" />
-                <line x1="180" y1="100" x2="176" y2="88" stroke="#8E9BAA" stroke-width="2" />
+                <line
+                  x1="20"
+                  y1="100"
+                  x2="24"
+                  y2="88"
+                  stroke="#8E9BAA"
+                  stroke-width="2"
+                />
+                <line
+                  x1="57"
+                  y1="33"
+                  x2="61"
+                  y2="44"
+                  stroke="#8E9BAA"
+                  stroke-width="2"
+                />
+                <line
+                  x1="100"
+                  y1="20"
+                  x2="100"
+                  y2="32"
+                  stroke="#8E9BAA"
+                  stroke-width="2"
+                />
+                <line
+                  x1="143"
+                  y1="33"
+                  x2="139"
+                  y2="44"
+                  stroke="#8E9BAA"
+                  stroke-width="2"
+                />
+                <line
+                  x1="180"
+                  y1="100"
+                  x2="176"
+                  y2="88"
+                  stroke="#8E9BAA"
+                  stroke-width="2"
+                />
                 <!-- 바늘 (JS로 rotate 제어) -->
                 <line
                   id="fuel-needle"

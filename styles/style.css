@@ -275,17 +275,17 @@ button.main-menu-btn:hover {
 
 /* ── 스테이지별 배경 이미지 ── */
 .game-screen.bg-stage01 {
-  background-image: url("../assets/images/background/stage01-bg.png");
+  background-image: url('../assets/images/background/stage01-bg.png');
   background-size: cover;
   background-position: center;
 }
 .game-screen.bg-stage02 {
-  background-image: url("../assets/images/background/stage02-bg.png");
+  background-image: url('../assets/images/background/stage02-bg.png');
   background-size: cover;
   background-position: center;
 }
 .game-screen.bg-stage03 {
-  background-image: url("../assets/images/background/stage03-bg.png");
+  background-image: url('../assets/images/background/stage03-bg.png');
   background-size: cover;
   background-position: center;
 }
@@ -328,14 +328,14 @@ button.main-menu-btn:hover {
 }
 
 .brand-title {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 20px;
   color: #eaf4ff;
   line-height: 1.2;
 }
 
 .brand-sub {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 13px;
   color: #ffc857;
   letter-spacing: 0.2em;
@@ -348,14 +348,14 @@ button.main-menu-btn:hover {
 }
 
 .game-stage-number {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 32px;
   color: #eaf4ff;
   line-height: 1;
 }
 
 .game-stage-name {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #59c3ff;
@@ -375,13 +375,13 @@ button.main-menu-btn:hover {
 }
 
 .fuel-title {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 24px;
   color: #eaf4ff;
 }
 
 .fuel-percent-text {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 18px;
   color: #ffc857;
   transition: color 0.3s;
@@ -415,13 +415,13 @@ button.main-menu-btn:hover {
 }
 
 .skills-title {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 24px;
   color: #eaf4ff;
 }
 
 .skills-subtitle {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 13px;
   color: #8e9baa;
   margin-top: 2px;
@@ -454,13 +454,13 @@ button.main-menu-btn:hover {
 }
 
 .skill-key {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 18px;
   line-height: 1;
 }
 
 .skill-label {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 11px;
   color: #ffc857;
   text-align: center;
@@ -468,7 +468,7 @@ button.main-menu-btn:hover {
 }
 
 .no-skill-text {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 13px;
   color: #8e9baa;
 }
@@ -496,14 +496,14 @@ button.main-menu-btn:hover {
 }
 
 .score-label {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 18px;
   color: #8e9baa;
   letter-spacing: 0.1em;
 }
 
 .score-value {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 36px;
   color: #ffc857;
   letter-spacing: 0.05em;
@@ -518,7 +518,7 @@ button.main-menu-btn:hover {
 }
 
 .system-log-title {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 18px;
   color: #8e9baa;
   letter-spacing: 0.1em;
@@ -546,7 +546,7 @@ button.main-menu-btn:hover {
 
 /* 로그 엔트리 색상 */
 .log-entry {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 16px;
   line-height: 1.4;
 }
@@ -595,7 +595,7 @@ button.main-menu-btn:hover {
 }
 
 .intro-stage-label {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 64px;
   color: #eaf4ff;
   letter-spacing: 0.1em;
@@ -609,7 +609,7 @@ button.main-menu-btn:hover {
 }
 
 .intro-text {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 18px;
   color: #eaf4ff;
   line-height: 1.8;
@@ -618,7 +618,7 @@ button.main-menu-btn:hover {
 }
 
 .intro-skill-unlock {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 20px;
   color: #00ff9d;
   letter-spacing: 0.05em;
@@ -628,7 +628,7 @@ button.main-menu-btn:hover {
   padding: 16px 48px;
   border: 2px solid #ff7a1a;
   color: #ff7a1a;
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 24px;
   letter-spacing: 0.1em;
   background: transparent;
@@ -666,7 +666,7 @@ button.main-menu-btn:hover {
 }
 
 .result-title {
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 56px;
   letter-spacing: 0.08em;
 }
@@ -681,7 +681,7 @@ button.main-menu-btn:hover {
 }
 
 .result-subtitle {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-size: 20px;
   color: #8e9baa;
 }
@@ -694,7 +694,7 @@ button.main-menu-btn:hover {
 
 .result-btn {
   padding: 14px 36px;
-  font-family: "Jersey 25", sans-serif;
+  font-family: 'Jersey 25', sans-serif;
   font-size: 20px;
   letter-spacing: 0.05em;
   border-radius: 8px;
@@ -725,4 +725,163 @@ button.main-menu-btn:hover {
 .btn-secondary:hover {
   border-color: #eaf4ff;
   color: #eaf4ff;
+}
+
+.settings-body {
+  margin-top: 40px;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.settings-menu {
+  margin-right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-content {
+  flex: 1;
+  min-height: 0;
+}
+
+.settings-menu-btn {
+  padding: 24px;
+  font-family: 'Jersey 25', sans-serif;
+  font-size: 24px;
+  color: #eaf4ff;
+  background-color: rgba(14, 26, 43, 0.8);
+  border-radius: 16px;
+  min-width: 200px;
+  border: 1px solid #eaf4ff;
+}
+
+.settings-menu-btn:hover {
+  color: #59c3ff;
+}
+
+.settings-menu-btn.active {
+  color: #59c3ff;
+  border: 1px solid #59c3ff;
+  box-shadow: 0 0 20px rgb(89, 195, 255);
+}
+
+.settings-content {
+  display: none;
+  background: linear-gradient(rgba(234, 244, 255, 0), rgba(234, 244, 255, 0.4));
+  border-radius: 16px;
+  height: 100%;
+  padding: 80px;
+}
+
+.settings-content.active {
+  display: block;
+}
+
+.audio-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.audio-setting-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.audio-setting-label {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #eaf4ff;
+  flex-shrink: 0;
+  width: 120px;
+}
+
+.audio-setting-slider {
+  width: 800px;
+  margin-left: 40px;
+  appearance: none;
+  height: 12px;
+  border-radius: 999px;
+  --slider-progress: 50%;
+  background: linear-gradient(
+    90deg,
+    #eaf4ff 0%,
+    #59c3ff var(--slider-progress),
+    #8e9baa var(--slider-progress),
+    #8e9baa 100%
+  );
+  outline: none;
+  cursor: pointer;
+  accent-color: #59c3ff;
+}
+
+.audio-setting-slider::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #eaf4ff 0%,
+    #59c3ff var(--slider-progress),
+    #8e9baa var(--slider-progress),
+    #8e9baa 100%
+  );
+}
+
+.audio-setting-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -8px;
+  border: 3px solid #59c3ff;
+  border-radius: 50%;
+  background-color: #eaf4ff;
+}
+
+.audio-setting-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 16px rgba(234, 244, 255, 0.8);
+}
+
+.audio-setting-slider::-moz-range-track {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #eaf4ff 0%,
+    #59c3ff var(--slider-progress),
+    #8e9baa var(--slider-progress),
+    #8e9baa 100%
+  );
+}
+
+.audio-setting-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #59c3ff;
+  border-radius: 50%;
+  background-color: #eaf4ff;
+  cursor: pointer;
+}
+
+.audio-setting-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 16px rgba(234, 244, 255, 0.8);
+}
+
+.audio-setting-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Jersey 25', sans-serif;
+  font-size: 24px;
+  color: #eaf4ff;
+  padding: 8px 0;
+  border: 1px solid #eaf4ff;
+  border-radius: 8px;
+  margin-left: 40px;
+  width: 100px;
 }

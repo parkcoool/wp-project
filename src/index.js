@@ -28,7 +28,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // ── 설정 메뉴 선택 → 설정 컨텐츠 전환 ──
+  const settingsMenuBtns = document.querySelectorAll(".settings-menu-btn");
+  const settingsContents = document.querySelectorAll(".settings-content");
+  settingsMenuBtns.forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      settingsMenuBtns.forEach((menuBtn) => {
+        menuBtn.classList.remove("active");
+      });
+      settingsContents.forEach((content) => {
+        content.classList.remove("active");
+      });
+
+      btn.classList.add("active");
+      settingsContents[index]?.classList.add("active");
+    });
+  });
+
   // ── 스테이지 선택 → 게임 시작 ──
+  const audioSettingSliders = document.querySelectorAll(".audio-setting-slider");
+  audioSettingSliders.forEach((slider) => {
+    const syncSliderProgress = () => {
+      const min = Number(slider.min) || 0;
+      const max = Number(slider.max) || 100;
+      const value = Number(slider.value) || 0;
+      const progress = ((value - min) / (max - min)) * 100;
+
+      slider.style.setProperty("--slider-progress", `${progress}%`);
+      slider.nextElementSibling.textContent = `${value}%`;
+    };
+
+    syncSliderProgress();
+    slider.addEventListener("input", syncSliderProgress);
+  });
+
   const stageStartBtns = document.querySelectorAll(".select-stage-btn");
   stageStartBtns.forEach((btn, index) => {
     btn.addEventListener("click", () => {
