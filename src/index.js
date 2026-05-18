@@ -14,64 +14,14 @@ import {
 import { showScreen } from "./screen.js";
 import { initEngine } from "./engine.js";
 import { GameState } from "./state.js";
-
-const audioSettings = {
-  master: { volume: 0.5, muted: false },
-  music: { volume: 0.5, muted: false },
-  effects: { volume: 0.5, muted: false },
-};
-const backgroundMusicAudio = new Audio("./assets/music/background/cosmos.mp3");
-backgroundMusicAudio.loop = true;
-backgroundMusicAudio.preload = "auto";
-let hasUserActivatedAudio = false;
-
-const clampVolume = (value) => Math.min(Math.max(value, 0), 1);
-
-function getEffectiveAudioVolume(control) {
-  const setting = audioSettings[control];
-  if (!setting || setting.muted) return 0;
-
-  return clampVolume(setting.volume);
-}
-
-function applyAudioVolumes() {
-  backgroundMusicAudio.volume = clampVolume(
-    getEffectiveAudioVolume("master") * getEffectiveAudioVolume("music"),
-  );
-}
-
-function playBackgroundMusic() {
-  if (!hasUserActivatedAudio || backgroundMusicAudio.volume === 0) return;
-
-  backgroundMusicAudio.play().catch(() => {
-    // Browsers can still block audio until a direct user gesture is accepted.
-  });
-}
-
-function setBackgroundMusicSource(src) {
-  if (!src) return;
-
-  const nextSrc = new URL(src, window.location.href).href;
-  if (backgroundMusicAudio.src === nextSrc) {
-    playBackgroundMusic();
-    return;
-  }
-
-  const shouldResume = hasUserActivatedAudio && !backgroundMusicAudio.paused;
-  backgroundMusicAudio.src = nextSrc;
-  backgroundMusicAudio.load();
-
-  if (shouldResume || hasUserActivatedAudio) {
-    playBackgroundMusic();
-  }
-}
-
-function enableBackgroundMusicAfterGesture() {
-  if (hasUserActivatedAudio) return;
-
-  hasUserActivatedAudio = true;
-  playBackgroundMusic();
-}
+import {
+  applyAudioVolumes,
+  audioSettings,
+  clampVolume,
+  enableAudioAfterGesture,
+  playBackgroundMusic,
+  setBackgroundMusicSource,
+} from "./audio.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initEngine();
@@ -79,10 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
   typeMainSystemDescription();
   applyAudioVolumes();
 
-  document.addEventListener("pointerdown", enableBackgroundMusicAfterGesture, {
+  document.addEventListener("pointerdown", enableAudioAfterGesture, {
     once: true,
   });
-  document.addEventListener("keydown", enableBackgroundMusicAfterGesture, {
+  document.addEventListener("keydown", enableAudioAfterGesture, {
     once: true,
   });
 

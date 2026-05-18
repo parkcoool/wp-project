@@ -1,6 +1,7 @@
 import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT } from "./state.js";
 import { onBrickHit } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
+import { playSoundEffect } from "./audio.js";
 
 let canvas;
 let ctx;
@@ -348,6 +349,7 @@ export function initEngine() {
           ball.isLaunched = true;
           ball.vx = 5;  // 초기 x 속도
           ball.vy = -5; // 초기 y 속도
+          playSoundEffect("pulseShot");
           onBallLaunch(); 
         }
       });
@@ -436,7 +438,10 @@ function updatePhysics() {
         ball.vy *= -1; // 일단 무조건 반전 (세밀한 상하좌우 판정은 추후 고도화)
         const destroyed = onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
         if (destroyed) {
+          playSoundEffect("crashAstrophage");
           createBrickShards(brick, brickStyle, ball.x, ball.y);
+        } else {
+          playSoundEffect("hitAstrophage");
         }
       }
     });
