@@ -454,7 +454,11 @@ function updatePhysics() {
           }
         }
 
-        onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
+        const brickStyle = getBrickStyle(brick);
+        const wasDestroyed = onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
+        if (wasDestroyed) {
+          createBrickShards(brick, brickStyle, ball.x, ball.y);
+        }
       }
     });
   }
