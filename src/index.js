@@ -3,7 +3,14 @@
  * @description 애플리케이션 진입점. 메뉴 이벤트 바인딩, 화면 전환, 캔버스 리사이즈를 담당.
  */
 
-import { initStage, startPlaying, goToNextStage } from "./stageManager.js";
+import {
+  initStage,
+  startPlaying,
+  goToNextStage,
+  pauseGame,
+  resumeGame,
+  exitGameToMenu,
+} from "./stageManager.js";
 import { showScreen } from "./screen.js";
 import { initEngine } from "./engine.js";
 
@@ -181,6 +188,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeGameplayDropdowns();
+      const status = window.gameAPI?.getState().status;
+      if (status === "playing") {
+        pauseGame();
+      } else if (status === "paused") {
+        resumeGame();
+      }
     }
   });
 
@@ -197,6 +210,14 @@ document.addEventListener("DOMContentLoaded", () => {
     startPlaying();
   });
 
+  document.getElementById("pause-continue-btn")?.addEventListener("click", () => {
+    resumeGame();
+  });
+
+  document.getElementById("pause-exit-btn")?.addEventListener("click", () => {
+    exitGameToMenu();
+  });
+
   // ── 게임 오버 버튼 ──
   document.getElementById("retry-btn")?.addEventListener("click", () => {
     document.getElementById("game-over-overlay").classList.remove("active");
@@ -204,8 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("gameover-menu-btn")?.addEventListener("click", () => {
-    document.getElementById("game-over-overlay").classList.remove("active");
-    showScreen("menu-screen");
+    exitGameToMenu();
   });
 
   // ── 스테이지 클리어 버튼 ──
@@ -215,14 +235,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("stageclear-menu-btn")?.addEventListener("click", () => {
-    document.getElementById("stage-clear-overlay").classList.remove("active");
-    showScreen("menu-screen");
+    exitGameToMenu();
   });
 
   // ── 미션 클리어 버튼 ──
   document.getElementById("mission-clear-menu-btn")?.addEventListener("click", () => {
-    document.getElementById("mission-clear-overlay").classList.remove("active");
-    showScreen("menu-screen");
+    exitGameToMenu();
   });
 
   // ── 캔버스 크기 동적 설정 ──

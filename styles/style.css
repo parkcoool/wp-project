@@ -352,17 +352,17 @@ button.main-menu-btn:hover {
 
 /* ── 스테이지별 배경 이미지 ── */
 .game-screen.bg-stage01 {
-  background-image: url('../assets/images/background/stage01-bg.png');
+  background-image: url('../assets/images/background/stage1-background.png');
   background-size: cover;
   background-position: center;
 }
 .game-screen.bg-stage02 {
-  background-image: url('../assets/images/background/stage02-bg.png');
+  background-image: url('../assets/images/background/stage2-background.png');
   background-size: cover;
   background-position: center;
 }
 .game-screen.bg-stage03 {
-  background-image: url('../assets/images/background/stage03-bg.png');
+  background-image: url('../assets/images/background/state3-background.png');
   background-size: cover;
   background-position: center;
 }
@@ -555,7 +555,7 @@ button.main-menu-btn:hover {
   flex: 1;
   min-width: 0;
   position: relative;
-  background-color: rgba(234, 244, 255, 0.07);
+  background-color: rgba(234, 244, 255, 0.16);
   border: 1px solid rgba(234, 244, 255, 0.3);
   border-radius: 16px;
   overflow: hidden;
@@ -723,6 +723,93 @@ button.main-menu-btn:hover {
   color: #eaf4ff;
   box-shadow: 0 0 20px rgba(255, 122, 26, 0.6);
   transform: translateY(-2px);
+}
+
+.pause-overlay {
+  z-index: 120;
+}
+
+.pause-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: min(640px, calc(100vw - 40px));
+  padding: 56px 40px;
+  text-align: center;
+}
+
+.pause-title {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 64px;
+  font-weight: 900;
+  color: #eaf4ff;
+  text-shadow:
+    0 0 18px rgba(89, 195, 255, 0.55),
+    0 0 36px rgba(255, 200, 87, 0.22);
+}
+
+.pause-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.pause-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 220px;
+  min-height: 72px;
+  padding: 16px 22px;
+  border-radius: 8px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #eaf4ff;
+  background-color: rgba(14, 26, 43, 0.88);
+  border: 2px solid rgba(234, 244, 255, 0.28);
+  box-shadow: 0 0 22px rgba(89, 195, 255, 0.18);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.pause-btn:hover {
+  transform: translateY(-2px);
+}
+
+.pause-exit-btn {
+  border-color: #ff7a1a;
+  color: #ffc857;
+}
+
+.pause-exit-btn:hover {
+  background-color: rgba(255, 122, 26, 0.2);
+  box-shadow: 0 0 20px rgba(255, 122, 26, 0.48);
+}
+
+.pause-continue-btn {
+  border-color: #59c3ff;
+  color: #eaf4ff;
+}
+
+.pause-continue-btn:hover {
+  background-color: rgba(89, 195, 255, 0.2);
+  box-shadow: 0 0 20px rgba(89, 195, 255, 0.48);
+}
+
+.pause-btn-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
 /* ── 결과 오버레이 (게임오버 / 클리어) ── */

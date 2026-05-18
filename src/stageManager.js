@@ -257,6 +257,7 @@ function _proliferateAstrophage() {
 export function startPlaying() {
   GameState.status = "playing";
   _hideOverlay("stage-intro-overlay");
+  _hideOverlay("pause-overlay");
 
   // 스테이지 3 증식 타이머 시작
   _startProliferateTimer();
@@ -267,6 +268,31 @@ export function startPlaying() {
   if (typeof window.startGameLoop === "function") {
     window.startGameLoop();
   }
+}
+
+export function pauseGame() {
+  if (GameState.status !== "playing") return;
+
+  GameState.status = "paused";
+  _showOverlay("pause-overlay");
+}
+
+export function resumeGame() {
+  if (GameState.status !== "paused") return;
+
+  GameState.status = "playing";
+  _hideOverlay("pause-overlay");
+}
+
+export function exitGameToMenu() {
+  GameState.status = "idle";
+  _clearProliferateTimer();
+  _hideOverlay("pause-overlay");
+  _hideOverlay("stage-intro-overlay");
+  _hideOverlay("game-over-overlay");
+  _hideOverlay("stage-clear-overlay");
+  _hideOverlay("mission-clear-overlay");
+  showScreen("menu-screen");
 }
 
 // ─────────────────────────────────────────────
@@ -428,4 +454,7 @@ window.gameAPI = {
   onFuelItemPickup,
   onDebrisPickup,
   onSkillUse,
+  pauseGame,
+  resumeGame,
+  exitGameToMenu,
 };

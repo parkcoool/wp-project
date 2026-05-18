@@ -1,10 +1,79 @@
-import { GameState } from "./state.js";
+import { GameState, CANVAS_LAYOUT } from "./state.js";
 import { onBrickHit } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 
 let canvas;
 let ctx;
 let animationId = null;
+const BALL_RADIUS = 10;
+const BRICK_STYLES = {
+  normal: {
+    alpha: 0.9,
+    lightness: 0,
+  },
+  tough: {
+    alpha: 0.92,
+    lightness: 0,
+  },
+  armored: {
+    alpha: 0.94,
+    lightness: 0,
+  },
+};
+const paddleImage = new Image();
+paddleImage.src = new URL("../assets/images/sprites/hail-mary.png", import.meta.url).href;
+
+function drawRoundedRect(ctx, x, y, w, h, radius) {
+  const r = Math.min(radius, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function getBrickStyle(brick) {
+  const base = BRICK_STYLES[brick.type] ?? BRICK_STYLES.normal;
+  const damageRatio = brick.maxHp > 1 ? 1 - brick.hp / brick.maxHp : 0;
+  const lightness = Math.round(80 * damageRatio);
+  const alpha = Math.max(base.alpha - damageRatio * 0.06, 0.84);
+
+  return {
+    fill: `rgba(${14 + lightness}, ${26 + lightness}, ${43 + lightness}, ${alpha})`,
+    stroke: `rgba(${234}, ${244}, ${255}, ${0.26 + damageRatio * 0.22})`,
+    glow: `rgba(${89}, ${195}, ${255}, ${0.12 + damageRatio * 0.12})`,
+  };
+}
+
+function getPaddleHeight() {
+  const imageRatio = paddleImage.naturalWidth
+    ? paddleImage.naturalHeight / paddleImage.naturalWidth
+    : 2 / 3;
+  return GameState.paddle.w * imageRatio;
+}
+
+function syncPaddleSize() {
+  GameState.paddle.h = getPaddleHeight();
+}
+
+function getPaddleHitbox(paddle) {
+  return {
+    x: paddle.x,
+    y: paddle.y + paddle.h * 0.36,
+    w: paddle.w * 0.96,
+    h: paddle.h * 0.28,
+  };
+}
+
+function getAttachedBallY(paddle, ballRadius) {
+  return getPaddleHitbox(paddle).y - ballRadius - 12;
+}
 
 // 포인터(마우스/터치)로 패들을 조작합니다 (이전 키보드 입력 제거)
 
@@ -14,9 +83,12 @@ let animationId = null;
 export function initEngine() {
   canvas = document.getElementById("game-canvas");
   ctx = canvas.getContext("2d");
+  syncPaddleSize();
+  paddleImage.addEventListener("load", syncPaddleSize);
 
   // index.js에서 호출할 수 있도록 전역 함수로 등록
   window.onCanvasResize = (w, h) => {
+    syncPaddleSize();
     // 캔버스 크기가 변할 때 패들을 화면 하단 중앙에 재배치
     GameState.paddle.y = h - GameState.paddle.h - 30;
     GameState.paddle.x = (w - GameState.paddle.w) / 2;
@@ -30,10 +102,10 @@ export function initEngine() {
     }
     GameState.balls = [{
       x: GameState.paddle.x + GameState.paddle.w / 2,
-      y: GameState.paddle.y - 10,
+      y: getAttachedBallY(GameState.paddle, BALL_RADIUS),
       vx: 0,
       vy: 0,
-      r: 8,
+      r: BALL_RADIUS,
       isLaunched: false // 스페이스바로 발사하기 전 상태
     }];
 
@@ -44,6 +116,8 @@ export function initEngine() {
 
   // 포인터(마우스/터치) 이벤트 리스너 등록: 패들 이동 및 클릭으로 발사
   canvas.addEventListener("pointermove", (e) => {
+    if (GameState.status !== "playing") return;
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     GameState.paddle.x = x - GameState.paddle.w / 2;
@@ -80,10 +154,11 @@ function updatePhysics() {
   // 2. 공 이동 및 충돌 처리
   for(let i=GameState.balls.length-1; i>=0; i--) {
     const ball = GameState.balls[i];
+    const paddleHitbox = getPaddleHitbox(paddle);
     if (!ball.isLaunched) {
       // 발사 전에는 패들을 따라다님
       ball.x = paddle.x + paddle.w / 2;
-      ball.y = paddle.y - ball.r;
+      ball.y = getAttachedBallY(paddle, ball.r);
       return;
     }
 
@@ -110,8 +185,8 @@ function updatePhysics() {
       if (GameState.balls.length === 0 && GameState.status === "playing") {
          GameState.balls.push({
             x: paddle.x + paddle.w / 2,
-            y: paddle.y - ball.r,
-            vx: 0, vy: 0, r: 8, isLaunched: false
+            y: getAttachedBallY(paddle, ball.r),
+            vx: 0, vy: 0, r: BALL_RADIUS, isLaunched: false
          });
       }
       return;
@@ -120,16 +195,15 @@ function updatePhysics() {
     // 패들 충돌
     if (
       ball.vy > 0 && // 공이 아래로 떨어질 때만
-      ball.y + ball.r > paddle.y &&
-      ball.y - ball.r < paddle.y + paddle.h &&
-      ball.x + ball.r > paddle.x &&
-      ball.x - ball.r < paddle.x + paddle.w
+      ball.y + ball.r > paddleHitbox.y &&
+      ball.y - ball.r < paddleHitbox.y + paddleHitbox.h &&
+      ball.x + ball.r > paddleHitbox.x &&
+      ball.x - ball.r < paddleHitbox.x + paddleHitbox.w
     ) {
       ball.vy *= -1;
-      // 맞은 위치에 따라 튕기는 각도(vx) 변경
-      const hitPoint = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+      const hitPoint = (ball.x - (paddleHitbox.x + paddleHitbox.w / 2)) / (paddleHitbox.w / 2);
       ball.vx = hitPoint * 6; // 최대 속도 조절
-      ball.y = paddle.y - ball.r; 
+      ball.y = paddleHitbox.y - ball.r; 
     }
 
     // 아스트로파지(벽돌) 충돌
@@ -158,27 +232,54 @@ function draw() {
 
   // 1. 패들(헤일메리호) 그리기
   const p = GameState.paddle;
-  ctx.fillStyle = "#e94560";
-  ctx.fillRect(p.x, p.y, p.w, p.h);
+  syncPaddleSize();
+  if (paddleImage.complete) {
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 255, 157, 0.85)";
+    ctx.shadowBlur = 8;
+    ctx.drawImage(paddleImage, p.x, p.y, p.w, p.h);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = "#e94560";
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+  }
 
   // 2. 아스트로파지(벽돌) 그리기
   GameState.bricks.forEach(brick => {
     if (brick.alive) {
-      // 내구도(hp)나 타입에 따라 색상 다르게 표시
-      ctx.fillStyle = brick.hp === 3 ? "#FF7A1A" : brick.hp === 2 ? "#FFC857" : "#59C3FF";
-      ctx.fillRect(brick.x, brick.y, brick.w, brick.h);
-      ctx.strokeStyle = "#1a1a2e";
-      ctx.strokeRect(brick.x, brick.y, brick.w, brick.h);
+      const style = getBrickStyle(brick);
+      const radius = CANVAS_LAYOUT.brickRadius;
+
+      ctx.save();
+      ctx.shadowColor = style.glow;
+      ctx.shadowBlur = 10;
+      drawRoundedRect(ctx, brick.x, brick.y, brick.w, brick.h, radius);
+      ctx.fillStyle = style.fill;
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = style.stroke;
+      ctx.stroke();
+
+      drawRoundedRect(ctx, brick.x + 1, brick.y + 1, brick.w - 2, brick.h - 2, Math.max(radius - 2, 0));
+      ctx.strokeStyle = "rgba(6, 11, 22, 0.32)";
+      ctx.stroke();
+      ctx.restore();
     }
   });
 
   // 3. 공(에너지 펄스/타우메바) 그리기
   GameState.balls.forEach(ball => {
+    ctx.save();
+    ctx.shadowColor = "#59C3FF";
+    ctx.shadowBlur = 16;
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-    ctx.fillStyle = "#EAF4FF";
+    ctx.fillStyle = "#59C3FF";
     ctx.fill();
     ctx.closePath();
+    ctx.restore();
   });
 }
 

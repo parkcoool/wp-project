@@ -122,7 +122,7 @@ export const GameState = {
   balls: [],
 
   /** @type {{x: number, y: number, w: number, h: number}} */
-  paddle: { x: 0, y: 0, w: 160, h: 16 },
+  paddle: { x: 0, y: 0, w: 160, h: 107 },
 
   /** @type {Array<{x: number, y: number, vy: number, type: 'fuel'|'debris', alive: boolean}>} */
   items: [],
