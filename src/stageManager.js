@@ -347,7 +347,7 @@ function _updateSkillsUI(stageNum) {
 
   const skillMeta = {
     slow: { label: "슬로우", key: "[S]", color: "#59C3FF" },
-    laser: { label: "레이저", key: "[D]", color: "#FF7A1A" },
+    laser: { label: "레이저", key: "[R]", color: "#FF7A1A" },
   };
 
   if (config.unlockedSkills.length === 0) {

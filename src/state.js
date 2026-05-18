@@ -56,7 +56,7 @@ export const STAGE_CONFIG = {
     backgroundClass: "bg-stage03",
     introText:
       '"긴 항해 끝에 헤일메리호는 아스트로파지가 대량 증식하고 있는 중심 구역에 도달합니다. 이곳을 파괴하지 못한다면 태양은 끝내 빛을 잃고 인류 역시 멸망하게 됩니다.\n\n당신은 타우메바를 이용해 증식하는 아스트로파지를 제거하고 헤일메리 프로젝트의 마지막 임무를 완수해야 합니다."',
-    skillUnlockText: "레이저 스킬이 해금됐다. [D]키로 사용.",
+    skillUnlockText: "레이저 스킬이 해금됐다. [R]키로 사용.",
     ballName: "타우메바",
   },
 };

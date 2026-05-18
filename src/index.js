@@ -63,6 +63,80 @@ document.addEventListener("DOMContentLoaded", () => {
     slider.addEventListener("input", syncSliderProgress);
   });
 
+  const skillKeyInputs = document.querySelectorAll(".skill-key-input");
+  const getKeyLabelFromEvent = (event) => {
+    if (event.code.startsWith("Key")) return event.code.replace("Key", "");
+    if (event.code.startsWith("Digit")) return event.code.replace("Digit", "");
+    return event.key.length === 1 ? event.key.toUpperCase() : "";
+  };
+  const isKeyAlreadyAssigned = (targetInput, keyLabel) =>
+    Array.from(skillKeyInputs).some(
+      (input) => input !== targetInput && input.value === keyLabel,
+    );
+  const restoreAssignedKey = (input) => {
+    input.value = input.dataset.currentKey || input.dataset.defaultKey || "";
+  };
+
+  skillKeyInputs.forEach((input) => {
+    input.readOnly = true;
+    input.dataset.currentKey = input.value;
+
+    input.addEventListener("keydown", (event) => {
+      if (event.ctrlKey || event.metaKey || event.altKey || event.key === "Tab") return;
+
+      if (event.key === "Backspace" || event.key === "Delete") {
+        event.preventDefault();
+        input.value = "";
+        return;
+      }
+
+      const keyLabel = getKeyLabelFromEvent(event);
+      if (!keyLabel) return;
+
+      event.preventDefault();
+      if (isKeyAlreadyAssigned(input, keyLabel)) {
+        restoreAssignedKey(input);
+        return;
+      }
+
+      input.value = keyLabel;
+      input.dataset.currentKey = keyLabel;
+    });
+
+    input.addEventListener("beforeinput", (event) => {
+      event.preventDefault();
+    });
+
+    input.addEventListener("compositionstart", (event) => {
+      event.preventDefault();
+      restoreAssignedKey(input);
+    });
+
+    input.addEventListener("input", () => {
+      const nextValue = input.value.replace(/[^a-zA-Z0-9]/g, "").slice(-1).toUpperCase();
+      if (nextValue && isKeyAlreadyAssigned(input, nextValue)) {
+        restoreAssignedKey(input);
+        return;
+      }
+
+      input.value = nextValue;
+      if (nextValue) input.dataset.currentKey = nextValue;
+    });
+
+    input.addEventListener("blur", () => {
+      if (input.value) return;
+      restoreAssignedKey(input);
+    });
+  });
+
+  document.querySelector(".control-reset-btn")?.addEventListener("click", () => {
+    skillKeyInputs.forEach((input) => {
+      const defaultKey = input.dataset.defaultKey ?? "";
+      input.value = defaultKey;
+      input.dataset.currentKey = defaultKey;
+    });
+  });
+
   const gameplayDropdowns = document.querySelectorAll(".gameplay-setting-dropdown");
   const closeGameplayDropdowns = (exceptDropdown = null) => {
     gameplayDropdowns.forEach((dropdown) => {

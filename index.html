@@ -306,7 +306,69 @@
               </div>
             </div>
           </div>
-          <div class="settings-content"></div>
+          <div class="settings-content">
+            <div class="control-settings">
+              <section class="control-setting-section">
+                <div class="control-setting-section-header">
+                  <p class="control-setting-section-title">조작 일반</p>
+                </div>
+                <div class="audio-setting-item control-setting-item">
+                  <p class="audio-setting-label control-setting-label">패들 민감도</p>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="50"
+                    class="audio-setting-slider"
+                  />
+                  <p class="audio-setting-value">50%</p>
+                </div>
+                <div class="control-setting-item control-switch-row">
+                  <p class="control-setting-label">반전 조작</p>
+                  <label class="control-switch">
+                    <input type="checkbox" class="control-switch-input" />
+                    <span class="control-switch-track">
+                      <span class="control-switch-thumb"></span>
+                    </span>
+                  </label>
+                </div>
+              </section>
+              <section class="control-setting-section">
+                <div class="control-setting-section-header">
+                  <p class="control-setting-section-title">스킬 키 할당</p>
+                  <button class="control-reset-btn" type="button">기본값으로 초기화</button>
+                </div>
+                <div class="skill-key-setting-list">
+                  <label class="skill-key-setting-item">
+                    <span class="skill-key-setting-label">레이저 스킬</span>
+                    <input
+                      type="text"
+                      class="skill-key-input"
+                      value="R"
+                      maxlength="1"
+                      data-default-key="R"
+                      autocomplete="off"
+                      inputmode="none"
+                      aria-label="레이저 스킬 키"
+                    />
+                  </label>
+                  <label class="skill-key-setting-item">
+                    <span class="skill-key-setting-label">슬로 스킬</span>
+                    <input
+                      type="text"
+                      class="skill-key-input"
+                      value="S"
+                      maxlength="1"
+                      data-default-key="S"
+                      autocomplete="off"
+                      inputmode="none"
+                      aria-label="슬로 스킬 키"
+                    />
+                  </label>
+                </div>
+              </section>
+            </div>
+          </div>
         </div>
       </div>
       <div id="help-box" class="main-menu-modal">
