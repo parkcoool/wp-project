@@ -5,6 +5,7 @@ import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 let canvas;
 let ctx;
 let animationId = null;
+let lastPointerX = null;
 const BALL_RADIUS = 10;
 const BRICK_TYPE_STYLES = {
   normal: {
@@ -172,6 +173,12 @@ function getAttachedBallY(paddle, ballRadius) {
   return getPaddleHitbox(paddle).y - ballRadius - 12;
 }
 
+function getPaddleSensitivityMultiplier() {
+  const sensitivity = Number(GameState.controls?.paddleSensitivity ?? 1);
+  const normalizedSensitivity = (Math.min(Math.max(sensitivity, 1), 100) - 1) / 99;
+  return 1 + normalizedSensitivity * 2;
+}
+
 // 포인터(마우스/터치)로 패들을 조작합니다 (이전 키보드 입력 제거)
 
 /**
@@ -192,6 +199,7 @@ export function initEngine() {
   };
 
   window.startGameLoop = () => {
+    lastPointerX = null;
     // 게임 시작 시 초기 공 생성 (패들 정중앙에 부착)
     if (GameState.paddle.y === 0) {
       GameState.paddle.y = canvas.height - GameState.paddle.h - 30;
@@ -213,14 +221,28 @@ export function initEngine() {
 
   // 포인터(마우스/터치) 이벤트 리스너 등록: 패들 이동 및 클릭으로 발사
   canvas.addEventListener("pointermove", (e) => {
-    if (GameState.status !== "playing") return;
+    if (GameState.status !== "playing") {
+      lastPointerX = null;
+      return;
+    }
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    GameState.paddle.x = x - GameState.paddle.w / 2;
+    if (lastPointerX === null) {
+      lastPointerX = x;
+    } else {
+      const pointerDelta = x - lastPointerX;
+      const controlDirection = GameState.controls?.isPaddleInverted ? -1 : 1;
+      lastPointerX = x;
+      GameState.paddle.x += pointerDelta * controlDirection * getPaddleSensitivityMultiplier();
+    }
     // 경계 처리
     if (GameState.paddle.x < 0) GameState.paddle.x = 0;
     if (GameState.paddle.x + GameState.paddle.w > canvas.width) GameState.paddle.x = canvas.width - GameState.paddle.w;
+  });
+
+  canvas.addEventListener("pointerleave", () => {
+    lastPointerX = null;
   });
 
   canvas.addEventListener("pointerdown", (e) => {

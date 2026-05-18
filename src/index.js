@@ -138,10 +138,26 @@ document.addEventListener("DOMContentLoaded", () => {
         applyAudioVolumes();
         playBackgroundMusic();
       }
+
+      if (slider.dataset.controlSetting === "paddle-sensitivity") {
+        GameState.controls.paddleSensitivity = value;
+      }
     };
 
     syncSliderProgress();
     slider.addEventListener("input", syncSliderProgress);
+  });
+
+  const controlSwitchInputs = document.querySelectorAll(".control-switch-input");
+  controlSwitchInputs.forEach((input) => {
+    const syncControlSwitch = () => {
+      if (input.dataset.controlSetting === "paddle-inverted") {
+        GameState.controls.isPaddleInverted = input.checked;
+      }
+    };
+
+    syncControlSwitch();
+    input.addEventListener("change", syncControlSwitch);
   });
 
   const audioMuteBtns = document.querySelectorAll(".audio-mute-btn");

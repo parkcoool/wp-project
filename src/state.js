@@ -191,6 +191,11 @@ export const GameState = {
   /** @type {{x: number, y: number, w: number, h: number}} */
   paddle: { x: 0, y: 0, w: 160, h: 107 },
 
+  controls: {
+    paddleSensitivity: 1,
+    isPaddleInverted: false,
+  },
+
   /** @type {Array<{x: number, y: number, vy: number, type: 'fuel'|'debris', alive: boolean}>} */
   items: [],
 
