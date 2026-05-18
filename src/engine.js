@@ -136,14 +136,33 @@ function updatePhysics() {
     GameState.bricks.forEach((brick, brickIndex) => {
       if (!brick.alive) return;
 
-      // 간단한 AABB 사각형 충돌 판정
+      // 간단한 원-사각형 충돌 판정
       if (
         ball.x + ball.r > brick.x &&
         ball.x - ball.r < brick.x + brick.w &&
         ball.y + ball.r > brick.y &&
         ball.y - ball.r < brick.y + brick.h
       ) {
-        ball.vy *= -1; // 일단 무조건 반전 (세밀한 상하좌우 판정은 추후 고도화)
+        // 충돌이 발생했으면 상하/좌우 방향을 비교해 반사 방향 결정
+        const overlapX = Math.min(ball.x + ball.r, brick.x + brick.w) - Math.max(ball.x - ball.r, brick.x);
+        const overlapY = Math.min(ball.y + ball.r, brick.y + brick.h) - Math.max(ball.y - ball.r, brick.y);
+
+        if (overlapX < overlapY) {
+          ball.vx *= -1;
+          if (ball.x < brick.x) {
+            ball.x = brick.x - ball.r;
+          } else {
+            ball.x = brick.x + brick.w + ball.r;
+          }
+        } else {
+          ball.vy *= -1;
+          if (ball.y < brick.y) {
+            ball.y = brick.y - ball.r;
+          } else {
+            ball.y = brick.y + brick.h + ball.r;
+          }
+        }
+
         onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
       }
     });
