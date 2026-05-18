@@ -58,6 +58,39 @@ function getBrickStyle(brick) {
   };
 }
 
+function getTransparentColor(hexColor) {
+  const hex = hexColor.replace("#", "");
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, 0)`;
+}
+
+function drawBallTail(ball, style) {
+  if (!ball.isLaunched) return;
+
+  const angle = Math.atan2(ball.vy, ball.vx) + Math.PI;
+  const tailLength = ball.r * 2.8;
+  const tailWidth = ball.r * 0.7;
+  const tailX = ball.x + Math.cos(angle) * tailLength;
+  const tailY = ball.y + Math.sin(angle) * tailLength;
+  const perpX = Math.cos(angle + Math.PI / 2) * tailWidth;
+  const perpY = Math.sin(angle + Math.PI / 2) * tailWidth;
+  const tailGradient = ctx.createLinearGradient(ball.x, ball.y, tailX, tailY);
+
+  tailGradient.addColorStop(0, style.fill);
+  tailGradient.addColorStop(1, getTransparentColor(style.fill));
+
+  ctx.beginPath();
+  ctx.moveTo(ball.x + perpX, ball.y + perpY);
+  ctx.lineTo(tailX, tailY);
+  ctx.lineTo(ball.x - perpX, ball.y - perpY);
+  ctx.closePath();
+  ctx.fillStyle = tailGradient;
+  ctx.fill();
+}
+
 function drawBall(ball) {
   const style =
     APPEARANCE_PRESETS.balls[GameState.appearance.ballSkin] ??
@@ -66,6 +99,7 @@ function drawBall(ball) {
   ctx.save();
   ctx.shadowColor = style.glow;
   ctx.shadowBlur = style.shape === "singularity" ? 22 : 16;
+  drawBallTail(ball, style);
 
   if (style.shape === "pulse") {
     ctx.beginPath();
@@ -75,23 +109,6 @@ function drawBall(ball) {
     ctx.closePath();
     ctx.restore();
     return;
-  }
-
-  if (style.shape === "comet" && ball.isLaunched) {
-    const angle = Math.atan2(ball.vy, ball.vx) + Math.PI;
-    const tailLength = ball.r * 2.8;
-    const tailX = ball.x + Math.cos(angle) * tailLength;
-    const tailY = ball.y + Math.sin(angle) * tailLength;
-    const tailGradient = ctx.createLinearGradient(ball.x, ball.y, tailX, tailY);
-    tailGradient.addColorStop(0, style.fill);
-    tailGradient.addColorStop(1, "rgba(125, 235, 255, 0)");
-    ctx.beginPath();
-    ctx.moveTo(ball.x, ball.y - ball.r * 0.7);
-    ctx.lineTo(tailX, tailY);
-    ctx.lineTo(ball.x, ball.y + ball.r * 0.7);
-    ctx.closePath();
-    ctx.fillStyle = tailGradient;
-    ctx.fill();
   }
 
   if (style.shape === "sun") {
