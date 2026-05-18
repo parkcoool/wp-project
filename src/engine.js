@@ -1,4 +1,4 @@
-import { GameState, CANVAS_LAYOUT } from "./state.js";
+import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT } from "./state.js";
 import { onBrickHit } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 
@@ -6,7 +6,7 @@ let canvas;
 let ctx;
 let animationId = null;
 const BALL_RADIUS = 10;
-const BRICK_STYLES = {
+const BRICK_TYPE_STYLES = {
   normal: {
     alpha: 0.9,
     lightness: 0,
@@ -39,16 +39,113 @@ function drawRoundedRect(ctx, x, y, w, h, radius) {
 }
 
 function getBrickStyle(brick) {
-  const base = BRICK_STYLES[brick.type] ?? BRICK_STYLES.normal;
+  const typeStyle = BRICK_TYPE_STYLES[brick.type] ?? BRICK_TYPE_STYLES.normal;
+  const skin =
+    APPEARANCE_PRESETS.bricks[GameState.appearance.brickSkin] ??
+    APPEARANCE_PRESETS.bricks.astrophage;
   const damageRatio = brick.maxHp > 1 ? 1 - brick.hp / brick.maxHp : 0;
   const lightness = Math.round(80 * damageRatio);
-  const alpha = Math.max(base.alpha - damageRatio * 0.06, 0.84);
+  const alpha = Math.max(typeStyle.alpha - damageRatio * 0.06, 0.84);
+  const [baseR, baseG, baseB] = skin.baseRgb;
+  const [strokeR, strokeG, strokeB] = skin.strokeRgb;
+  const [glowR, glowG, glowB] = skin.glowRgb;
 
   return {
-    fill: `rgba(${14 + lightness}, ${26 + lightness}, ${43 + lightness}, ${alpha})`,
-    stroke: `rgba(${234}, ${244}, ${255}, ${0.26 + damageRatio * 0.22})`,
-    glow: `rgba(${89}, ${195}, ${255}, ${0.12 + damageRatio * 0.12})`,
+    fill: `rgba(${baseR + lightness}, ${baseG + lightness}, ${baseB + lightness}, ${alpha})`,
+    stroke: `rgba(${strokeR}, ${strokeG}, ${strokeB}, ${0.26 + damageRatio * 0.22})`,
+    glow: `rgba(${glowR}, ${glowG}, ${glowB}, ${0.12 + damageRatio * 0.12})`,
   };
+}
+
+function drawBall(ball) {
+  const style =
+    APPEARANCE_PRESETS.balls[GameState.appearance.ballSkin] ??
+    APPEARANCE_PRESETS.balls["pulse-energy"];
+
+  ctx.save();
+  ctx.shadowColor = style.glow;
+  ctx.shadowBlur = style.shape === "singularity" ? 22 : 16;
+
+  if (style.shape === "pulse") {
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fillStyle = style.fill;
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+    return;
+  }
+
+  if (style.shape === "comet" && ball.isLaunched) {
+    const angle = Math.atan2(ball.vy, ball.vx) + Math.PI;
+    const tailLength = ball.r * 2.8;
+    const tailX = ball.x + Math.cos(angle) * tailLength;
+    const tailY = ball.y + Math.sin(angle) * tailLength;
+    const tailGradient = ctx.createLinearGradient(ball.x, ball.y, tailX, tailY);
+    tailGradient.addColorStop(0, style.fill);
+    tailGradient.addColorStop(1, "rgba(125, 235, 255, 0)");
+    ctx.beginPath();
+    ctx.moveTo(ball.x, ball.y - ball.r * 0.7);
+    ctx.lineTo(tailX, tailY);
+    ctx.lineTo(ball.x, ball.y + ball.r * 0.7);
+    ctx.closePath();
+    ctx.fillStyle = tailGradient;
+    ctx.fill();
+  }
+
+  if (style.shape === "sun") {
+    ctx.strokeStyle = style.glow;
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 10; i += 1) {
+      const angle = (Math.PI * 2 * i) / 10;
+      ctx.beginPath();
+      ctx.moveTo(
+        ball.x + Math.cos(angle) * ball.r * 1.15,
+        ball.y + Math.sin(angle) * ball.r * 1.15,
+      );
+      ctx.lineTo(
+        ball.x + Math.cos(angle) * ball.r * 1.65,
+        ball.y + Math.sin(angle) * ball.r * 1.65,
+      );
+      ctx.stroke();
+    }
+  }
+
+  const gradient = ctx.createRadialGradient(
+    ball.x - ball.r * 0.3,
+    ball.y - ball.r * 0.35,
+    ball.r * 0.1,
+    ball.x,
+    ball.y,
+    ball.r,
+  );
+  gradient.addColorStop(0, style.core);
+  gradient.addColorStop(style.shape === "singularity" ? 0.45 : 0.28, style.fill);
+  gradient.addColorStop(1, style.glow);
+
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+
+  if (style.shape === "core" || style.shape === "singularity") {
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = style.core;
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r * 1.35, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  if (style.shape === "singularity") {
+    ctx.fillStyle = style.core;
+    ctx.beginPath();
+    ctx.arc(ball.x + ball.r * 0.2, ball.y - ball.r * 0.18, ball.r * 0.22, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.closePath();
+  ctx.restore();
 }
 
 function getPaddleHeight() {
@@ -271,15 +368,7 @@ function draw() {
 
   // 3. 공(에너지 펄스/타우메바) 그리기
   GameState.balls.forEach(ball => {
-    ctx.save();
-    ctx.shadowColor = "#59C3FF";
-    ctx.shadowBlur = 16;
-    ctx.beginPath();
-    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-    ctx.fillStyle = "#59C3FF";
-    ctx.fill();
-    ctx.closePath();
-    ctx.restore();
+    drawBall(ball);
   });
 }
 

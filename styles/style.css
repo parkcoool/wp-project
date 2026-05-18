@@ -1425,7 +1425,8 @@ button.main-menu-btn:hover {
   top: calc(100% + 8px);
   left: 0;
   width: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 280px;
   border: 1px solid rgba(234, 244, 255, 0.8);
   border-radius: 8px;
   background-color: rgba(14, 26, 43, 0.98);

@@ -13,6 +13,7 @@ import {
 } from "./stageManager.js";
 import { showScreen } from "./screen.js";
 import { initEngine } from "./engine.js";
+import { GameState } from "./state.js";
 
 const audioSettings = {
   master: { volume: 0.5, muted: false },
@@ -281,6 +282,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (dropdown.dataset.setting === "background-music") {
           setBackgroundMusicSource(option.dataset.musicSrc);
+        }
+
+        if (dropdown.dataset.setting === "brick-skin") {
+          GameState.appearance.brickSkin = option.dataset.appearance;
+        }
+
+        if (dropdown.dataset.setting === "ball-skin") {
+          GameState.appearance.ballSkin = option.dataset.appearance;
         }
 
         dropdown.classList.remove("open");
