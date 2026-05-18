@@ -56,7 +56,7 @@ export const STAGE_CONFIG = {
     backgroundClass: "bg-stage03",
     introText:
       '"긴 항해 끝에 헤일메리호는 아스트로파지가 대량 증식하고 있는 중심 구역에 도달합니다. 이곳을 파괴하지 못한다면 태양은 끝내 빛을 잃고 인류 역시 멸망하게 됩니다.\n\n당신은 타우메바를 이용해 증식하는 아스트로파지를 제거하고 헤일메리 프로젝트의 마지막 임무를 완수해야 합니다."',
-    skillUnlockText: "레이저 스킬이 해금됐다. [D]키로 사용.",
+    skillUnlockText: "레이저 스킬이 해금됐다. [R]키로 사용.",
     ballName: "타우메바",
   },
 };
@@ -91,6 +91,73 @@ export const CANVAS_LAYOUT = {
   brickRadius: 8, // 벽돌 모서리 둥글기 (px)
 };
 
+export const APPEARANCE_PRESETS = {
+  bricks: {
+    astrophage: {
+      baseRgb: [14, 26, 43],
+      strokeRgb: [234, 244, 255],
+      glowRgb: [89, 195, 255],
+    },
+    taumoeba: {
+      baseRgb: [30, 53, 42],
+      strokeRgb: [143, 255, 194],
+      glowRgb: [0, 255, 157],
+    },
+    xenonite: {
+      baseRgb: [41, 32, 72],
+      strokeRgb: [196, 150, 255],
+      glowRgb: [151, 92, 255],
+    },
+    "radiant-ice": {
+      baseRgb: [18, 58, 70],
+      strokeRgb: [167, 244, 255],
+      glowRgb: [74, 222, 255],
+    },
+    "ember-core": {
+      baseRgb: [72, 35, 20],
+      strokeRgb: [255, 189, 92],
+      glowRgb: [255, 122, 26],
+    },
+    "eclipse-glass": {
+      baseRgb: [18, 20, 31],
+      strokeRgb: [221, 232, 245],
+      glowRgb: [157, 174, 255],
+    },
+  },
+  balls: {
+    "pulse-energy": {
+      fill: "#59C3FF",
+      glow: "#59C3FF",
+      core: "#EAF4FF",
+      shape: "pulse",
+    },
+    "mini-sun": {
+      fill: "#FFB84D",
+      glow: "#FF7A1A",
+      core: "#FFF2B8",
+      shape: "sun",
+    },
+    "probe-core": {
+      fill: "#9DAEFF",
+      glow: "#C496FF",
+      core: "#EAF4FF",
+      shape: "core",
+    },
+    "comet-ice": {
+      fill: "#7DEBFF",
+      glow: "#4ADEFF",
+      core: "#EAF4FF",
+      shape: "comet",
+    },
+    "singularity": {
+      fill: "#151826",
+      glow: "#9DAEFF",
+      core: "#DDE8F5",
+      shape: "singularity",
+    },
+  },
+};
+
 // ─────────────────────────────────────────────
 // 전역 게임 상태 (런타임 중 변경되는 값)
 // ─────────────────────────────────────────────
@@ -122,10 +189,20 @@ export const GameState = {
   balls: [],
 
   /** @type {{x: number, y: number, w: number, h: number}} */
-  paddle: { x: 0, y: 0, w: 160, h: 16 },
+  paddle: { x: 0, y: 0, w: 160, h: 107 },
+
+  controls: {
+    paddleSensitivity: 1,
+    isPaddleInverted: false,
+  },
 
   /** @type {Array<{x: number, y: number, vy: number, type: 'fuel'|'debris', alive: boolean}>} */
   items: [],
+
+  appearance: {
+    brickSkin: "astrophage",
+    ballSkin: "pulse-energy",
+  },
 
   // 해금된 스킬 목록
   unlockedSkills: [],
