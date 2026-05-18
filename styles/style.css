@@ -20,11 +20,39 @@
   position: absolute;
   left: 0;
   bottom: 0;
+  animation: start-ship-float 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
 }
 
 .start-ship img {
   width: 50vw;
   height: auto;
+}
+
+@keyframes start-ship-float {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-0.8deg);
+  }
+
+  20% {
+    transform: translate3d(8px, -9px, 0) rotate(-0.25deg);
+  }
+
+  45% {
+    transform: translate3d(14px, -21px, 0) rotate(0.85deg);
+  }
+
+  70% {
+    transform: translate3d(5px, -27px, 0) rotate(0.35deg);
+  }
+
+  88% {
+    transform: translate3d(-4px, -11px, 0) rotate(-0.6deg);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.8deg);
+  }
 }
 
 .start-title-box {
@@ -59,16 +87,23 @@ button.main-menu-btn {
   width: 400px;
   display: flex;
   padding: 20px 24px;
+  border: 1px solid transparent;
   border-radius: 16px;
   background-color: rgba(14, 26, 43, 0.8);
   box-shadow: 0 0 20px rgba(234, 244, 255, 0.5);
   gap: 24px;
   align-items: center;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    background-color 0.25s ease;
 }
 
 button.main-menu-btn:hover {
-  border: 1px solid #ff7a1a;
+  border-color: #ff7a1a;
   box-shadow: 0 0 20px rgba(255, 122, 26, 1);
+  transform: translateX(-6px);
 }
 
 .main-menu-btn-text {
@@ -105,6 +140,26 @@ button.main-menu-btn:hover {
   margin-top: 4px;
   letter-spacing: 2.5%;
   line-height: 1.2;
+  min-height: 72px;
+}
+
+.main-system-description.is-typing::after {
+  content: '|';
+  display: inline-block;
+  margin-left: 4px;
+  animation: system-cursor-blink 0.8s steps(2, start) infinite;
+}
+
+@keyframes system-cursor-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .main-menu-modal {
@@ -131,10 +186,14 @@ button.main-menu-btn:hover {
   right: 40px;
   width: 48px;
   height: 48px;
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
 }
 
 .main-menu-modal-close-btn:hover {
   filter: brightness(1.5);
+  transform: rotate(90deg) scale(1.08);
 }
 
 .main-menu-modal-close-icon {
@@ -179,6 +238,16 @@ button.main-menu-btn:hover {
   flex: 1 1 0;
   background-color: rgba(89, 195, 255, 0.2);
   position: relative;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.select-stage-item:hover {
+  background-color: rgba(89, 195, 255, 0.28);
+  box-shadow: 0 0 24px rgba(89, 195, 255, 0.25);
+  transform: translateY(-4px);
 }
 
 .select-stage-number {
@@ -251,11 +320,18 @@ button.main-menu-btn:hover {
   color: #ff7a1a;
   font-size: 20px;
   font-family: 'Jersey 25', sans-serif;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .select-stage-btn:hover {
   background-color: #ff7a1a;
   color: #eaf4ff;
+  box-shadow: 0 0 18px rgba(255, 122, 26, 0.55);
+  transform: translateY(-2px);
 }
 
 /* ======================================================
@@ -636,15 +712,17 @@ button.main-menu-btn:hover {
   border-radius: 8px;
   cursor: pointer;
   transition:
-    background-color 0.2s,
-    color 0.2s,
-    box-shadow 0.2s;
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .intro-start-btn:hover {
   background-color: #ff7a1a;
   color: #eaf4ff;
   box-shadow: 0 0 20px rgba(255, 122, 26, 0.6);
+  transform: translateY(-2px);
 }
 
 /* ── 결과 오버레이 (게임오버 / 클리어) ── */
@@ -701,9 +779,11 @@ button.main-menu-btn:hover {
   border-radius: 8px;
   cursor: pointer;
   transition:
-    background-color 0.2s,
-    color 0.2s,
-    box-shadow 0.2s;
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .btn-primary {
@@ -715,6 +795,7 @@ button.main-menu-btn:hover {
 .btn-primary:hover {
   background-color: #e06910;
   box-shadow: 0 0 16px rgba(255, 122, 26, 0.5);
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -726,6 +807,8 @@ button.main-menu-btn:hover {
 .btn-secondary:hover {
   border-color: #eaf4ff;
   color: #eaf4ff;
+  box-shadow: 0 0 14px rgba(234, 244, 255, 0.25);
+  transform: translateY(-2px);
 }
 
 .settings-body {
@@ -757,10 +840,18 @@ button.main-menu-btn:hover {
   border-radius: 16px;
   min-width: 200px;
   border: 1px solid #eaf4ff;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .settings-menu-btn:hover {
   color: #59c3ff;
+  border-color: #59c3ff;
+  box-shadow: 0 0 14px rgba(89, 195, 255, 0.45);
+  transform: translateX(4px);
 }
 
 .settings-menu-btn.active {
@@ -820,6 +911,11 @@ button.main-menu-btn:hover {
   outline: none;
   cursor: pointer;
   accent-color: #59c3ff;
+  transition: filter 0.2s ease;
+}
+
+.audio-setting-slider:hover {
+  filter: brightness(1.08);
 }
 
 .audio-setting-slider::-webkit-slider-runnable-track {
@@ -842,10 +938,14 @@ button.main-menu-btn:hover {
   border: 3px solid #59c3ff;
   border-radius: 50%;
   background-color: #eaf4ff;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .audio-setting-slider:hover::-webkit-slider-thumb {
   box-shadow: 0 0 16px rgba(234, 244, 255, 0.8);
+  transform: scale(1.08);
 }
 
 .audio-setting-slider::-moz-range-track {
@@ -867,10 +967,14 @@ button.main-menu-btn:hover {
   border-radius: 50%;
   background-color: #eaf4ff;
   cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .audio-setting-slider:hover::-moz-range-thumb {
   box-shadow: 0 0 16px rgba(234, 244, 255, 0.8);
+  transform: scale(1.08);
 }
 
 .audio-setting-value {
@@ -937,4 +1041,121 @@ button.main-menu-btn:hover {
   font-family: 'Jersey 25', sans-serif;
   font-size: 28px;
   color: #ff7a1a;
+}
+
+.gameplay-setting-item {
+  margin-top: 32px;
+}
+
+.gameplay-setting-item:first-child {
+  margin-top: 0;
+}
+
+.gameplay-setting-item-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.gameplay-setting-item-header img {
+  width: 48px;
+  height: 48px;
+}
+
+.gameplay-setting-item-title {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: #eaf4ff;
+}
+
+.gameplay-setting-dropdown {
+  margin-top: 12px;
+  position: relative;
+  width: 800px;
+}
+
+.gameplay-setting-dropdown.open {
+  z-index: 20;
+}
+
+.gameplay-dropdown-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background-color: #0e1a2b;
+  border: 1px solid #eaf4ff;
+  border-radius: 8px;
+  display: flex;
+  box-shadow: 0 0 16px rgba(234, 244, 255, 0.8);
+  align-items: center;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.gameplay-dropdown-btn:hover,
+.gameplay-setting-dropdown.open .gameplay-dropdown-btn {
+  border-color: #59c3ff;
+  box-shadow: 0 0 18px rgba(89, 195, 255, 0.75);
+  transform: translateY(-2px);
+}
+
+.gameplay-dropdown-selected {
+  flex-grow: 1;
+  text-align: left;
+  font-size: 32px;
+  color: #eaf4ff;
+  font-family: 'Jersey 25', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.gameplay-dropdown-angle {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.gameplay-setting-dropdown.open .gameplay-dropdown-angle {
+  transform: rotate(180deg);
+}
+
+.gameplay-dropdown-list {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(234, 244, 255, 0.8);
+  border-radius: 8px;
+  background-color: rgba(14, 26, 43, 0.98);
+  box-shadow: 0 0 18px rgba(89, 195, 255, 0.45);
+}
+
+.gameplay-setting-dropdown.open .gameplay-dropdown-list {
+  display: block;
+}
+
+.gameplay-dropdown-option {
+  width: 100%;
+  padding: 16px 24px;
+  text-align: left;
+  font-family: 'Jersey 25', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.05em;
+  color: #eaf4ff;
+  background-color: transparent;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    padding-left 0.18s ease;
+}
+
+.gameplay-dropdown-option:hover,
+.gameplay-dropdown-option.active {
+  color: #060b16;
+  background-color: #59c3ff;
+  padding-left: 32px;
 }

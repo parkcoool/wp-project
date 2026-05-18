@@ -10,6 +10,7 @@ import { initEngine } from "./engine.js";
 document.addEventListener("DOMContentLoaded", () => {
   initEngine();
   showScreen("menu-screen");
+  typeMainSystemDescription();
 
 
   // ── 메인 메뉴 모달 열기/닫기 ──
@@ -62,6 +63,53 @@ document.addEventListener("DOMContentLoaded", () => {
     slider.addEventListener("input", syncSliderProgress);
   });
 
+  const gameplayDropdowns = document.querySelectorAll(".gameplay-setting-dropdown");
+  const closeGameplayDropdowns = (exceptDropdown = null) => {
+    gameplayDropdowns.forEach((dropdown) => {
+      if (dropdown === exceptDropdown) return;
+
+      dropdown.classList.remove("open");
+      dropdown
+        .querySelector(".gameplay-dropdown-btn")
+        ?.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  gameplayDropdowns.forEach((dropdown) => {
+    const dropdownBtn = dropdown.querySelector(".gameplay-dropdown-btn");
+    const selectedText = dropdown.querySelector(".gameplay-dropdown-selected");
+    const options = dropdown.querySelectorAll(".gameplay-dropdown-option");
+
+    dropdownBtn?.addEventListener("click", () => {
+      const willOpen = !dropdown.classList.contains("open");
+      closeGameplayDropdowns(dropdown);
+      dropdown.classList.toggle("open", willOpen);
+      dropdownBtn.setAttribute("aria-expanded", String(willOpen));
+    });
+
+    options.forEach((option) => {
+      option.addEventListener("click", () => {
+        options.forEach((item) => item.classList.remove("active"));
+        option.classList.add("active");
+        selectedText.textContent = option.textContent.trim();
+        dropdown.classList.remove("open");
+        dropdownBtn?.setAttribute("aria-expanded", "false");
+      });
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".gameplay-setting-dropdown")) {
+      closeGameplayDropdowns();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeGameplayDropdowns();
+    }
+  });
+
   const stageStartBtns = document.querySelectorAll(".select-stage-btn");
   stageStartBtns.forEach((btn, index) => {
     btn.addEventListener("click", () => {
@@ -107,6 +155,74 @@ document.addEventListener("DOMContentLoaded", () => {
   _resizeCanvas();
   window.addEventListener("resize", _resizeCanvas);
 });
+
+function typeMainSystemDescription() {
+  const description = document.querySelector(".main-system-description");
+  if (!description) return;
+
+  const lines = [
+    "Solar dimming detected.",
+    "Astrophage contamination spreading...",
+    "Mission Ready.",
+  ];
+  const typingDelay = 42;
+  const deletingDelay = 24;
+  const lineBreakDelay = 280;
+  const restartDelay = 700;
+  let lineIndex = 0;
+  let charIndex = 0;
+  let typedText = "";
+
+  description.textContent = "";
+  description.classList.add("is-typing");
+
+  const renderText = () => {
+    description.replaceChildren();
+    typedText.split("\n").forEach((line, index) => {
+      if (index > 0) description.append(document.createElement("br"));
+      description.append(line);
+    });
+  };
+
+  const deleteNextCharacter = () => {
+    if (typedText.length > 0) {
+      typedText = typedText.slice(0, -1);
+      renderText();
+      window.setTimeout(deleteNextCharacter, deletingDelay);
+      return;
+    }
+
+    lineIndex = 0;
+    charIndex = 0;
+    window.setTimeout(typeNextCharacter, restartDelay);
+  };
+
+  const typeNextCharacter = () => {
+    const currentLine = lines[lineIndex];
+
+    if (charIndex < currentLine.length) {
+      typedText += currentLine[charIndex];
+      renderText();
+      charIndex += 1;
+      window.setTimeout(typeNextCharacter, typingDelay);
+      return;
+    }
+
+    lineIndex += 1;
+    charIndex = 0;
+
+    if (lineIndex < lines.length) {
+      typedText += "\n";
+      renderText();
+      window.setTimeout(typeNextCharacter, lineBreakDelay);
+      return;
+    }
+
+    window.setTimeout(deleteNextCharacter, restartDelay);
+  };
+
+  typeNextCharacter();
+}
 
 export { showScreen } from "./screen.js";
 
