@@ -6,7 +6,11 @@ let canvas;
 let ctx;
 let animationId = null;
 let lastPointerX = null;
+let brickShards = [];
 const BALL_RADIUS = 10;
+const BRICK_SHARD_GRAVITY = 0.12;
+const BRICK_SHARD_DRAG = 0.985;
+const BRICK_SHARD_LIFE = 34;
 const BRICK_TYPE_STYLES = {
   normal: {
     alpha: 0.9,
@@ -65,6 +69,80 @@ function getTransparentColor(hexColor) {
   const b = parseInt(hex.slice(4, 6), 16);
 
   return `rgba(${r}, ${g}, ${b}, 0)`;
+}
+
+function createBrickShards(brick, style, impactX, impactY) {
+  const cols = 4;
+  const rows = 3;
+  const shardW = brick.w / cols;
+  const shardH = brick.h / rows;
+  const centerX = brick.x + brick.w / 2;
+  const centerY = brick.y + brick.h / 2;
+
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
+      const x = brick.x + col * shardW;
+      const y = brick.y + row * shardH;
+      const shardCenterX = x + shardW / 2;
+      const shardCenterY = y + shardH / 2;
+      const awayFromCenter = Math.atan2(shardCenterY - centerY, shardCenterX - centerX);
+      const awayFromImpact = Math.atan2(shardCenterY - impactY, shardCenterX - impactX);
+      const speed = 1.5 + Math.random() * 2.6;
+      const angle = awayFromCenter * 0.65 + awayFromImpact * 0.35 + (Math.random() - 0.5) * 0.55;
+      const maxLife = BRICK_SHARD_LIFE + Math.floor(Math.random() * 8);
+
+      brickShards.push({
+        x: shardCenterX,
+        y: shardCenterY,
+        w: Math.max(shardW - 2, 4),
+        h: Math.max(shardH - 2, 4),
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - Math.random() * 1.5,
+        rotation: (Math.random() - 0.5) * 0.8,
+        spin: (Math.random() - 0.5) * 0.28,
+        life: maxLife,
+        maxLife,
+        fill: style.fill,
+        stroke: style.stroke,
+        glow: style.glow,
+      });
+    }
+  }
+}
+
+function updateBrickShards() {
+  for (let i = brickShards.length - 1; i >= 0; i -= 1) {
+    const shard = brickShards[i];
+    shard.x += shard.vx;
+    shard.y += shard.vy;
+    shard.vx *= BRICK_SHARD_DRAG;
+    shard.vy = shard.vy * BRICK_SHARD_DRAG + BRICK_SHARD_GRAVITY;
+    shard.rotation += shard.spin;
+    shard.life -= 1;
+
+    if (shard.life <= 0) {
+      brickShards.splice(i, 1);
+    }
+  }
+}
+
+function drawBrickShards() {
+  brickShards.forEach((shard) => {
+    const alpha = Math.max(shard.life / shard.maxLife, 0);
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(shard.x, shard.y);
+    ctx.rotate(shard.rotation);
+    ctx.shadowColor = shard.glow;
+    ctx.shadowBlur = 8 * alpha;
+    ctx.fillStyle = shard.fill;
+    ctx.strokeStyle = shard.stroke;
+    ctx.lineWidth = 1;
+    ctx.fillRect(-shard.w / 2, -shard.h / 2, shard.w, shard.h);
+    ctx.strokeRect(-shard.w / 2, -shard.h / 2, shard.w, shard.h);
+    ctx.restore();
+  });
 }
 
 function drawBallTail(ball, style) {
@@ -217,6 +295,7 @@ export function initEngine() {
 
   window.startGameLoop = () => {
     lastPointerX = null;
+    brickShards = [];
     // 게임 시작 시 초기 공 생성 (패들 정중앙에 부착)
     if (GameState.paddle.y === 0) {
       GameState.paddle.y = canvas.height - GameState.paddle.h - 30;
@@ -353,8 +432,12 @@ function updatePhysics() {
         ball.y + ball.r > brick.y &&
         ball.y - ball.r < brick.y + brick.h
       ) {
+        const brickStyle = getBrickStyle(brick);
         ball.vy *= -1; // 일단 무조건 반전 (세밀한 상하좌우 판정은 추후 고도화)
-        onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
+        const destroyed = onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
+        if (destroyed) {
+          createBrickShards(brick, brickStyle, ball.x, ball.y);
+        }
       }
     });
   }
@@ -409,6 +492,9 @@ function draw() {
   GameState.balls.forEach(ball => {
     drawBall(ball);
   });
+
+  // 4. 파괴된 벽돌 파편 그리기
+  drawBrickShards();
 }
 
 /**
@@ -418,6 +504,7 @@ function loop() {
   if (GameState.status === "playing") {
     updatePhysics();
   }
+  updateBrickShards();
   
   // 상태와 무관하게 화면은 계속 렌더링 (일시정지 화면 등을 위해)
   draw();
