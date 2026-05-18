@@ -1080,6 +1080,42 @@ button.main-menu-btn:hover {
   width: 100px;
 }
 
+.audio-mute-btn {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #eaf4ff;
+  border-radius: 8px;
+  background-color: rgba(14, 26, 43, 0.8);
+  box-shadow: 0 0 12px rgba(234, 244, 255, 0.28);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.audio-mute-btn:hover {
+  border-color: #59c3ff;
+  box-shadow: 0 0 16px rgba(89, 195, 255, 0.55);
+  transform: translateY(-2px);
+}
+
+.audio-mute-btn.muted {
+  border-color: #ff7a1a;
+  background-color: rgba(255, 122, 26, 0.18);
+  box-shadow: 0 0 16px rgba(255, 122, 26, 0.4);
+}
+
+.audio-mute-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
 .control-settings {
   display: flex;
   flex-direction: column;

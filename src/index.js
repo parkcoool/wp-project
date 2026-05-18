@@ -14,10 +14,76 @@ import {
 import { showScreen } from "./screen.js";
 import { initEngine } from "./engine.js";
 
+const audioSettings = {
+  master: { volume: 0.5, muted: false },
+  music: { volume: 0.5, muted: false },
+  effects: { volume: 0.5, muted: false },
+};
+const backgroundMusicAudio = new Audio("./assets/music/background/cosmos.mp3");
+backgroundMusicAudio.loop = true;
+backgroundMusicAudio.preload = "auto";
+let hasUserActivatedAudio = false;
+
+const clampVolume = (value) => Math.min(Math.max(value, 0), 1);
+
+function getEffectiveAudioVolume(control) {
+  const setting = audioSettings[control];
+  if (!setting || setting.muted) return 0;
+
+  return clampVolume(setting.volume);
+}
+
+function applyAudioVolumes() {
+  backgroundMusicAudio.volume = clampVolume(
+    getEffectiveAudioVolume("master") * getEffectiveAudioVolume("music"),
+  );
+}
+
+function playBackgroundMusic() {
+  if (!hasUserActivatedAudio || backgroundMusicAudio.volume === 0) return;
+
+  backgroundMusicAudio.play().catch(() => {
+    // Browsers can still block audio until a direct user gesture is accepted.
+  });
+}
+
+function setBackgroundMusicSource(src) {
+  if (!src) return;
+
+  const nextSrc = new URL(src, window.location.href).href;
+  if (backgroundMusicAudio.src === nextSrc) {
+    playBackgroundMusic();
+    return;
+  }
+
+  const shouldResume = hasUserActivatedAudio && !backgroundMusicAudio.paused;
+  backgroundMusicAudio.src = nextSrc;
+  backgroundMusicAudio.load();
+
+  if (shouldResume || hasUserActivatedAudio) {
+    playBackgroundMusic();
+  }
+}
+
+function enableBackgroundMusicAfterGesture() {
+  if (hasUserActivatedAudio) return;
+
+  hasUserActivatedAudio = true;
+  playBackgroundMusic();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initEngine();
   showScreen("menu-screen");
   typeMainSystemDescription();
+  applyAudioVolumes();
+
+  document.addEventListener("pointerdown", enableBackgroundMusicAfterGesture, {
+    once: true,
+  });
+  document.addEventListener("keydown", enableBackgroundMusicAfterGesture, {
+    once: true,
+  });
 
 
   // ── 메인 메뉴 모달 열기/닫기 ──
@@ -64,10 +130,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
       slider.style.setProperty("--slider-progress", `${progress}%`);
       slider.nextElementSibling.textContent = `${value}%`;
+
+      const audioControl = slider.dataset.audioControl;
+      if (audioControl && audioControl in audioSettings) {
+        audioSettings[audioControl].volume = clampVolume(value / 100);
+        applyAudioVolumes();
+        playBackgroundMusic();
+      }
     };
 
     syncSliderProgress();
     slider.addEventListener("input", syncSliderProgress);
+  });
+
+  const audioMuteBtns = document.querySelectorAll(".audio-mute-btn");
+  const syncAudioMuteButton = (button) => {
+    const audioControl = button.dataset.audioMute;
+    const setting = audioSettings[audioControl];
+    const icon = button.querySelector(".audio-mute-icon");
+    if (!setting || !icon) return;
+
+    button.classList.toggle("muted", setting.muted);
+    button.setAttribute("aria-pressed", String(setting.muted));
+    button.setAttribute(
+      "aria-label",
+      setting.muted ? `Unmute ${audioControl} volume` : `Mute ${audioControl} volume`,
+    );
+    icon.src = setting.muted
+      ? "./assets/images/sprites/volume-x-icon.png"
+      : "./assets/images/sprites/volume-icon.png";
+  };
+
+  audioMuteBtns.forEach((button) => {
+    syncAudioMuteButton(button);
+
+    button.addEventListener("click", () => {
+      const audioControl = button.dataset.audioMute;
+      if (!(audioControl in audioSettings)) return;
+
+      audioSettings[audioControl].muted = !audioSettings[audioControl].muted;
+      syncAudioMuteButton(button);
+      applyAudioVolumes();
+      playBackgroundMusic();
+    });
   });
 
   const skillKeyInputs = document.querySelectorAll(".skill-key-input");
@@ -173,6 +278,11 @@ document.addEventListener("DOMContentLoaded", () => {
         options.forEach((item) => item.classList.remove("active"));
         option.classList.add("active");
         selectedText.textContent = option.textContent.trim();
+
+        if (dropdown.dataset.setting === "background-music") {
+          setBackgroundMusicSource(option.dataset.musicSrc);
+        }
+
         dropdown.classList.remove("open");
         dropdownBtn?.setAttribute("aria-expanded", "false");
       });

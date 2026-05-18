@@ -181,8 +181,21 @@
                   max="100"
                   value="50"
                   class="audio-setting-slider"
+                  data-audio-control="master"
                 />
                 <p class="audio-setting-value">50%</p>
+                <button
+                  class="audio-mute-btn"
+                  type="button"
+                  aria-label="Mute master volume"
+                  data-audio-mute="master"
+                >
+                  <img
+                    src="./assets/images/sprites/volume-icon.png"
+                    alt=""
+                    class="audio-mute-icon"
+                  />
+                </button>
               </div>
               <div class="audio-setting-item">
                 <p class="audio-setting-label">배경 음악</p>
@@ -192,8 +205,21 @@
                   max="100"
                   value="50"
                   class="audio-setting-slider"
+                  data-audio-control="music"
                 />
                 <p class="audio-setting-value">50%</p>
+                <button
+                  class="audio-mute-btn"
+                  type="button"
+                  aria-label="Mute background music"
+                  data-audio-mute="music"
+                >
+                  <img
+                    src="./assets/images/sprites/volume-icon.png"
+                    alt=""
+                    class="audio-mute-icon"
+                  />
+                </button>
               </div>
               <div class="audio-setting-item">
                 <p class="audio-setting-label">효과음</p>
@@ -203,8 +229,21 @@
                   max="100"
                   value="50"
                   class="audio-setting-slider"
+                  data-audio-control="effects"
                 />
                 <p class="audio-setting-value">50%</p>
+                <button
+                  class="audio-mute-btn"
+                  type="button"
+                  aria-label="Mute sound effects"
+                  data-audio-mute="effects"
+                >
+                  <img
+                    src="./assets/images/sprites/volume-icon.png"
+                    alt=""
+                    class="audio-mute-icon"
+                  />
+                </button>
               </div>
             </div>
           </div>
@@ -214,9 +253,9 @@
                 <img src="./assets/images/sprites/music.png" />
                 <p class="gameplay-setting-item-title">배경 음악</p>
               </div>
-              <div class="gameplay-setting-dropdown">
+              <div class="gameplay-setting-dropdown" data-setting="background-music">
                 <button class="gameplay-dropdown-btn" type="button" aria-expanded="false">
-                  <div class="gameplay-dropdown-selected">OUTTA SPACE</div>
+                  <div class="gameplay-dropdown-selected">COSMOS</div>
                   <img
                     src="./assets/images/sprites/angle-down.png"
                     class="gameplay-dropdown-angle"
@@ -224,18 +263,30 @@
                 </button>
                 <ul class="gameplay-dropdown-list">
                   <li>
-                    <button class="gameplay-dropdown-option active" type="button">
-                      OUTTA SPACE
+                    <button
+                      class="gameplay-dropdown-option active"
+                      type="button"
+                      data-music-src="./assets/music/background/cosmos.mp3"
+                    >
+                      COSMOS
                     </button>
                   </li>
                   <li>
-                    <button class="gameplay-dropdown-option" type="button">
-                      SOLAR WARNING
+                    <button
+                      class="gameplay-dropdown-option"
+                      type="button"
+                      data-music-src="./assets/music/background/space-galaxy-universe.mp3"
+                    >
+                      SPACE GALAXY UNIVERSE
                     </button>
                   </li>
                   <li>
-                    <button class="gameplay-dropdown-option" type="button">
-                      ROCKY SIGNAL
+                    <button
+                      class="gameplay-dropdown-option"
+                      type="button"
+                      data-music-src="./assets/music/background/space.mp3"
+                    >
+                      SPACE
                     </button>
                   </li>
                 </ul>
