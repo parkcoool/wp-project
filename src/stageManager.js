@@ -16,6 +16,7 @@ import {
   onSkillUse,
 } from "./fuelSystem.js";
 import { showScreen } from "./screen.js";
+import { playSoundEffect } from "./audio.js";
 
 // ─────────────────────────────────────────────
 // 스테이지 초기화
@@ -136,6 +137,7 @@ export function onBrickHit(brickIndex) {
   addSystemLog("Astrophage Hit!", "normal");
 
   if (brick.hp <= 0) {
+    playSoundEffect("crashAstrophage");
     brick.alive = false;
     GameState.score += _getScoreForBrick(brick);
     _updateScoreUI();
@@ -149,6 +151,7 @@ export function onBrickHit(brickIndex) {
     _checkStageClear();
     return true;
   }
+  playSoundEffect("hitAstrophage");
   return false;
 }
 

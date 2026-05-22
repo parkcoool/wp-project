@@ -9,9 +9,11 @@ let animationId = null;
 let lastPointerX = null;
 let brickShards = [];
 const BALL_RADIUS = 10;
-const BRICK_SHARD_GRAVITY = 0.12;
-const BRICK_SHARD_DRAG = 0.985;
-const BRICK_SHARD_LIFE = 34;
+const BRICK_SHARD_GRAVITY = 0.145;
+const BRICK_SHARD_DRAG = 0.982;
+const BRICK_SHARD_LIFE = 46;
+const BRICK_DUST_DRAG = 0.94;
+const BRICK_SPARK_DRAG = 0.965;
 const BRICK_TYPE_STYLES = {
   normal: {
     alpha: 0.9,
@@ -72,42 +74,136 @@ function getTransparentColor(hexColor) {
   return `rgba(${r}, ${g}, ${b}, 0)`;
 }
 
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function colorWithAlpha(color, alpha) {
+  return color.replace(/rgba?\(([^)]+)\)/, (_, values) => {
+    const parts = values.split(",").map((part) => part.trim());
+    return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
+  });
+}
+
+function createShardPoints(w, h, chip) {
+  const inset = chip ? 0.12 : 0.18;
+  const left = -w / 2;
+  const right = w / 2;
+  const top = -h / 2;
+  const bottom = h / 2;
+
+  return [
+    { x: left + randomBetween(-w * 0.08, w * inset), y: top + randomBetween(-h * 0.08, h * inset) },
+    { x: right - randomBetween(0, w * inset), y: top + randomBetween(-h * 0.12, h * 0.22) },
+    { x: right + randomBetween(-w * 0.1, w * 0.08), y: bottom - randomBetween(0, h * inset) },
+    { x: randomBetween(left + w * 0.2, right - w * 0.08), y: bottom + randomBetween(-h * 0.08, h * 0.12) },
+    { x: left + randomBetween(-w * 0.08, w * 0.2), y: randomBetween(top + h * 0.25, bottom - h * 0.08) },
+  ];
+}
+
 function createBrickShards(brick, style, impactX, impactY) {
-  const cols = 4;
+  const cols = 5;
   const rows = 3;
   const shardW = brick.w / cols;
   const shardH = brick.h / rows;
   const centerX = brick.x + brick.w / 2;
   const centerY = brick.y + brick.h / 2;
+  const impactAngle = Math.atan2(centerY - impactY, centerX - impactX);
+  const highlight = colorWithAlpha(style.stroke, 0.62);
+  const shadow = "rgba(6, 11, 22, 0.45)";
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
+      if (Math.random() < 0.16 && !(row === 1 && col === 2)) continue;
+
       const x = brick.x + col * shardW;
       const y = brick.y + row * shardH;
-      const shardCenterX = x + shardW / 2;
-      const shardCenterY = y + shardH / 2;
+      const shardCenterX = x + shardW * randomBetween(0.35, 0.65);
+      const shardCenterY = y + shardH * randomBetween(0.32, 0.68);
       const awayFromCenter = Math.atan2(shardCenterY - centerY, shardCenterX - centerX);
       const awayFromImpact = Math.atan2(shardCenterY - impactY, shardCenterX - impactX);
-      const speed = 1.5 + Math.random() * 2.6;
-      const angle = awayFromCenter * 0.65 + awayFromImpact * 0.35 + (Math.random() - 0.5) * 0.55;
-      const maxLife = BRICK_SHARD_LIFE + Math.floor(Math.random() * 8);
+      const impactDistance = Math.hypot(shardCenterX - impactX, shardCenterY - impactY);
+      const proximityBoost = clamp(1 - impactDistance / Math.max(brick.w, brick.h), 0, 1.2);
+      const speed = randomBetween(1.4, 3.4) + proximityBoost * 2.2;
+      const angle = awayFromCenter * 0.45 + awayFromImpact * 0.55 + randomBetween(-0.42, 0.42);
+      const maxLife = BRICK_SHARD_LIFE + Math.floor(Math.random() * 16);
+      const widthScale = randomBetween(0.72, 1.08);
+      const heightScale = randomBetween(0.62, 1.04);
 
       brickShards.push({
+        type: "chunk",
         x: shardCenterX,
         y: shardCenterY,
-        w: Math.max(shardW - 2, 4),
-        h: Math.max(shardH - 2, 4),
+        w: Math.max(shardW * widthScale, 5),
+        h: Math.max(shardH * heightScale, 5),
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - Math.random() * 1.5,
-        rotation: (Math.random() - 0.5) * 0.8,
-        spin: (Math.random() - 0.5) * 0.28,
+        vy: Math.sin(angle) * speed - randomBetween(0.4, 2.2),
+        rotation: randomBetween(-0.75, 0.75),
+        spin: randomBetween(-0.18, 0.18) + proximityBoost * randomBetween(-0.05, 0.05),
         life: maxLife,
         maxLife,
+        points: createShardPoints(Math.max(shardW * widthScale, 5), Math.max(shardH * heightScale, 5), false),
         fill: style.fill,
         stroke: style.stroke,
         glow: style.glow,
+        highlight,
+        shadow,
       });
     }
+  }
+
+  for (let i = 0; i < 18; i += 1) {
+    const angle = impactAngle + Math.PI + randomBetween(-1.25, 1.25);
+    const speed = randomBetween(2.6, 7.2);
+    const size = randomBetween(2.2, 6.5);
+    const maxLife = Math.floor(randomBetween(22, 42));
+
+    brickShards.push({
+      type: "chip",
+      x: impactX + randomBetween(-brick.w * 0.12, brick.w * 0.12),
+      y: impactY + randomBetween(-brick.h * 0.12, brick.h * 0.12),
+      w: size * randomBetween(1.1, 1.9),
+      h: size,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - randomBetween(0.8, 2.8),
+      rotation: randomBetween(-Math.PI, Math.PI),
+      spin: randomBetween(-0.42, 0.42),
+      life: maxLife,
+      maxLife,
+      points: createShardPoints(size * randomBetween(1.1, 1.9), size, true),
+      fill: colorWithAlpha(style.fill, 0.92),
+      stroke: colorWithAlpha(style.stroke, 0.55),
+      glow: style.glow,
+      highlight,
+      shadow,
+    });
+  }
+
+  for (let i = 0; i < 24; i += 1) {
+    const angle = randomBetween(0, Math.PI * 2);
+    const speed = randomBetween(0.7, 3.8);
+    const maxLife = Math.floor(randomBetween(18, 34));
+
+    brickShards.push({
+      type: Math.random() < 0.28 ? "spark" : "dust",
+      x: impactX + randomBetween(-brick.w * 0.18, brick.w * 0.18),
+      y: impactY + randomBetween(-brick.h * 0.18, brick.h * 0.18),
+      radius: randomBetween(0.9, 2.4),
+      length: randomBetween(7, 16),
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - randomBetween(0.1, 1.4),
+      rotation: angle,
+      spin: randomBetween(-0.06, 0.06),
+      life: maxLife,
+      maxLife,
+      fill: Math.random() < 0.36 ? highlight : colorWithAlpha(style.fill, 0.72),
+      stroke: highlight,
+      glow: style.glow,
+    });
   }
 }
 
@@ -116,8 +212,10 @@ function updateBrickShards() {
     const shard = brickShards[i];
     shard.x += shard.vx;
     shard.y += shard.vy;
-    shard.vx *= BRICK_SHARD_DRAG;
-    shard.vy = shard.vy * BRICK_SHARD_DRAG + BRICK_SHARD_GRAVITY;
+    const drag = shard.type === "dust" ? BRICK_DUST_DRAG : shard.type === "spark" ? BRICK_SPARK_DRAG : BRICK_SHARD_DRAG;
+    const gravity = shard.type === "spark" ? BRICK_SHARD_GRAVITY * 0.42 : BRICK_SHARD_GRAVITY;
+    shard.vx *= drag;
+    shard.vy = shard.vy * drag + gravity;
     shard.rotation += shard.spin;
     shard.life -= 1;
 
@@ -132,16 +230,62 @@ function drawBrickShards() {
     const alpha = Math.max(shard.life / shard.maxLife, 0);
 
     ctx.save();
-    ctx.globalAlpha = alpha;
+    ctx.globalAlpha = alpha * (shard.type === "dust" ? 0.72 : 1);
     ctx.translate(shard.x, shard.y);
     ctx.rotate(shard.rotation);
     ctx.shadowColor = shard.glow;
-    ctx.shadowBlur = 8 * alpha;
+    ctx.shadowBlur = shard.type === "spark" ? 12 * alpha : 7 * alpha;
+
+    if (shard.type === "dust") {
+      ctx.beginPath();
+      ctx.arc(0, 0, shard.radius, 0, Math.PI * 2);
+      ctx.fillStyle = shard.fill;
+      ctx.fill();
+      ctx.restore();
+      return;
+    }
+
+    if (shard.type === "spark") {
+      ctx.beginPath();
+      ctx.moveTo(-shard.length * 0.42, 0);
+      ctx.lineTo(shard.length * 0.58, 0);
+      ctx.strokeStyle = shard.stroke;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.restore();
+      return;
+    }
+
+    ctx.beginPath();
+    shard.points.forEach((point, index) => {
+      if (index === 0) {
+        ctx.moveTo(point.x, point.y);
+      } else {
+        ctx.lineTo(point.x, point.y);
+      }
+    });
+    ctx.closePath();
     ctx.fillStyle = shard.fill;
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
     ctx.strokeStyle = shard.stroke;
+    ctx.lineWidth = shard.type === "chip" ? 0.8 : 1.1;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(-shard.w * 0.28, -shard.h * 0.24);
+    ctx.lineTo(shard.w * 0.18, -shard.h * 0.1);
+    ctx.strokeStyle = shard.highlight;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(-shard.w * 0.32, shard.h * 0.2);
+    ctx.lineTo(shard.w * 0.26, shard.h * 0.26);
+    ctx.strokeStyle = shard.shadow;
     ctx.lineWidth = 1;
-    ctx.fillRect(-shard.w / 2, -shard.h / 2, shard.w, shard.h);
-    ctx.strokeRect(-shard.w / 2, -shard.h / 2, shard.w, shard.h);
+    ctx.stroke();
     ctx.restore();
   });
 }
@@ -427,21 +571,37 @@ function updatePhysics() {
     GameState.bricks.forEach((brick, brickIndex) => {
       if (!brick.alive) return;
 
-      // 간단한 AABB 사각형 충돌 판정
+      // 간단한 원-사각형 충돌 판정
       if (
         ball.x + ball.r > brick.x &&
         ball.x - ball.r < brick.x + brick.w &&
         ball.y + ball.r > brick.y &&
         ball.y - ball.r < brick.y + brick.h
       ) {
-        const brickStyle = getBrickStyle(brick);
-        ball.vy *= -1; // 일단 무조건 반전 (세밀한 상하좌우 판정은 추후 고도화)
-        const destroyed = onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
-        if (destroyed) {
-          playSoundEffect("crashAstrophage");
-          createBrickShards(brick, brickStyle, ball.x, ball.y);
+        // 충돌이 발생했으면 상하/좌우 방향을 비교해 반사 방향 결정
+        const overlapX = Math.min(ball.x + ball.r, brick.x + brick.w) - Math.max(ball.x - ball.r, brick.x);
+        const overlapY = Math.min(ball.y + ball.r, brick.y + brick.h) - Math.max(ball.y - ball.r, brick.y);
+
+        if (overlapX < overlapY) {
+          ball.vx *= -1;
+          if (ball.x < brick.x) {
+            ball.x = brick.x - ball.r;
+          } else {
+            ball.x = brick.x + brick.w + ball.r;
+          }
         } else {
-          playSoundEffect("hitAstrophage");
+          ball.vy *= -1;
+          if (ball.y < brick.y) {
+            ball.y = brick.y - ball.r;
+          } else {
+            ball.y = brick.y + brick.h + ball.r;
+          }
+        }
+
+        const brickStyle = getBrickStyle(brick);
+        const wasDestroyed = onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
+        if (wasDestroyed) {
+          createBrickShards(brick, brickStyle, ball.x, ball.y);
         }
       }
     });
