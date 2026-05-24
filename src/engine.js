@@ -2,6 +2,7 @@ import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT } from "./state.js";
 import { onBrickHit } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 import { playSoundEffect } from "./audio.js";
+import { updateItems } from "./itemSkill.js";
 
 let canvas;
 let ctx;
