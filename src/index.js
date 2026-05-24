@@ -22,6 +22,7 @@ import {
   playBackgroundMusic,
   setBackgroundMusicSource,
 } from "./audio.js";
+import "./itemskill.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initEngine();

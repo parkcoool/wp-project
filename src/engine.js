@@ -2,6 +2,7 @@ import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT } from "./state.js";
 import { onBrickHit } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 import { playSoundEffect } from "./audio.js";
+import { updateItems, drawItems } from "./itemSkill.js"; 
 
 let canvas;
 let ctx;
@@ -660,6 +661,9 @@ function draw() {
 
   // 4. 파괴된 벽돌 파편 그리기
   drawBrickShards();
+
+  // 5. 아이템 그리기
+  drawItems(ctx);
 }
 
 /**
@@ -668,6 +672,7 @@ function draw() {
 function loop() {
   if (GameState.status === "playing") {
     updatePhysics();
+    updateItems();
   }
   updateBrickShards();
   
