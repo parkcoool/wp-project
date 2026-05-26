@@ -88,6 +88,7 @@ document.addEventListener('keydown', e => {
 		if(GameState.activeSkills.laser) return;
 		onSkillUse('laser');
 		GameState.activeSkills.laser = true;
+		GameState.activeSkills.laserStartTime = Date.now();
 
 		const paddle = GameState.paddle;
 		const centerX = paddle.x + paddle.w / 2;

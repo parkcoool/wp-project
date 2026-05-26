@@ -41,7 +41,7 @@ export function initStage(stageNum) {
   GameState.fuel.max = config.maxFuel;
   GameState.fuel.current = config.startFuel;
   GameState.unlockedSkills = [...config.unlockedSkills];
-  GameState.activeSkills = { slow: false, laser: false };
+  GameState.activeSkills = { slow: false, laser: false, laserStartTime: 0 };
   GameState.balls = [];
   GameState.items = [];
   
