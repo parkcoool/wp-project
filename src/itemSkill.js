@@ -68,6 +68,27 @@ document.addEventListener('keydown', e => {
 		if(GameState.activeSkills.slow) return;
 		onSkillUse('slow');
 		GameState.activeSkills.slow = true;
+
+		// 쿨타임 오버레이 추가
+		const ring = document.getElementById('skill-ring-slow');
+		const overlay = document.createElement('div');
+		overlay.className = 'skill-cooldown-overlay';
+		ring?.appendChild(overlay);
+
+		const totalTime = 4000;
+		const startTime = Date.now();
+
+		// 쿨타임 게이지 업데이트
+		const interval = setInterval(() => {
+			const progress = (Date.now() - startTime) / totalTime;
+			overlay.style.background = `conic-gradient(
+			transparent ${progress*360}deg,
+			rgba(0,0,0,0.6) ${progress*360}deg
+			)`;
+			if(progress >= 1) clearInterval(interval);
+		}, 50);
+
+
 		GameState.balls.forEach(b => {
 			b.vy *= 0.5;
 			b.vx *= 0.5;
@@ -88,6 +109,27 @@ document.addEventListener('keydown', e => {
 		if(GameState.activeSkills.laser) return;
 		onSkillUse('laser');
 		GameState.activeSkills.laser = true;
+
+		// 쿨타임 오버레이 추가
+		const ring = document.getElementById('skill-ring-laser');
+		const overlay = document.createElement('div');
+		overlay.className = 'skill-cooldown-overlay';
+		ring?.appendChild(overlay);
+
+		const totalTime = 4000;
+		const startTime = Date.now();
+
+		// 쿨타임 게이지 업데이트
+		const interval = setInterval(() => {
+			const progress = (Date.now() - startTime) / totalTime;
+			overlay.style.background = `conic-gradient(
+			transparent ${progress*360}deg,
+			rgba(0,0,0,0.6) ${progress*360}deg
+			)`;
+			if(progress >= 1) clearInterval(interval);
+		}, 50);
+
+
 
 		const paddle = GameState.paddle;
 		const centerX = paddle.x + paddle.w / 2;
@@ -115,30 +157,6 @@ export function drawItems(ctx) {
 	GameState.items.forEach(item => {
 		if(!item.alive) return;
 
-	// 	if(item.type === 'fuel') {
-	// 		ctx.fillStyle = '#FFC857';
-	// 		ctx.shadowColor = '#FFC857';
-	// 	}
-	// 	else {
-	// 		ctx.fillStyle = '#FF4444';
-	// 		ctx.styleColor = '#FF4444';
-	// 	}
-
-	// 	// 네모 그리기
-	// 	ctx.shadowBlur = 10;
-	// 	ctx.fillRect(item.x, item.y, item.w, item.h);
-	// 	ctx.shadowBlur = 0;
-
-	// 	// 아이콘 그리기
-	// 	ctx.fillStyle = '#fff';
-	// 	ctx.font = '14px monospace';
-	// 	ctx.textAlign = 'center';
-	// 	ctx.fillText(
-	// 		item.type === 'fuel' ? '⚡' : '🗑',
-	// 		item.x + item.w / 2,
-	// 		item.y + item.h - 4
-	// 	);
-	// });
 	const cx = item.x + item.w / 2;
     const cy = item.y + item.h / 2;
     const r = item.w / 2;

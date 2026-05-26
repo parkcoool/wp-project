@@ -390,7 +390,7 @@ function _updateSkillsUI(stageNum) {
     const item = document.createElement("div");
     item.className = "skill-item";
     item.innerHTML = `
-      <div class="skill-icon-ring">
+      <div class="skill-icon-ring" id="skill-ring-${skillId}">
         <span class="skill-key" style="color:${meta.color}">${meta.key}</span>
       </div>
       <p class="skill-label">${meta.label}</p>
