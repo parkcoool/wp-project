@@ -66,8 +66,7 @@ document.addEventListener('keydown', e => {
 		if(!GameState.unlockedSkills.includes('slow')) return;
 		if(GameState.fuel.current < FUEL_COSTS.skillSlow) return;
 		if(GameState.activeSkills.slow) return;
-		onSkillUse('slow');
-		GameState.activeSkills.slow = true;
+		
 
 		// 쿨타임 오버레이 추가
 		const ring = document.getElementById('skill-ring-slow');
@@ -90,15 +89,32 @@ document.addEventListener('keydown', e => {
 
 
 		GameState.balls.forEach(b => {
+			if(!b.isLaunched) return;
+			b.originVx = b.vx;
+			b.originVy = b.vy;
 			b.vy *= 0.5;
 			b.vx *= 0.5;
 		});
+		onSkillUse('slow');
+		GameState.activeSkills.slow = true;
+
 		setTimeout(() => {
-			GameState.balls.forEach(b => {
-				b.vy *= 2;
-				b.vx *= 2;
+			GameState.balls.forEach(b => {	
+				if(!b.isLaunched) return;
+				if(b.originVx === undefined) return; 
+				
+				// 현재 방향은 유지하고 속도 크기만 2배로 복구
+    			const speed = Math.hypot(b.vx, b.vy); // 현재 속도 크기
+    			const originalSpeed = Math.hypot(b.originVx, b.originVy); // 원래 속도 크기
+    			const ratio = originalSpeed / speed; // 복구 비율
+
+				b.vy *= ratio;
+				b.vx *= ratio;
+				b.originVx = undefined;
+				b.originVy = undefined;
 			});
 			GameState.activeSkills.slow = false;
+			overlay?.remove();
 		}, 4000);
 		
 	}

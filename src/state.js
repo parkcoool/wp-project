@@ -13,7 +13,7 @@ export const STAGE_CONFIG = {
     cols: 10,
     maxFuel: 100,
     startFuel: 100,
-    unlockedSkills: [],
+    unlockedSkills: ["slow"],
     // 벽돌 HP 배분: [row 0..4] → 각 행의 HP
     rowHp: [1, 1, 1, 1, 1],
     proliferate: false,

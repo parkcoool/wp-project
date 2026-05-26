@@ -259,6 +259,12 @@ function _proliferateAstrophage() {
  */
 export function startPlaying() {
   GameState.status = "playing";
+
+  // 스테이지 2 패들 버프
+  if(GameState.currentStage === 2) {
+    GameState.paddle.w = 240;
+  }
+
   _hideOverlay("stage-intro-overlay");
   _hideOverlay("pause-overlay");
 
