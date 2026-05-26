@@ -609,6 +609,88 @@ function updatePhysics() {
   }
 }
 
+function drawLaserEffect(ctx) {
+  if (!GameState.activeSkills.laser) return;
+
+  const elapsed = Date.now() - GameState.activeSkills.laserStartTime;
+  const progress = Math.min(elapsed / 500, 1.0);
+  const alpha = 1.0 - progress;
+
+  const paddle = GameState.paddle;
+  const centerX = paddle.x + paddle.w / 2;
+  const beamHalfWidth = 20;
+
+  ctx.save();
+
+  const outerGlow = ctx.createLinearGradient(
+    centerX - beamHalfWidth * 3, 0,
+    centerX + beamHalfWidth * 3, 0
+  );
+  outerGlow.addColorStop(0,   'rgba(255,122,26,0)');
+  outerGlow.addColorStop(0.3, 'rgba(255,122,26,0.18)');
+  outerGlow.addColorStop(0.5, 'rgba(255,122,26,0.35)');
+  outerGlow.addColorStop(0.7, 'rgba(255,122,26,0.18)');
+  outerGlow.addColorStop(1,   'rgba(255,122,26,0)');
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = outerGlow;
+  ctx.fillRect(centerX - beamHalfWidth * 3, 0, beamHalfWidth * 6, paddle.y);
+
+  const midGrad = ctx.createLinearGradient(
+    centerX - beamHalfWidth, 0,
+    centerX + beamHalfWidth, 0
+  );
+  midGrad.addColorStop(0,   'rgba(255,122,26,0)');
+  midGrad.addColorStop(0.2, 'rgba(255,122,26,0.7)');
+  midGrad.addColorStop(0.5, 'rgba(255,200,80,0.95)');
+  midGrad.addColorStop(0.8, 'rgba(255,122,26,0.7)');
+  midGrad.addColorStop(1,   'rgba(255,122,26,0)');
+  ctx.shadowColor = '#FF7A1A';
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = midGrad;
+  ctx.fillRect(centerX - beamHalfWidth, 0, beamHalfWidth * 2, paddle.y);
+
+  const coreGrad = ctx.createLinearGradient(centerX - 2, 0, centerX + 2, 0);
+  coreGrad.addColorStop(0,   'rgba(255,255,240,0)');
+  coreGrad.addColorStop(0.5, 'rgba(255,255,255,0.98)');
+  coreGrad.addColorStop(1,   'rgba(255,255,240,0)');
+  ctx.shadowColor = '#FFFFFF';
+  ctx.shadowBlur = 10;
+  ctx.fillStyle = coreGrad;
+  ctx.fillRect(centerX - 2, 0, 4, paddle.y);
+
+  ctx.restore();
+}
+
+function drawLaserFlash(ctx) {
+  if (!GameState.activeSkills.laser) return;
+
+  const elapsed = Date.now() - GameState.activeSkills.laserStartTime;
+  if (elapsed > 80) return;
+
+  const t = elapsed / 80;
+  const alpha = (1 - t) * (1 - t) * 0.45;
+
+  const paddle = GameState.paddle;
+  const centerX = paddle.x + paddle.w / 2;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  const flashGrad = ctx.createRadialGradient(
+    centerX, paddle.y, 0,
+    centerX, paddle.y, canvas.width * 0.6
+  );
+  flashGrad.addColorStop(0,    'rgba(255,240,200,1)');
+  flashGrad.addColorStop(0.15, 'rgba(255,180,80,0.8)');
+  flashGrad.addColorStop(0.5,  'rgba(255,122,26,0.3)');
+  flashGrad.addColorStop(1,    'rgba(255,122,26,0)');
+
+  ctx.fillStyle = flashGrad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.restore();
+}
+
 /**
  * 렌더링 (매 프레임 화면 그리기)
  */
@@ -654,6 +736,9 @@ function draw() {
     }
   });
 
+  // 레이저 빔 이펙트 (벽돌 위, 공 아래)
+  drawLaserEffect(ctx);
+
   // 3. 공(에너지 펄스/타우메바) 그리기
   GameState.balls.forEach(ball => {
     drawBall(ball);
@@ -664,6 +749,9 @@ function draw() {
 
   // 5. 아이템 그리기
   drawItems(ctx);
+
+  // 발동 섬광 (최상단 레이어)
+  drawLaserFlash(ctx);
 }
 
 /**

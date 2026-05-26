@@ -109,6 +109,7 @@ document.addEventListener('keydown', e => {
 		if(GameState.activeSkills.laser) return;
 		onSkillUse('laser');
 		GameState.activeSkills.laser = true;
+		GameState.activeSkills.laserStartTime = Date.now();
 
 		// 쿨타임 오버레이 추가
 		const ring = document.getElementById('skill-ring-laser');
