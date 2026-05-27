@@ -16,6 +16,11 @@
   background-position: center;
 }
 
+#menu-screen.active {
+  display: flex;
+  flex-direction: column;
+}
+
 .start-ship {
   position: absolute;
   left: 0;
@@ -81,6 +86,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 button.main-menu-btn {
@@ -120,9 +126,10 @@ button.main-menu-btn:hover {
 }
 
 .main-system-box {
-  position: absolute;
-  right: 80px;
-  bottom: 80px;
+  margin-top: auto;
+  margin-left: auto;
+  padding-top: 32px;
+  flex-shrink: 0;
 }
 
 .main-system-title {
@@ -1574,11 +1581,6 @@ button.main-menu-btn:hover {
     margin-top: 80px;
   }
 
-  .main-system-box {
-    right: 48px;
-    bottom: 48px;
-  }
-
   .main-menu-modal {
     top: 48px;
     left: 48px;
@@ -1627,18 +1629,12 @@ button.main-menu-btn:hover {
 }
 
 @media (max-width: 1280px) and (max-height: 820px) {
-  #menu-screen.active {
-    display: flex;
-    flex-direction: column;
-  }
-
   .main-menu-box {
     margin-top: clamp(40px, 8vh, 80px);
   }
 
   .main-system-box {
-    position: static;
-    margin-top: 32px;
+    margin-top: auto;
     margin-left: auto;
   }
 
@@ -1677,9 +1673,9 @@ button.main-menu-btn:hover {
   }
 
   .main-system-box {
-    position: static;
-    margin-top: 24px;
+    margin-top: auto;
     margin-left: auto;
+    padding-top: 24px;
   }
 
   .main-system-description {
@@ -1938,9 +1934,9 @@ button.main-menu-btn:hover {
   }
 
   .main-system-box {
-    position: static;
-    margin-top: 40px;
+    margin-top: auto;
     margin-left: 0;
+    padding-top: 40px;
   }
 
   .main-system-title,
