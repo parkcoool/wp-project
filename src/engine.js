@@ -9,6 +9,7 @@ let ctx;
 let animationId = null;
 let lastPointerX = null;
 let brickShards = [];
+let previousCanvasSize = { width: 0, height: 0 };
 const BALL_RADIUS = 10;
 const BRICK_SHARD_GRAVITY = 0.145;
 const BRICK_SHARD_DRAG = 0.982;
@@ -401,6 +402,11 @@ function syncPaddleSize() {
   GameState.paddle.h = getPaddleHeight();
 }
 
+function syncPaddleWidth(canvasWidth = canvas?.width ?? 0) {
+  GameState.paddle.w = clamp(canvasWidth * 0.18, 92, 160);
+  syncPaddleSize();
+}
+
 function getPaddleHitbox(paddle) {
   return {
     x: paddle.x,
@@ -428,15 +434,38 @@ function getPaddleSensitivityMultiplier() {
 export function initEngine() {
   canvas = document.getElementById("game-canvas");
   ctx = canvas.getContext("2d");
-  syncPaddleSize();
-  paddleImage.addEventListener("load", syncPaddleSize);
+  syncPaddleWidth(canvas.width);
+  paddleImage.addEventListener("load", () => syncPaddleWidth(canvas.width));
 
   // index.js에서 호출할 수 있도록 전역 함수로 등록
   window.onCanvasResize = (w, h) => {
-    syncPaddleSize();
+    const previousWidth = previousCanvasSize.width || w;
+    const previousHeight = previousCanvasSize.height || h;
+    const scaleX = previousWidth > 0 ? w / previousWidth : 1;
+    const scaleY = previousHeight > 0 ? h / previousHeight : 1;
+
+    GameState.bricks.forEach((brick) => {
+      brick.x *= scaleX;
+      brick.y *= scaleY;
+      brick.w *= scaleX;
+      brick.h *= scaleY;
+    });
+
+    GameState.balls.forEach((ball) => {
+      ball.x *= scaleX;
+      ball.y *= scaleY;
+    });
+
+    GameState.items.forEach((item) => {
+      item.x *= scaleX;
+      item.y *= scaleY;
+    });
+
+    syncPaddleWidth(w);
     // 캔버스 크기가 변할 때 패들을 화면 하단 중앙에 재배치
     GameState.paddle.y = h - GameState.paddle.h - 30;
-    GameState.paddle.x = (w - GameState.paddle.w) / 2;
+    GameState.paddle.x = clamp(GameState.paddle.x * scaleX, 0, Math.max(w - GameState.paddle.w, 0));
+    previousCanvasSize = { width: w, height: h };
   };
 
   window.startGameLoop = () => {

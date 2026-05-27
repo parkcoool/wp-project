@@ -1519,3 +1519,456 @@ button.main-menu-btn:hover {
   background-color: #59c3ff;
   padding-left: 32px;
 }
+
+/* ======================================================
+   Responsive Layout
+   ====================================================== */
+
+.screen {
+  box-sizing: border-box;
+}
+
+#menu-screen.active {
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+.main-menu-modal {
+  overflow-y: auto;
+}
+
+.start-main-title,
+.start-sub-title,
+.main-menu-modal-title,
+.credit-title,
+.credit-subtitle,
+.result-title,
+.intro-stage-label {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1280px) {
+  .screen {
+    padding: 48px;
+  }
+
+  .start-title-box .start-main-title {
+    font-size: clamp(52px, 7vw, 80px);
+  }
+
+  .start-title-box .start-sub-title {
+    font-size: clamp(28px, 3.8vw, 40px);
+  }
+
+  .main-menu-box {
+    margin-top: 80px;
+  }
+
+  .main-system-box {
+    right: 48px;
+    bottom: 48px;
+  }
+
+  .main-menu-modal {
+    top: 48px;
+    left: 48px;
+    width: calc(100% - 96px);
+    height: calc(100% - 96px);
+    padding: 32px;
+  }
+
+  .select-stage-box {
+    gap: 20px;
+  }
+
+  .select-stage-title {
+    font-size: 24px;
+  }
+
+  .select-stage-description {
+    font-size: 16px;
+  }
+
+  .game-layout {
+    padding: 12px;
+  }
+
+  .game-sidebar-left,
+  .game-sidebar-right {
+    width: 220px;
+  }
+
+  .sidebar-card {
+    padding: 14px;
+  }
+
+  .fuel-gauge-svg {
+    width: min(180px, 100%);
+  }
+
+  .settings-content {
+    padding: 48px;
+  }
+
+  .gameplay-setting-dropdown {
+    width: min(800px, 100%);
+  }
+}
+
+@media (max-width: 1280px) and (max-height: 820px) {
+  #menu-screen.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-menu-box {
+    margin-top: clamp(40px, 8vh, 80px);
+  }
+
+  .main-system-box {
+    position: static;
+    margin-top: 32px;
+    margin-left: auto;
+  }
+
+  .main-system-title,
+  .main-system-description {
+    text-align: right;
+  }
+}
+
+@media (max-width: 1024px) {
+  .game-screen.active {
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .game-layout {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(520px, 1fr) auto;
+    align-items: stretch;
+  }
+
+  .game-canvas-container {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-height: 520px;
+    order: 0;
+  }
+
+  .game-sidebar-left,
+  .game-sidebar-right {
+    width: auto;
+    min-width: 0;
+  }
+
+  .game-sidebar-left {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .game-sidebar-right {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .skills-card,
+  .system-log-card {
+    max-height: 220px;
+  }
+
+  .settings-body {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .settings-menu {
+    margin-right: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .settings-menu-btn {
+    flex: 1 1 160px;
+    min-width: 0;
+    padding: 16px;
+  }
+
+  .settings-content {
+    min-height: 360px;
+    height: auto;
+    padding: 32px;
+  }
+
+  .audio-setting-item,
+  .control-setting-item {
+    flex-wrap: wrap;
+  }
+
+  .audio-setting-label,
+  .control-setting-label {
+    width: 100%;
+  }
+
+  .audio-setting-slider,
+  .audio-setting-value {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .screen {
+    padding: 28px;
+  }
+
+  .start-title-box {
+    text-align: left;
+  }
+
+  .start-title-box .start-main-title {
+    font-size: clamp(40px, 12vw, 64px);
+    letter-spacing: 0.04em;
+  }
+
+  .start-title-box .start-sub-title {
+    font-size: clamp(24px, 7vw, 36px);
+    letter-spacing: 0.12em;
+  }
+
+  .start-ship {
+    opacity: 0.65;
+  }
+
+  .start-ship img {
+    width: min(86vw, 620px);
+  }
+
+  .main-menu-box {
+    align-items: stretch;
+    margin-top: 56px;
+  }
+
+  button.main-menu-btn {
+    width: min(100%, 420px);
+    margin-left: auto;
+  }
+
+  .main-system-box {
+    position: static;
+    margin-top: 40px;
+    margin-left: 0;
+  }
+
+  .main-system-title,
+  .main-system-description {
+    text-align: left;
+  }
+
+  .main-menu-modal {
+    position: fixed;
+    inset: 20px;
+    width: auto;
+    height: auto;
+    padding: 24px;
+    border-radius: 12px;
+  }
+
+  .main-menu-modal-close-btn {
+    top: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .main-menu-modal-title-box {
+    gap: 12px;
+    padding-right: 48px;
+  }
+
+  .main-menu-modal-title-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .main-menu-modal-title {
+    font-size: 28px;
+  }
+
+  .main-menu-modal-description {
+    font-size: 18px;
+  }
+
+  .select-stage-box {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .select-stage-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .select-stage-btn {
+    position: static;
+    align-self: flex-end;
+    margin: 0 20px 20px;
+  }
+
+  .credit-title {
+    font-size: clamp(36px, 11vw, 56px);
+  }
+
+  .credit-list {
+    margin-top: 40px;
+    gap: 32px;
+  }
+
+  .game-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(440px, 60dvh) auto auto;
+  }
+
+  .game-canvas-container,
+  .game-sidebar-left,
+  .game-sidebar-right {
+    grid-column: 1;
+  }
+
+  .game-sidebar-left {
+    grid-row: 2;
+  }
+
+  .game-sidebar-right {
+    grid-row: 3;
+  }
+
+  .game-sidebar-left,
+  .game-sidebar-right {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .skills-card,
+  .system-log-card {
+    max-height: 180px;
+  }
+}
+
+@media (max-width: 560px) {
+  .screen {
+    padding: 20px;
+  }
+
+  button.main-menu-btn {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 10px;
+    gap: 16px;
+  }
+
+  .main-menu-btn-text {
+    font-size: 20px;
+  }
+
+  .main-menu-modal {
+    inset: 12px;
+    padding: 18px;
+  }
+
+  .select-stage-number {
+    font-size: 22px;
+  }
+
+  .select-stage-title,
+  .gameplay-setting-item-title,
+  .control-setting-section-title,
+  .skill-key-setting-label {
+    font-size: 20px;
+  }
+
+  .select-stage-description,
+  .main-menu-modal-description,
+  .result-subtitle {
+    font-size: 15px;
+  }
+
+  .settings-content {
+    padding: 18px;
+    min-height: 300px;
+  }
+
+  .audio-setting-label,
+  .control-setting-label {
+    font-size: 18px;
+  }
+
+  .audio-setting-value {
+    width: 76px;
+    font-size: 20px;
+  }
+
+  .audio-mute-btn {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+  .control-setting-section-header,
+  .skill-key-setting-item,
+  .pause-btn-group,
+  .result-btn-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .control-reset-btn,
+  .skill-key-input,
+  .pause-btn,
+  .result-btn {
+    width: 100%;
+  }
+
+  .control-switch-row {
+    gap: 20px;
+  }
+
+  .game-layout {
+    padding: 8px;
+    grid-template-rows: minmax(360px, 56dvh) auto auto;
+  }
+
+  .game-sidebar-left,
+  .game-sidebar-right {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-title {
+    font-size: 18px;
+  }
+
+  .game-stage-number,
+  .score-value {
+    font-size: 28px;
+  }
+
+  .intro-content,
+  .result-content,
+  .pause-content {
+    width: calc(100vw - 24px);
+    padding: 32px 18px;
+  }
+
+  .intro-stage-label,
+  .pause-title,
+  .result-title {
+    font-size: clamp(36px, 12vw, 56px);
+  }
+
+  .intro-text-box {
+    padding: 20px 16px;
+  }
+}
