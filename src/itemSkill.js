@@ -98,11 +98,14 @@ document.addEventListener('keydown', e => {
 		onSkillUse('slow');
 		GameState.activeSkills.slow = true;
 
+		const screenEffect = document.getElementById('slow-screen-effect');
+		screenEffect?.classList.add('active');
+
 		setTimeout(() => {
-			GameState.balls.forEach(b => {	
+			GameState.balls.forEach(b => {
 				if(!b.isLaunched) return;
-				if(b.originVx === undefined) return; 
-				
+				if(b.originVx === undefined) return;
+
 				// 현재 방향은 유지하고 속도 크기만 2배로 복구
     			const speed = Math.hypot(b.vx, b.vy); // 현재 속도 크기
     			const originalSpeed = Math.hypot(b.originVx, b.originVy); // 원래 속도 크기
@@ -115,6 +118,7 @@ document.addEventListener('keydown', e => {
 			});
 			GameState.activeSkills.slow = false;
 			overlay?.remove();
+			screenEffect?.classList.remove('active');
 		}, 4000);
 		
 	}

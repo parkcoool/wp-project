@@ -577,6 +577,57 @@ button.main-menu-btn:hover {
   height: 100%;
 }
 
+/* ── 슬로우 스킬 화면 이펙트 ── */
+#slow-screen-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(89, 195, 255, 0.1) 70%,
+    rgba(89, 195, 255, 0.28) 100%
+  );
+}
+
+#slow-screen-effect.active {
+  opacity: 1;
+  animation: slow-effect-pulse 1.4s ease-in-out infinite;
+}
+
+#slow-screen-effect::before {
+  content: 'TIME  SLOW';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Jersey 25', sans-serif;
+  font-size: 18px;
+  color: #59c3ff;
+  letter-spacing: 0.25em;
+  text-shadow:
+    0 0 12px rgba(89, 195, 255, 0.9),
+    0 0 24px rgba(89, 195, 255, 0.5);
+  white-space: nowrap;
+}
+
+@keyframes slow-effect-pulse {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 50px rgba(89, 195, 255, 0.2),
+      inset 0 0 0 2px rgba(89, 195, 255, 0.25);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 90px rgba(89, 195, 255, 0.4),
+      inset 0 0 0 2px rgba(89, 195, 255, 0.5);
+  }
+}
+
 /* ── 우측 패널 ── */
 .score-card {
   flex-shrink: 0;
