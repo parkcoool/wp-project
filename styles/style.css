@@ -1014,10 +1014,15 @@ button.main-menu-btn:hover {
   border-radius: 16px;
   height: 100%;
   padding: 80px;
+  overflow: auto;
 }
 
 .settings-content.active {
   display: block;
+}
+
+.settings-content > * {
+  max-width: 100%;
 }
 
 .audio-settings {
@@ -1031,6 +1036,7 @@ button.main-menu-btn:hover {
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
+  max-width: 100%;
 }
 
 .audio-setting-label {
@@ -1044,6 +1050,7 @@ button.main-menu-btn:hover {
 
 .audio-setting-slider {
   flex: 1 1 auto;
+  min-width: 0;
   width: 100%;
   max-width: 800px;
   margin-left: 40px;
@@ -1431,7 +1438,8 @@ button.main-menu-btn:hover {
 .gameplay-setting-dropdown {
   margin-top: 12px;
   position: relative;
-  width: 800px;
+  width: min(800px, 100%);
+  max-width: 100%;
 }
 
 .gameplay-setting-dropdown.open {
@@ -1867,6 +1875,11 @@ button.main-menu-btn:hover {
     padding: 32px;
   }
 
+  .settings-content.active {
+    display: flex;
+    flex-direction: column;
+  }
+
   .audio-setting-item,
   .control-setting-item {
     flex-wrap: wrap;
@@ -1880,6 +1893,10 @@ button.main-menu-btn:hover {
   .audio-setting-slider,
   .audio-setting-value {
     margin-left: 0;
+  }
+
+  .audio-setting-slider {
+    max-width: none;
   }
 }
 
