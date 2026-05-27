@@ -1529,11 +1529,13 @@ button.main-menu-btn:hover {
 }
 
 #menu-screen.active {
-  min-height: 100dvh;
-  overflow-y: auto;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .main-menu-modal {
+  max-height: calc(100dvh - 160px);
   overflow-y: auto;
 }
 
@@ -1574,6 +1576,7 @@ button.main-menu-btn:hover {
     left: 48px;
     width: calc(100% - 96px);
     height: calc(100% - 96px);
+    max-height: calc(100dvh - 96px);
     padding: 32px;
   }
 
@@ -1634,6 +1637,166 @@ button.main-menu-btn:hover {
   .main-system-title,
   .main-system-description {
     text-align: right;
+  }
+}
+
+@media (max-height: 850px) {
+  .screen {
+    padding-top: clamp(28px, 5vh, 56px);
+    padding-bottom: clamp(28px, 5vh, 56px);
+  }
+
+  .start-title-box .start-main-title {
+    font-size: clamp(48px, 7vh, 72px);
+  }
+
+  .start-title-box .start-sub-title {
+    font-size: clamp(26px, 4vh, 36px);
+    margin-top: 8px;
+  }
+
+  .main-menu-box {
+    margin-top: clamp(32px, 7vh, 72px);
+    gap: 14px;
+  }
+
+  button.main-menu-btn {
+    padding: 14px 22px;
+  }
+
+  .main-menu-btn-text {
+    font-size: 22px;
+  }
+
+  .main-system-box {
+    position: static;
+    margin-top: 24px;
+    margin-left: auto;
+  }
+
+  .main-system-description {
+    min-height: 0;
+  }
+
+  .main-menu-modal {
+    position: fixed;
+    inset: clamp(20px, 5vh, 48px) clamp(20px, 5vw, 48px);
+    width: auto;
+    height: auto;
+    max-height: none;
+    padding: 28px;
+  }
+
+  .main-menu-modal-close-btn {
+    top: 28px;
+    right: 28px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .main-menu-modal-title-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .main-menu-modal-title {
+    font-size: 30px;
+  }
+
+  .main-menu-modal-description {
+    font-size: 18px;
+  }
+
+  .select-stage-box {
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .select-stage-content {
+    padding: 16px;
+    padding-bottom: 72px;
+  }
+
+  .select-stage-title {
+    font-size: 22px;
+  }
+
+  .select-stage-description {
+    font-size: 15px;
+  }
+
+  .select-stage-difficulty {
+    margin-top: 12px;
+    font-size: 22px;
+  }
+
+  .select-stage-skill {
+    font-size: 16px;
+  }
+
+  .select-stage-btn {
+    padding: 12px 18px;
+    font-size: 18px;
+  }
+
+  .settings-body,
+  .credit-body {
+    margin-top: 24px;
+  }
+
+  .settings-menu {
+    gap: 14px;
+    margin-right: 24px;
+  }
+
+  .settings-menu-btn {
+    min-width: 160px;
+    padding: 16px;
+  }
+
+  .settings-content {
+    padding: 36px;
+    overflow-y: auto;
+  }
+
+  .audio-settings {
+    gap: 20px;
+  }
+
+  .audio-setting-label,
+  .control-setting-label,
+  .skill-key-setting-label {
+    font-size: 20px;
+  }
+
+  .gameplay-setting-item {
+    margin-top: 22px;
+  }
+
+  .gameplay-setting-item-title,
+  .control-setting-section-title {
+    font-size: 22px;
+  }
+
+  .gameplay-dropdown-selected {
+    font-size: 26px;
+  }
+
+  .gameplay-dropdown-option {
+    font-size: 22px;
+  }
+
+  .credit-title {
+    font-size: 46px;
+  }
+
+  .credit-subtitle {
+    font-size: 24px;
+  }
+
+  .credit-list {
+    margin-top: 32px;
+    gap: 28px;
   }
 }
 
