@@ -8,7 +8,7 @@ window.onBrickDestroyed = function(brick) {
 		GameState.items.push( {
 			x: brick.x + brick.w /2 - 12,
 			y: brick.y,
-			vy: 3,
+			vy: 2,
 			type: 'fuel',
 			alive: true,
 			w: brick.w,
@@ -19,7 +19,7 @@ window.onBrickDestroyed = function(brick) {
 		GameState.items.push({
 			x: brick.x + brick.w / 2 - 12,
 			y: brick.y,
-			vy: 3,
+			vy: 2,
 			type: 'debris',
 			alive: true,
 			w: brick.w,
