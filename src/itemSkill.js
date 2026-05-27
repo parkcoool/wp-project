@@ -1,5 +1,6 @@
 import { GameState, FUEL_COSTS } from "./state.js";
 import { onFuelItemPickup, onDebrisPickup, onSkillUse } from "./fuelSystem.js";
+import { addSystemLog } from "./stageManager.js";
 
 window.onBrickDestroyed = function(brick) {
 	const roll = Math.random();
@@ -97,6 +98,7 @@ document.addEventListener('keydown', e => {
 		});
 		onSkillUse('slow');
 		GameState.activeSkills.slow = true;
+		addSystemLog("Time Slow Active", "warning");
 
 		const screenEffect = document.getElementById('slow-screen-effect');
 		screenEffect?.classList.add('active');
@@ -117,6 +119,7 @@ document.addEventListener('keydown', e => {
 				b.originVy = undefined;
 			});
 			GameState.activeSkills.slow = false;
+			addSystemLog("Time Slow Ended", "normal");
 			overlay?.remove();
 			screenEffect?.classList.remove('active');
 		}, 4000);
@@ -130,6 +133,7 @@ document.addEventListener('keydown', e => {
 		onSkillUse('laser');
 		GameState.activeSkills.laser = true;
 		GameState.activeSkills.laserStartTime = Date.now();
+		addSystemLog("Laser Fired!", "warning");
 
 		// 쿨타임 오버레이 추가
 		const ring = document.getElementById('skill-ring-laser');
