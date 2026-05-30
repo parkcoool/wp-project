@@ -542,8 +542,9 @@ export function initEngine() {
       GameState.balls.forEach(ball => {
         if (!ball.isLaunched) {
           ball.isLaunched = true;
-          ball.vx = 5;  // 초기 x 속도
-          ball.vy = -5; // 초기 y 속도
+          const speed = 7.07;
+          ball.vx = 0;  // 초기 x 속도
+          ball.vy = -speed; // 초기 y 속도
           playSoundEffect("pulseShot");
           onBallLaunch(); 
         }
