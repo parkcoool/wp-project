@@ -97,15 +97,6 @@ export function drainFuel(amount, logMsg = null, logType = "normal") {
   if (logMsg) _cb.addSystemLog(logMsg, logType);
 
   if (GameState.fuel.current <= 0) {
-    if (GameState.lives > 1) {
-      GameState.lives -= 1;
-      GameState.fuel.current = Math.max(10, Math.floor(GameState.fuel.max * 0.3));
-      _clampFuel();
-      _updateFuelUI();
-      _cb.addSystemLog("Loki Shield Activated : Extra Life Used", "positive");
-      return;
-    }
-
     _cb.triggerGameOver();
   }
 }
@@ -131,7 +122,7 @@ export function addFuel(amount) {
     GameState.fuel.current >= overchargeThreshold
   ) {
     GameState.fuel.isOverchargeShieldActive = true;
-    _cb.addSystemLog("Aux Shield Ready!", "positive");
+    _cb.addSystemLog("Rocky Shield Ready!", "positive");
   }
 }
 
@@ -162,7 +153,7 @@ export function onBallMiss() {
   if (GameState.fuel.isOverchargeShieldActive) {
     GameState.fuel.isOverchargeShieldActive = false;
     GameState.fuel.shieldUsedThisStage = true;
-    _cb.addSystemLog("Aux Shield Absorbed the hit!", "positive");
+    _cb.addSystemLog("Rocky Shield Absorbed the hit!", "positive");
     return;
   }
 
