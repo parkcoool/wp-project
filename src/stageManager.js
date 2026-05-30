@@ -158,7 +158,7 @@ export function onBrickHit(brickIndex) {
       GameState.paddle.w *= GameState.paddle.widthBoost;
       GameState.paddle.h *= GameState.paddle.widthBoost;
       GameState.paddle.hasXenonite = true;
-      addSystemLog("Xenonite Shield Expanded!", "positive");
+      addSystemLog("Xenonite Buff Activation", "positive");
     }
 
     // 아이템 드롭 (외부 등록 콜백)

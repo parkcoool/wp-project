@@ -679,7 +679,7 @@ function updatePhysics() {
         ) {
           GameState.balls.push(...createResonanceBalls(ball));
           GameState.hasResonanceTriggered = true;
-          addSystemLog("Resonance Achieved! Multiball!", "positive");
+          addSystemLog("Combo accomplished! Multi-ball added", "positive");
         }
         if (wasDestroyed) {
           createBrickShards(brick, brickStyle, ball.x, ball.y);
