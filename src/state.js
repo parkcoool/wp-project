@@ -172,7 +172,12 @@ export const GameState = {
   fuel: {
     current: 100,
     max: 100,
+    isOverchargeShieldActive: false,
+    shieldUsedThisStage: false,
   },
+
+  lives: 3,
+  hasResonanceTriggered: false,
 
   /**
    * @type {Array<{
@@ -188,8 +193,8 @@ export const GameState = {
   /** @type {Array<{x: number, y: number, vx: number, vy: number, r: number}>} */
   balls: [],
 
-  /** @type {{x: number, y: number, w: number, h: number}} */
-  paddle: { x: 0, y: 0, w: 160, h: 107 },
+  /** @type {{x: number, y: number, w: number, h: number, widthBoost: number, hasXenonite: boolean}} */
+  paddle: { x: 0, y: 0, w: 160, h: 107, widthBoost: 1, hasXenonite: false },
 
   controls: {
     paddleSensitivity: 1,

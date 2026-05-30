@@ -97,6 +97,15 @@ export function drainFuel(amount, logMsg = null, logType = "normal") {
   if (logMsg) _cb.addSystemLog(logMsg, logType);
 
   if (GameState.fuel.current <= 0) {
+    if (GameState.lives > 1) {
+      GameState.lives -= 1;
+      GameState.fuel.current = Math.max(10, Math.floor(GameState.fuel.max * 0.3));
+      _clampFuel();
+      _updateFuelUI();
+      _cb.addSystemLog("Loki Shield Activated : Extra Life Used", "positive");
+      return;
+    }
+
     _cb.triggerGameOver();
   }
 }
@@ -112,6 +121,18 @@ export function addFuel(amount) {
   _clampFuel();
   _updateFuelUI();
   _cb.addSystemLog(`Fuel +${amount}`, "positive");
+
+  const overchargeThreshold = Math.ceil(GameState.fuel.max * 0.9);
+  if (
+    GameState.currentStage >= 2 &&
+    GameState.paddle.hasXenonite &&
+    !GameState.fuel.isOverchargeShieldActive &&
+    !GameState.fuel.shieldUsedThisStage &&
+    GameState.fuel.current >= overchargeThreshold
+  ) {
+    GameState.fuel.isOverchargeShieldActive = true;
+    _cb.addSystemLog("Aux Shield Ready!", "positive");
+  }
 }
 
 /**
@@ -138,6 +159,13 @@ export function onBallLaunch() {
  * 공을 놓쳤을 때 물리 레이어에서 호출.
  */
 export function onBallMiss() {
+  if (GameState.fuel.isOverchargeShieldActive) {
+    GameState.fuel.isOverchargeShieldActive = false;
+    GameState.fuel.shieldUsedThisStage = true;
+    _cb.addSystemLog("Aux Shield Absorbed the hit!", "positive");
+    return;
+  }
+
   drainFuel(FUEL_COSTS.ballMiss, "Energy Pulse Lost..", "warning");
 }
 

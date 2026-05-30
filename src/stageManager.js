@@ -40,6 +40,12 @@ export function initStage(stageNum) {
   GameState.systemLog = [];
   GameState.fuel.max = config.maxFuel;
   GameState.fuel.current = config.startFuel;
+  GameState.fuel.isOverchargeShieldActive = false;
+  GameState.fuel.shieldUsedThisStage = false;
+  GameState.lives = 3;
+  GameState.hasResonanceTriggered = false;
+  GameState.paddle.widthBoost = 1;
+  GameState.paddle.hasXenonite = false;
   GameState.unlockedSkills = [...config.unlockedSkills];
   GameState.activeSkills = { slow: false, laser: false, laserStartTime: 0 };
   GameState.balls = [];
@@ -142,6 +148,18 @@ export function onBrickHit(brickIndex) {
     GameState.score += _getScoreForBrick(brick);
     _updateScoreUI();
     addSystemLog("Astrophage Destroyed!", "positive");
+
+    if (
+      GameState.currentStage >= 2 &&
+      !GameState.paddle.hasXenonite &&
+      (brick.type === "tough" || brick.type === "armored")
+    ) {
+      GameState.paddle.widthBoost = 1.4;
+      GameState.paddle.w *= GameState.paddle.widthBoost;
+      GameState.paddle.h *= GameState.paddle.widthBoost;
+      GameState.paddle.hasXenonite = true;
+      addSystemLog("Xenonite Shield Expanded!", "positive");
+    }
 
     // 아이템 드롭 (외부 등록 콜백)
     if (typeof window.onBrickDestroyed === "function") {
@@ -259,11 +277,6 @@ function _proliferateAstrophage() {
  */
 export function startPlaying() {
   GameState.status = "playing";
-
-  // 스테이지 2 패들 버프
-  if(GameState.currentStage === 2) {
-    GameState.paddle.w = 240;
-  }
 
   _hideOverlay("stage-intro-overlay");
   _hideOverlay("pause-overlay");

@@ -1,5 +1,5 @@
 import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT } from "./state.js";
-import { onBrickHit } from "./stageManager.js";
+import { onBrickHit, addSystemLog } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 import { playSoundEffect } from "./audio.js";
 import { updateItems, drawItems } from "./itemSkill.js";
@@ -32,6 +32,9 @@ const BRICK_TYPE_STYLES = {
 };
 const paddleImage = new Image();
 paddleImage.src = new URL("../assets/images/sprites/hail-mary.png", import.meta.url).href;
+
+const paddleImageXenonite = new Image();
+paddleImageXenonite.src = new URL("../assets/images/sprites/hail-mary_xenonite.png", import.meta.url).href;
 
 function drawRoundedRect(ctx, x, y, w, h, radius) {
   const r = Math.min(radius, w / 2, h / 2);
@@ -403,7 +406,7 @@ function syncPaddleSize() {
 }
 
 function syncPaddleWidth(canvasWidth = canvas?.width ?? 0) {
-  GameState.paddle.w = clamp(canvasWidth * 0.18, 92, 160);
+  GameState.paddle.w = clamp(canvasWidth * 0.18, 92, 160) * (GameState.paddle.widthBoost ?? 1);
   syncPaddleSize();
 }
 
@@ -426,6 +429,22 @@ function getPaddleSensitivityMultiplier() {
   return 1 + normalizedSensitivity * 2;
 }
 
+function createResonanceBalls(sourceBall) {
+  const speed = Math.max(Math.hypot(sourceBall.vx, sourceBall.vy), 5);
+  const baseAngle = Math.atan2(sourceBall.vy, sourceBall.vx);
+  const spread = Math.PI / 9;
+
+  return [spread, -spread].map((angleOffset) => ({
+    x: sourceBall.x,
+    y: sourceBall.y,
+    vx: Math.cos(baseAngle + angleOffset) * speed,
+    vy: Math.sin(baseAngle + angleOffset) * speed,
+    r: sourceBall.r,
+    isLaunched: true,
+    combo: 0,
+  }));
+}
+
 // 포인터(마우스/터치)로 패들을 조작합니다 (이전 키보드 입력 제거)
 
 /**
@@ -436,6 +455,7 @@ export function initEngine() {
   ctx = canvas.getContext("2d");
   syncPaddleWidth(canvas.width);
   paddleImage.addEventListener("load", () => syncPaddleWidth(canvas.width));
+  paddleImageXenonite.addEventListener("load", () => syncPaddleWidth(canvas.width));
 
   // index.js에서 호출할 수 있도록 전역 함수로 등록
   window.onCanvasResize = (w, h) => {
@@ -482,7 +502,8 @@ export function initEngine() {
       vx: 0,
       vy: 0,
       r: BALL_RADIUS,
-      isLaunched: false // 스페이스바로 발사하기 전 상태
+      isLaunched: false, // 스페이스바로 발사하기 전 상태
+      combo: 0,
     }];
 
     if (!animationId) {
@@ -570,14 +591,22 @@ function updatePhysics() {
     // 바닥에 떨어짐 (Miss)
     if (ball.y - ball.r > height) {
       GameState.balls.splice(i, 1); // 배열에서 공 제거
-      onBallMiss(); 
+
+      // 남은 공이 없을 때만 연료 감소 처리
+      if (GameState.balls.length === 0) {
+        onBallMiss(); 
+      }
       
       // 공이 다 떨어지면 새로 생성 (임시 로직 - 나중에 생명력 개념 추가 가능)
       if (GameState.balls.length === 0 && GameState.status === "playing") {
          GameState.balls.push({
             x: paddle.x + paddle.w / 2,
             y: getAttachedBallY(paddle, ball.r),
-            vx: 0, vy: 0, r: BALL_RADIUS, isLaunched: false
+            vx: 0,
+            vy: 0,
+            r: BALL_RADIUS,
+            isLaunched: false,
+            combo: 0,
          });
       }
       return;
@@ -591,10 +620,18 @@ function updatePhysics() {
       ball.x + ball.r > paddleHitbox.x &&
       ball.x - ball.r < paddleHitbox.x + paddleHitbox.w
     ) {
-      ball.vy *= -1;
+      // 반사 각도를 이용해 속도의 크기(에너지)를 보존하도록 조정
       const hitPoint = (ball.x - (paddleHitbox.x + paddleHitbox.w / 2)) / (paddleHitbox.w / 2);
-      ball.vx = hitPoint * 6; // 최대 속도 조절
-      ball.y = paddleHitbox.y - ball.r; 
+      const maxAngle = Math.PI / 3; // 패들 끝에서 약 60도까지 각도 변경 허용
+      const angle = hitPoint * maxAngle;
+      const prevSpeed = Math.hypot(ball.vx, ball.vy) || 6; // 속도 보존, 0일 경우 기본값 사용
+      const minSpeed = 4;
+      const speed = Math.max(prevSpeed, minSpeed);
+
+      ball.vx = Math.sin(angle) * speed;
+      ball.vy = -Math.cos(angle) * speed; // 항상 위로 반사
+      ball.y = paddleHitbox.y - ball.r;
+      ball.combo = 0;
     }
 
     // 아스트로파지(벽돌) 충돌
@@ -630,6 +667,19 @@ function updatePhysics() {
 
         const brickStyle = getBrickStyle(brick);
         const wasDestroyed = onBrickHit(brickIndex); // 벽돌 체력/점수 로직 호출
+        const prevCombo = ball.combo || 0;
+        ball.combo = prevCombo + 1;
+        if (
+          GameState.currentStage >= 2 &&
+          GameState.paddle.hasXenonite &&
+          !GameState.hasResonanceTriggered &&
+          ball.combo >= 4 &&
+          prevCombo < 4
+        ) {
+          GameState.balls.push(...createResonanceBalls(ball));
+          GameState.hasResonanceTriggered = true;
+          addSystemLog("Resonance Achieved! Multiball!", "positive");
+        }
         if (wasDestroyed) {
           createBrickShards(brick, brickStyle, ball.x, ball.y);
         }
@@ -729,11 +779,12 @@ function draw() {
   // 1. 패들(헤일메리호) 그리기
   const p = GameState.paddle;
   syncPaddleSize();
-  if (paddleImage.complete) {
+  const currentPaddleImage = GameState.paddle.hasXenonite ? paddleImageXenonite : paddleImage;
+  if (currentPaddleImage.complete) {
     ctx.save();
     ctx.shadowColor = "rgba(0, 255, 157, 0.85)";
     ctx.shadowBlur = 8;
-    ctx.drawImage(paddleImage, p.x, p.y, p.w, p.h);
+    ctx.drawImage(currentPaddleImage, p.x, p.y, p.w, p.h);
     ctx.restore();
   } else {
     ctx.fillStyle = "#e94560";
