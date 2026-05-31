@@ -1,4 +1,4 @@
-import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT } from "./state.js";
+import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT, STAGE_CONFIG } from "./state.js";
 import { onBrickHit, addSystemLog } from "./stageManager.js";
 import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
 import { playSoundEffect } from "./audio.js";
@@ -626,7 +626,8 @@ export function initEngine() {
       GameState.balls.forEach((ball) => {
         if (!ball.isLaunched) {
           ball.isLaunched = true;
-          const speed = 7.07;
+          const config = STAGE_CONFIG[GameState.currentStage];
+          const speed = config?.ballSpeed ?? 7.07;
           ball.vx = 0; // 초기 x 속도
           ball.vy = -speed; // 초기 y 속도
           playSoundEffect("pulseShot");
