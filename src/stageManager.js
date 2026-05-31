@@ -50,15 +50,15 @@ export function initStage(stageNum) {
   GameState.activeSkills = { slow: false, laser: false, laserStartTime: 0 };
   GameState.balls = [];
   GameState.items = [];
-  
+
   // 증식 타이머 정리
   _clearProliferateTimer();
-  
+
   // 게임 화면으로 전환
   showScreen("game-screen");
-  window.resizeCanvas?.();  //resize 전에는 게임 화면이 display:none이므로 캔버스 크기가 0이었음. 강제 resize로 초기화.
+  window.resizeCanvas?.(); //resize 전에는 게임 화면이 display:none이므로 캔버스 크기가 0이었음. 강제 resize로 초기화.
   GameState.bricks = _generateBricks(stageNum); //캔버스 크기를 확정한 후 벽돌 생성하도록 수정(canvas.width가 0이어서 벽돌 너비가 이상하게 계산되는 문제 해결)
-  
+
   // 스테이지별 배경 클래스 교체
   const gameScreen = document.getElementById("game-screen");
   gameScreen.className = `screen game-screen active ${config.backgroundClass}`;
@@ -68,6 +68,10 @@ export function initStage(stageNum) {
 
   // 연료 게이지 초기화
   resetFuelUI();
+
+  // 버프 화면 이펙트 초기화
+  const _multiballEl = document.getElementById("multiball-screen-effect");
+  if (_multiballEl) _multiballEl.classList.remove("flash");
 
   // 점수 초기화
   _updateScoreUI();
@@ -94,8 +98,7 @@ export function initStage(stageNum) {
  */
 function _generateBricks(stageNum) {
   const config = STAGE_CONFIG[stageNum];
-  const { brickOffsetX, brickOffsetY, brickHeight, brickGapX, brickGapY } =
-    CANVAS_LAYOUT;
+  const { brickOffsetX, brickOffsetY, brickHeight, brickGapX, brickGapY } = CANVAS_LAYOUT;
   const { rows, cols, rowHp } = config;
 
   const canvas = document.getElementById("game-canvas");

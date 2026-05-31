@@ -11,7 +11,7 @@
 
 #menu-screen {
   position: relative;
-  background-image: url('../assets/images/background/menu-background2.png');
+  background-image: url("../assets/images/background/menu-background2.png");
   background-size: cover;
   background-position: center;
 }
@@ -68,14 +68,14 @@
 .start-title-box .start-main-title {
   font-size: 80px;
   color: #eaf4ff;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   letter-spacing: 0.1em;
 }
 
 .start-title-box .start-sub-title {
   font-size: 40px;
   color: #ffc857;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   letter-spacing: 0.3em;
   margin-top: 16px;
 }
@@ -117,7 +117,7 @@ button.main-menu-btn:hover {
   color: #eaf4ff;
   text-align: right;
   flex-grow: 1;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .main-menu-btn-icon {
@@ -135,14 +135,14 @@ button.main-menu-btn:hover {
 .main-system-title {
   font-size: 24px;
   color: #ffc857;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   text-align: right;
 }
 
 .main-system-description {
   font-size: 20px;
   color: #eaf4ff;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   text-align: right;
   margin-top: 4px;
   letter-spacing: 2.5%;
@@ -151,7 +151,7 @@ button.main-menu-btn:hover {
 }
 
 .main-system-description.is-typing::after {
-  content: '|';
+  content: "|";
   display: inline-block;
   margin-left: 4px;
   animation: system-cursor-blink 0.8s steps(2, start) infinite;
@@ -222,14 +222,14 @@ button.main-menu-btn:hover {
 .main-menu-modal-title {
   font-size: 36px;
   color: #eaf4ff;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .main-menu-modal-description {
   margin-top: 12px;
   font-size: 24px;
   color: #8e9baa;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .select-stage-box {
@@ -263,7 +263,7 @@ button.main-menu-btn:hover {
   left: 20px;
   font-size: 28px;
   color: #eaf4ff;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
 }
 
 .select-stage-image {
@@ -283,20 +283,20 @@ button.main-menu-btn:hover {
   font-size: 28px;
   font-weight: bold;
   color: #eaf4ff;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .select-stage-description {
   margin-top: 8px;
   font-size: 18px;
   color: #8e9baa;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .select-stage-difficulty {
   margin-top: 16px;
   font-size: 28px;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
 }
 
 .select-stage-difficulty.easy {
@@ -315,7 +315,7 @@ button.main-menu-btn:hover {
   margin-top: 8px;
   font-size: 20px;
   color: #00ff9d;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .select-stage-btn {
@@ -326,7 +326,7 @@ button.main-menu-btn:hover {
   border: 3px solid #ff7a1a;
   color: #ff7a1a;
   font-size: 20px;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
@@ -359,17 +359,17 @@ button.main-menu-btn:hover {
 
 /* ── 스테이지별 배경 이미지 ── */
 .game-screen.bg-stage01 {
-  background-image: url('../assets/images/background/stage1-background.png');
+  background-image: url("../assets/images/background/stage1-background.png");
   background-size: cover;
   background-position: center;
 }
 .game-screen.bg-stage02 {
-  background-image: url('../assets/images/background/stage2-background.png');
+  background-image: url("../assets/images/background/stage2-background.png");
   background-size: cover;
   background-position: center;
 }
 .game-screen.bg-stage03 {
-  background-image: url('../assets/images/background/stage3-background.png');
+  background-image: url("../assets/images/background/stage3-background.png");
   background-size: cover;
   background-position: center;
 }
@@ -412,14 +412,14 @@ button.main-menu-btn:hover {
 }
 
 .brand-title {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 20px;
   color: #eaf4ff;
   line-height: 1.2;
 }
 
 .brand-sub {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 13px;
   color: #ffc857;
   letter-spacing: 0.2em;
@@ -432,14 +432,14 @@ button.main-menu-btn:hover {
 }
 
 .game-stage-number {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 32px;
   color: #eaf4ff;
   line-height: 1;
 }
 
 .game-stage-name {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #59c3ff;
@@ -459,13 +459,13 @@ button.main-menu-btn:hover {
 }
 
 .fuel-title {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 24px;
   color: #eaf4ff;
 }
 
 .fuel-percent-text {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 18px;
   color: #ffc857;
   transition: color 0.3s;
@@ -499,13 +499,13 @@ button.main-menu-btn:hover {
 }
 
 .skills-title {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 24px;
   color: #eaf4ff;
 }
 
 .skills-subtitle {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 13px;
   color: #8e9baa;
   margin-top: 2px;
@@ -550,13 +550,13 @@ button.main-menu-btn:hover {
 }
 
 .skill-key {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 18px;
   line-height: 1;
 }
 
 .skill-label {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 11px;
   color: #ffc857;
   text-align: center;
@@ -564,7 +564,7 @@ button.main-menu-btn:hover {
 }
 
 .no-skill-text {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 13px;
   color: #8e9baa;
 }
@@ -609,12 +609,12 @@ button.main-menu-btn:hover {
 }
 
 #slow-screen-effect::before {
-  content: 'TIME  SLOW';
+  content: "TIME  SLOW";
   position: absolute;
   top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 18px;
   color: #59c3ff;
   letter-spacing: 0.25em;
@@ -638,20 +638,131 @@ button.main-menu-btn:hover {
   }
 }
 
+/* ── 로키 쉴드 화면 이펙트 ── */
+#shield-screen-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#shield-screen-effect.active {
+  opacity: 1;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 255, 157, 0.06) 80%,
+    rgba(0, 255, 157, 0.18) 100%
+  );
+  animation: shield-effect-pulse 2s ease-in-out infinite;
+}
+
+#shield-screen-effect.active::before {
+  content: "ROCKY SHIELD  READY";
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Jersey 25", sans-serif;
+  font-size: 16px;
+  color: #00ff9d;
+  letter-spacing: 0.2em;
+  text-shadow:
+    0 0 10px rgba(0, 255, 157, 0.9),
+    0 0 20px rgba(0, 255, 157, 0.5);
+  white-space: nowrap;
+}
+
+@keyframes shield-effect-pulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 40px rgba(0, 255, 157, 0.1),
+      inset 0 0 0 2px rgba(0, 255, 157, 0.2);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 80px rgba(0, 255, 157, 0.25),
+      inset 0 0 0 2px rgba(0, 255, 157, 0.45);
+  }
+}
+
+#shield-screen-effect.absorbed {
+  animation: shield-absorb-flash 0.5s ease forwards;
+}
+
+@keyframes shield-absorb-flash {
+  0% {
+    opacity: 1;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(0, 255, 157, 0.5) 0%,
+      rgba(0, 255, 157, 0.25) 50%,
+      rgba(0, 255, 157, 0.08) 100%
+    );
+    box-shadow:
+      inset 0 0 120px rgba(0, 255, 157, 0.45),
+      inset 0 0 0 3px rgba(0, 255, 157, 0.7);
+  }
+  100% {
+    opacity: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+/* ── 공 분열 화면 이펙트 ── */
+#multiball-screen-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: 16px;
+  opacity: 0;
+}
+
+#multiball-screen-effect.flash {
+  animation: multiball-split-flash 0.5s ease forwards;
+}
+
+@keyframes multiball-split-flash {
+  0% {
+    opacity: 1;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(196, 150, 255, 0.35) 35%,
+      rgba(89, 195, 255, 0.15) 65%,
+      transparent 100%
+    );
+    box-shadow:
+      inset 0 0 80px rgba(196, 150, 255, 0.4),
+      inset 0 0 0 3px rgba(196, 150, 255, 0.6);
+  }
+  100% {
+    opacity: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
 /* ── 우측 패널 ── */
 .score-card {
   flex-shrink: 0;
 }
 
 .score-label {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 18px;
   color: #8e9baa;
   letter-spacing: 0.1em;
 }
 
 .score-value {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 36px;
   color: #ffc857;
   letter-spacing: 0.05em;
@@ -666,7 +777,7 @@ button.main-menu-btn:hover {
 }
 
 .system-log-title {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 18px;
   color: #8e9baa;
   letter-spacing: 0.1em;
@@ -694,7 +805,7 @@ button.main-menu-btn:hover {
 
 /* 로그 엔트리 색상 */
 .log-entry {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 16px;
   line-height: 1.4;
 }
@@ -743,7 +854,7 @@ button.main-menu-btn:hover {
 }
 
 .intro-stage-label {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 64px;
   color: #eaf4ff;
   letter-spacing: 0.1em;
@@ -757,7 +868,7 @@ button.main-menu-btn:hover {
 }
 
 .intro-text {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 18px;
   color: #eaf4ff;
   line-height: 1.8;
@@ -766,7 +877,7 @@ button.main-menu-btn:hover {
 }
 
 .intro-skill-unlock {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 20px;
   color: #00ff9d;
   letter-spacing: 0.05em;
@@ -776,7 +887,7 @@ button.main-menu-btn:hover {
   padding: 16px 48px;
   border: 2px solid #ff7a1a;
   color: #ff7a1a;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 24px;
   letter-spacing: 0.1em;
   background: transparent;
@@ -811,7 +922,7 @@ button.main-menu-btn:hover {
 }
 
 .pause-title {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 64px;
   font-weight: 900;
   color: #eaf4ff;
@@ -836,7 +947,7 @@ button.main-menu-btn:hover {
   min-height: 72px;
   padding: 16px 22px;
   border-radius: 8px;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #eaf4ff;
@@ -903,7 +1014,7 @@ button.main-menu-btn:hover {
 }
 
 .result-title {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 56px;
   letter-spacing: 0.08em;
 }
@@ -918,7 +1029,7 @@ button.main-menu-btn:hover {
 }
 
 .result-subtitle {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 20px;
   color: #8e9baa;
 }
@@ -931,7 +1042,7 @@ button.main-menu-btn:hover {
 
 .result-btn {
   padding: 14px 36px;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 20px;
   letter-spacing: 0.05em;
   border-radius: 8px;
@@ -991,7 +1102,7 @@ button.main-menu-btn:hover {
 
 .settings-menu-btn {
   padding: 24px;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 24px;
   color: #eaf4ff;
   background-color: rgba(14, 26, 43, 0.8);
@@ -1050,7 +1161,7 @@ button.main-menu-btn:hover {
 }
 
 .audio-setting-label {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: #eaf4ff;
@@ -1148,7 +1259,7 @@ button.main-menu-btn:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 24px;
   color: #eaf4ff;
   padding: 8px 0;
@@ -1213,7 +1324,7 @@ button.main-menu-btn:hover {
 }
 
 .control-setting-section-title {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 28px;
   font-weight: bold;
   color: #eaf4ff;
@@ -1224,7 +1335,7 @@ button.main-menu-btn:hover {
 }
 
 .control-setting-label {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: #eaf4ff;
@@ -1299,7 +1410,7 @@ button.main-menu-btn:hover {
   border: 2px solid #ff7a1a;
   border-radius: 8px;
   color: #ff7a1a;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 18px;
   font-weight: bold;
   transition:
@@ -1336,7 +1447,7 @@ button.main-menu-btn:hover {
 }
 
 .skill-key-setting-label {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 24px;
   font-weight: bold;
   color: #eaf4ff;
@@ -1349,7 +1460,7 @@ button.main-menu-btn:hover {
   border-radius: 8px;
   background-color: rgba(14, 26, 43, 0.8);
   color: #59c3ff;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 36px;
   text-align: center;
   text-transform: uppercase;
@@ -1375,7 +1486,7 @@ button.main-menu-btn:hover {
 }
 
 .credit-title {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 60px;
   color: #eaf4ff;
   letter-spacing: 0.1em;
@@ -1383,7 +1494,7 @@ button.main-menu-btn:hover {
 }
 
 .credit-subtitle {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 30px;
   color: #ffc857;
   text-align: center;
@@ -1407,14 +1518,14 @@ button.main-menu-btn:hover {
 }
 
 .credit-name {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 28px;
   color: #eaf4ff;
   font-weight: bold;
 }
 
 .credit-role {
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 28px;
   color: #ff7a1a;
 }
@@ -1439,7 +1550,7 @@ button.main-menu-btn:hover {
 }
 
 .gameplay-setting-item-title {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-size: 28px;
   font-weight: bold;
   color: #eaf4ff;
@@ -1483,7 +1594,7 @@ button.main-menu-btn:hover {
   text-align: left;
   font-size: 32px;
   color: #eaf4ff;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   letter-spacing: 0.05em;
 }
 
@@ -1520,7 +1631,7 @@ button.main-menu-btn:hover {
   width: 100%;
   padding: 16px 24px;
   text-align: left;
-  font-family: 'Jersey 25', sans-serif;
+  font-family: "Jersey 25", sans-serif;
   font-size: 28px;
   letter-spacing: 0.05em;
   color: #eaf4ff;

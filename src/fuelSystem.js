@@ -113,7 +113,7 @@ export function addFuel(amount) {
   _updateFuelUI();
   _cb.addSystemLog(`Fuel +${amount}`, "positive");
 
-  const overchargeThreshold = Math.ceil(GameState.fuel.max * 0.9);
+  const overchargeThreshold = Math.ceil(GameState.fuel.max * 0.8);
   if (
     GameState.currentStage >= 2 &&
     GameState.paddle.hasXenonite &&
@@ -123,6 +123,11 @@ export function addFuel(amount) {
   ) {
     GameState.fuel.isOverchargeShieldActive = true;
     _cb.addSystemLog("Rocky Shield Ready!", "positive");
+    const _shieldEl = document.getElementById("shield-screen-effect");
+    if (_shieldEl) {
+      _shieldEl.classList.remove("absorbed");
+      _shieldEl.classList.add("active");
+    }
   }
 }
 
@@ -133,6 +138,8 @@ export function addFuel(amount) {
 export function resetFuelUI() {
   _lowFuelWarned = false;
   _updateFuelUI();
+  const _shieldEl = document.getElementById("shield-screen-effect");
+  if (_shieldEl) _shieldEl.classList.remove("active", "absorbed");
 }
 
 // ─────────────────────────────────────────────
@@ -154,6 +161,13 @@ export function onBallMiss() {
     GameState.fuel.isOverchargeShieldActive = false;
     GameState.fuel.shieldUsedThisStage = true;
     _cb.addSystemLog("Rocky Shield Absorbed the hit!", "positive");
+    const _shieldEl = document.getElementById("shield-screen-effect");
+    if (_shieldEl) {
+      _shieldEl.classList.remove("active", "absorbed");
+      void _shieldEl.offsetWidth;
+      _shieldEl.classList.add("absorbed");
+      setTimeout(() => _shieldEl.classList.remove("absorbed"), 500);
+    }
     return;
   }
 
