@@ -16,7 +16,7 @@ window.onBrickDestroyed = function(brick) {
 			h: brick.h,
 		});
 	}
-	else if (roll < 0.3) {
+	else if (roll < 0.4) {
 		GameState.items.push({
 			x: brick.x + brick.w / 2 - 12,
 			y: brick.y,

@@ -489,7 +489,11 @@ export function initEngine() {
   };
 
   window.startGameLoop = () => {
-    lastPointerX = null;
+    //lastPointerX = null;
+    const rect = canvas.getBoundingClientRect();
+    const paddleCenterX = rect.left + GameState.paddle.x + GameState.paddle.w / 2;
+    const paddleCenterY = rect.top + GameState.paddle.y + GameState.paddle.h / 2;
+    lastPointerX = paddleCenterX - rect.left;
     brickShards = [];
     // 게임 시작 시 초기 공 생성 (패들 정중앙에 부착)
     if (GameState.paddle.y === 0) {
@@ -521,6 +525,7 @@ export function initEngine() {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     if (lastPointerX === null) {
+      GameState.paddle.x = x - GameState.paddle.w / 2;
       lastPointerX = x;
     } else {
       const pointerDelta = x - lastPointerX;
