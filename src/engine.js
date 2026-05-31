@@ -17,6 +17,7 @@ const BRICK_SHARD_DRAG = 0.982;
 const BRICK_SHARD_LIFE = 46;
 const BRICK_DUST_DRAG = 0.94;
 const BRICK_SPARK_DRAG = 0.965;
+const MAX_BRICK_SHARDS = 200;
 const BRICK_TYPE_STYLES = {
   normal: {
     alpha: 0.9,
@@ -134,6 +135,7 @@ function createBrickShards(brick, style, impactX, impactY) {
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
       if (Math.random() < 0.16 && !(row === 1 && col === 2)) continue;
+      if (brickShards.length >= MAX_BRICK_SHARDS) continue;
 
       const x = brick.x + col * shardW;
       const y = brick.y + row * shardH;
@@ -175,7 +177,7 @@ function createBrickShards(brick, style, impactX, impactY) {
     }
   }
 
-  for (let i = 0; i < 18; i += 1) {
+  for (let i = 0; i < 12 && brickShards.length < MAX_BRICK_SHARDS; i += 1) {
     const angle = impactAngle + Math.PI + randomBetween(-1.25, 1.25);
     const speed = randomBetween(2.6, 7.2);
     const size = randomBetween(2.2, 6.5);
@@ -202,7 +204,7 @@ function createBrickShards(brick, style, impactX, impactY) {
     });
   }
 
-  for (let i = 0; i < 24; i += 1) {
+  for (let i = 0; i < 14 && brickShards.length < MAX_BRICK_SHARDS; i += 1) {
     const angle = randomBetween(0, Math.PI * 2);
     const speed = randomBetween(0.7, 3.8);
     const maxLife = Math.floor(randomBetween(18, 34));
@@ -244,50 +246,64 @@ function updateBrickShards() {
     shard.life -= 1;
 
     if (shard.life <= 0) {
-      brickShards.splice(i, 1);
+      // swap-and-pop: O(1) 제거, splice O(n) 대비 성능 개선
+      brickShards[i] = brickShards[brickShards.length - 1];
+      brickShards.pop();
     }
   }
 }
 
 function drawBrickShards() {
-  brickShards.forEach((shard) => {
-    const alpha = Math.max(shard.life / shard.maxLife, 0);
+  if (brickShards.length === 0) return;
 
-    ctx.save();
-    ctx.globalAlpha = alpha * (shard.type === "dust" ? 0.72 : 1);
-    ctx.translate(shard.x, shard.y);
-    ctx.rotate(shard.rotation);
-    ctx.shadowColor = shard.glow;
-    ctx.shadowBlur = shard.type === "spark" ? 12 * alpha : 7 * alpha;
+  ctx.save();
+  ctx.shadowBlur = 0;
 
-    if (shard.type === "dust") {
-      ctx.beginPath();
-      ctx.arc(0, 0, shard.radius, 0, Math.PI * 2);
-      ctx.fillStyle = shard.fill;
-      ctx.fill();
-      ctx.restore();
-      return;
-    }
-
-    if (shard.type === "spark") {
-      ctx.beginPath();
-      ctx.moveTo(-shard.length * 0.42, 0);
-      ctx.lineTo(shard.length * 0.58, 0);
-      ctx.strokeStyle = shard.stroke;
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-      ctx.restore();
-      return;
-    }
-
+  // dust — 원형, shadow 없음, transform 없음 (한 번에 배치 처리)
+  for (let i = 0; i < brickShards.length; i += 1) {
+    const shard = brickShards[i];
+    if (shard.type !== "dust") continue;
+    const alpha = shard.life / shard.maxLife;
+    ctx.globalAlpha = alpha * 0.72;
+    ctx.fillStyle = shard.fill;
     ctx.beginPath();
-    shard.points.forEach((point, index) => {
-      if (index === 0) {
-        ctx.moveTo(point.x, point.y);
-      } else {
-        ctx.lineTo(point.x, point.y);
-      }
-    });
+    ctx.arc(shard.x, shard.y, shard.radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // spark — 선분, shadow 없음, setTransform 대신 수동 좌표 계산
+  ctx.lineWidth = 1.2;
+  for (let i = 0; i < brickShards.length; i += 1) {
+    const shard = brickShards[i];
+    if (shard.type !== "spark") continue;
+    const alpha = shard.life / shard.maxLife;
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = shard.stroke;
+    const cos = Math.cos(shard.rotation);
+    const sin = Math.sin(shard.rotation);
+    ctx.beginPath();
+    ctx.moveTo(shard.x + cos * (-shard.length * 0.42), shard.y + sin * (-shard.length * 0.42));
+    ctx.lineTo(shard.x + cos * (shard.length * 0.58), shard.y + sin * (shard.length * 0.58));
+    ctx.stroke();
+  }
+
+  // chunk / chip — 다각형, shadow 적용, setTransform으로 save/restore 대체
+  for (let i = 0; i < brickShards.length; i += 1) {
+    const shard = brickShards[i];
+    if (shard.type !== "chunk" && shard.type !== "chip") continue;
+    const alpha = shard.life / shard.maxLife;
+    ctx.globalAlpha = alpha;
+    ctx.shadowColor = shard.glow;
+    ctx.shadowBlur = 7 * alpha;
+
+    const cos = Math.cos(shard.rotation);
+    const sin = Math.sin(shard.rotation);
+    ctx.setTransform(cos, sin, -sin, cos, shard.x, shard.y);
+
+    const pts = shard.points;
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let j = 1; j < pts.length; j += 1) ctx.lineTo(pts[j].x, pts[j].y);
     ctx.closePath();
     ctx.fillStyle = shard.fill;
     ctx.fill();
@@ -310,8 +326,9 @@ function drawBrickShards() {
     ctx.strokeStyle = shard.shadow;
     ctx.lineWidth = 1;
     ctx.stroke();
-    ctx.restore();
-  });
+  }
+
+  ctx.restore();
 }
 
 function drawBallTail(ball, style) {
