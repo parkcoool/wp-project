@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
     once: true,
   });
 
+  const startBtn = document.getElementById("game-start-btn");
+  startBtn.addEventListener("click", () => {
+    initStage(1);
+  });
 
   // ── 메인 메뉴 모달 열기/닫기 ──
   const modalOpenBtn = document.querySelectorAll(".main-menu-btn");
