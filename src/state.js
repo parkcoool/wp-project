@@ -34,8 +34,8 @@ export const STAGE_CONFIG = {
     startFuel: 80,
     unlockedSkills: ["slow"],
     rowHp: [1, 1, 1, 1, 2, 2],
-    proliferate: false,
-    proliferateInterval: null,
+    proliferate: true,
+    proliferateInterval: 12000, // 12초마다 증식
     maxAliveBricks: 60,
     backgroundClass: "bg-stage02",
     introText:
@@ -53,7 +53,7 @@ export const STAGE_CONFIG = {
     unlockedSkills: ["slow", "laser"],
     rowHp: [3, 3, 2, 2, 2],
     proliferate: true,
-    proliferateInterval: 15000, // 15초마다 증식
+    proliferateInterval: 7000, // 7초마다 증식
     maxAliveBricks: 40,
     backgroundClass: "bg-stage03",
     introText:
@@ -152,7 +152,7 @@ export const APPEARANCE_PRESETS = {
       core: "#EAF4FF",
       shape: "comet",
     },
-    "singularity": {
+    singularity: {
       fill: "#151826",
       glow: "#9DAEFF",
       core: "#DDE8F5",

@@ -284,7 +284,7 @@ export function startPlaying() {
   _hideOverlay("stage-intro-overlay");
   _hideOverlay("pause-overlay");
 
-  // 스테이지 3 증식 타이머 시작
+  // 스테이지 2+ 증식 타이머 시작
   _startProliferateTimer();
 
   addSystemLog("Mission Start", "normal");
