@@ -106,7 +106,7 @@
                 아스트로파지를 파괴하여 헤일메리호의 연료를 채집하세요.
               </p>
               <p class="select-stage-difficulty easy">난이도: EASY</p>
-              <p class="select-stage-skill">해금 스킬: 없음</p>
+              <p class="select-stage-skill">해금 스킬: 슬로우</p>
             </div>
             <button class="select-stage-btn">MISSION START</button>
           </div>
@@ -123,7 +123,7 @@
                 미지의 생명체, 로키와 조우하고 협력해 항로를 개척하세요.
               </p>
               <p class="select-stage-difficulty normal">난이도: NORMAL</p>
-              <p class="select-stage-skill">해금 스킬: 슬로우</p>
+              <!-- <p class="select-stage-skill">해금 스킬: 슬로우</p> -->
             </div>
             <button class="select-stage-btn">MISSION START</button>
           </div>
@@ -253,8 +253,15 @@
                 <img src="./assets/images/sprites/music.png" />
                 <p class="gameplay-setting-item-title">배경 음악</p>
               </div>
-              <div class="gameplay-setting-dropdown" data-setting="background-music">
-                <button class="gameplay-dropdown-btn" type="button" aria-expanded="false">
+              <div
+                class="gameplay-setting-dropdown"
+                data-setting="background-music"
+              >
+                <button
+                  class="gameplay-dropdown-btn"
+                  type="button"
+                  aria-expanded="false"
+                >
                   <div class="gameplay-dropdown-selected">COSMOS</div>
                   <img
                     src="./assets/images/sprites/angle-down.png"
@@ -298,7 +305,11 @@
                 <p class="gameplay-setting-item-title">벽돌 종류</p>
               </div>
               <div class="gameplay-setting-dropdown" data-setting="brick-skin">
-                <button class="gameplay-dropdown-btn" type="button" aria-expanded="false">
+                <button
+                  class="gameplay-dropdown-btn"
+                  type="button"
+                  aria-expanded="false"
+                >
                   <div class="gameplay-dropdown-selected">Astrophage</div>
                   <img
                     src="./assets/images/sprites/angle-down.png"
@@ -369,7 +380,11 @@
                 <p class="gameplay-setting-item-title">공 모양</p>
               </div>
               <div class="gameplay-setting-dropdown" data-setting="ball-skin">
-                <button class="gameplay-dropdown-btn" type="button" aria-expanded="false">
+                <button
+                  class="gameplay-dropdown-btn"
+                  type="button"
+                  aria-expanded="false"
+                >
                   <div class="gameplay-dropdown-selected">Pulse Energy</div>
                   <img
                     src="./assets/images/sprites/angle-down.png"
@@ -433,7 +448,9 @@
                   <p class="control-setting-section-title">조작 일반</p>
                 </div>
                 <div class="audio-setting-item control-setting-item">
-                  <p class="audio-setting-label control-setting-label">패들 민감도</p>
+                  <p class="audio-setting-label control-setting-label">
+                    패들 민감도
+                  </p>
                   <input
                     type="range"
                     min="1"
@@ -461,7 +478,9 @@
               <section class="control-setting-section">
                 <div class="control-setting-section-header">
                   <p class="control-setting-section-title">스킬 키 할당</p>
-                  <button class="control-reset-btn" type="button">기본값으로 초기화</button>
+                  <button class="control-reset-btn" type="button">
+                    기본값으로 초기화
+                  </button>
                 </div>
                 <div class="skill-key-setting-list">
                   <label class="skill-key-setting-item">
@@ -572,11 +591,18 @@
         </div>
       </div>
 
-      <div id="pause-overlay" class="game-overlay stage-intro-overlay pause-overlay">
+      <div
+        id="pause-overlay"
+        class="game-overlay stage-intro-overlay pause-overlay"
+      >
         <div class="pause-content">
           <p class="pause-title">일시정지</p>
           <div class="pause-btn-group">
-            <button id="pause-exit-btn" class="pause-btn pause-exit-btn" type="button">
+            <button
+              id="pause-exit-btn"
+              class="pause-btn pause-exit-btn"
+              type="button"
+            >
               <img
                 src="./assets/images/sprites/exit.png"
                 alt="exit icon"
@@ -584,7 +610,11 @@
               />
               <span>나가기</span>
             </button>
-            <button id="pause-continue-btn" class="pause-btn pause-continue-btn" type="button">
+            <button
+              id="pause-continue-btn"
+              class="pause-btn pause-continue-btn"
+              type="button"
+            >
               <img
                 src="./assets/images/sprites/play-icon.png"
                 alt="continue icon"
