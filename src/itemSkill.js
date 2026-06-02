@@ -4,7 +4,9 @@ import { addSystemLog } from "./stageManager.js";
 
 window.onBrickDestroyed = function(brick) {
 	const roll = Math.random();
+	const stage = GameState.currentStage;
 
+	const debrisChance = stage === 1 ? 0.1 : stage === 2 ? 0.15 : 0.2;
 	if(roll < 0.2) {
 		GameState.items.push( {
 			x: brick.x + brick.w /2 - 12,
@@ -16,7 +18,7 @@ window.onBrickDestroyed = function(brick) {
 			h: brick.h,
 		});
 	}
-	else if (roll < 0.4) {
+	else if (roll < 0.2 + debrisChance) {
 		GameState.items.push({
 			x: brick.x + brick.w / 2 - 12,
 			y: brick.y,
