@@ -215,6 +215,11 @@ export const GameState = {
   // 해금된 스킬 목록
   unlockedSkills: [],
 
+  skillKeys: {
+    slow: "S",
+    laser: "R",
+  },
+
   // 스킬 활성 상태
   activeSkills: {
     slow: false,

@@ -64,7 +64,7 @@ document.addEventListener('keydown', e => {
 	if(GameState.status !== 'playing') return;
 	const key = e.key.toUpperCase();
 
-	if(key === 'S') {
+	if(key === (GameState.skillKeys.slow ?? 'S')) {
 		if(!GameState.balls.some(b => b.isLaunched)) return;
 		if(!GameState.unlockedSkills.includes('slow')) return;
 		if(GameState.fuel.current <= FUEL_COSTS.skillSlow) return;
@@ -127,7 +127,7 @@ document.addEventListener('keydown', e => {
 		}, 4000);
 		
 	}
-	if(key === 'R') {
+	if(key === (GameState.skillKeys.laser ?? 'R')) {
 		if(!GameState.balls.some(b => b.isLaunched)) return;
 		if(!GameState.unlockedSkills.includes('laser')) return;
 		if(GameState.fuel.current <= FUEL_COSTS.skillLaser) return;

@@ -397,8 +397,8 @@ function _updateSkillsUI(stageNum) {
   skillsContainer.innerHTML = "";
 
   const skillMeta = {
-    slow: { label: "슬로우", key: "[S]", color: "#59C3FF" },
-    laser: { label: "레이저", key: "[R]", color: "#FF7A1A" },
+    slow: { label: "슬로우", key: `[${GameState.skillKeys.slow ?? "S"}]`, color: "#59C3FF" },
+    laser: { label: "레이저", key: `[${GameState.skillKeys.laser ?? "R"}]`, color: "#FF7A1A" },
   };
 
   if (config.unlockedSkills.length === 0) {
@@ -421,6 +421,10 @@ function _updateSkillsUI(stageNum) {
   });
 }
 
+document.addEventListener("skillkeyschange", () => {
+  _updateSkillsUI(GameState.currentStage);
+});
+
 /**
  * 스테이지 인트로 오버레이를 텍스트와 함께 표시.
  * @param {number} stageNum
@@ -435,8 +439,11 @@ function _showIntroOverlay(stageNum) {
 
   const skillLine = overlay.querySelector(".intro-skill-unlock");
   if (skillLine) {
-    skillLine.textContent = config.skillUnlockText ?? "";
-    skillLine.style.display = config.skillUnlockText ? "block" : "none";
+    const skillUnlockText = (config.skillUnlockText ?? "")
+      .replace("[S]", `[${GameState.skillKeys.slow ?? "S"}]`)
+      .replace("[R]", `[${GameState.skillKeys.laser ?? "R"}]`);
+    skillLine.textContent = skillUnlockText;
+    skillLine.style.display = skillUnlockText ? "block" : "none";
   }
 
   overlay.classList.add("active");

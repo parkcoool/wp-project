@@ -148,6 +148,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const skillKeyInputs = document.querySelectorAll(".skill-key-input");
+  const syncSkillKeyDisplays = () => {
+    skillKeyInputs.forEach((input) => {
+      const skillId = input.dataset.skillId;
+      const keyLabel = input.value || input.dataset.currentKey || input.dataset.defaultKey || "";
+      if (!skillId || !keyLabel) return;
+      GameState.skillKeys[skillId] = keyLabel;
+    });
+
+    document.querySelectorAll("[data-help-skill-key]").forEach((keyEl) => {
+      const skillId = keyEl.dataset.helpSkillKey;
+      keyEl.textContent = GameState.skillKeys[skillId] ?? "";
+    });
+
+    document.dispatchEvent(new CustomEvent("skillkeyschange"));
+  };
   const getKeyLabelFromEvent = (event) => {
     if (event.code.startsWith("Key")) return event.code.replace("Key", "");
     if (event.code.startsWith("Digit")) return event.code.replace("Digit", "");
@@ -185,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       input.value = keyLabel;
       input.dataset.currentKey = keyLabel;
+      syncSkillKeyDisplays();
     });
 
     input.addEventListener("beforeinput", (event) => {
@@ -204,14 +220,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       input.value = nextValue;
-      if (nextValue) input.dataset.currentKey = nextValue;
+      if (nextValue) {
+        input.dataset.currentKey = nextValue;
+        syncSkillKeyDisplays();
+      }
     });
 
     input.addEventListener("blur", () => {
-      if (input.value) return;
-      restoreAssignedKey(input);
+      if (!input.value) restoreAssignedKey(input);
+      syncSkillKeyDisplays();
     });
   });
+
+  syncSkillKeyDisplays();
 
   document.querySelector(".control-reset-btn")?.addEventListener("click", () => {
     skillKeyInputs.forEach((input) => {
@@ -219,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
       input.value = defaultKey;
       input.dataset.currentKey = defaultKey;
     });
+    syncSkillKeyDisplays();
   });
 
   const gameplayDropdowns = document.querySelectorAll(".gameplay-setting-dropdown");

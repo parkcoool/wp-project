@@ -490,6 +490,7 @@
                       class="skill-key-input"
                       value="R"
                       maxlength="1"
+                      data-skill-id="laser"
                       data-default-key="R"
                       autocomplete="off"
                       inputmode="none"
@@ -503,6 +504,7 @@
                       class="skill-key-input"
                       value="S"
                       maxlength="1"
+                      data-skill-id="slow"
                       data-default-key="S"
                       autocomplete="off"
                       inputmode="none"
@@ -530,6 +532,163 @@
             class="main-menu-modal-title-icon"
           />
           <p class="main-menu-modal-title">게임 방법</p>
+        </div>
+        <p class="main-menu-modal-description">
+          Hail Mary를 조종해 Astrophage 블록을 모두 제거하고 연료가 고갈되기 전에 임무를 완수하세요.
+        </p>
+        <div class="help-body">
+          <section class="help-visual-strip" aria-label="Game object visual guide">
+            <div class="help-visual-header">
+              <p class="help-section-title">VISUAL GUIDE</p>
+              <p class="help-visual-caption">게임 중 보게 될 주요 오브젝트입니다.</p>
+            </div>
+            <div class="help-visual-list">
+              <div class="help-visual-item">
+                <div class="help-visual-frame">
+                  <img
+                    src="./assets/images/sprites/hail-mary.png"
+                    alt="Hail Mary paddle"
+                    class="help-visual-ship"
+                  />
+                </div>
+                <div>
+                  <p class="help-visual-name">Hail Mary</p>
+                  <p class="help-visual-text">마우스로 조종하는 패들입니다.</p>
+                </div>
+              </div>
+              <div class="help-visual-item">
+                <div class="help-visual-frame">
+                  <span class="help-visual-ball"></span>
+                </div>
+                <div>
+                  <p class="help-visual-name">Energy Pulse</p>
+                  <p class="help-visual-text">블록을 파괴하는 공입니다.</p>
+                </div>
+              </div>
+              <div class="help-visual-item">
+                <div class="help-visual-frame">
+                  <span class="help-visual-brick"></span>
+                </div>
+                <div>
+                  <p class="help-visual-name">Astrophage Block</p>
+                  <p class="help-visual-text">모두 제거하면 스테이지 클리어.</p>
+                </div>
+              </div>
+              <div class="help-visual-item">
+                <div class="help-visual-frame">
+                  <span class="help-visual-fuel"></span>
+                </div>
+                <div>
+                  <p class="help-visual-name">Fuel Item</p>
+                  <p class="help-visual-text">획득 시 연료를 회복합니다.</p>
+                </div>
+              </div>
+              <div class="help-visual-item">
+                <div class="help-visual-frame">
+                  <span class="help-visual-debris"></span>
+                </div>
+                <div>
+                  <p class="help-visual-name">Space Debris</p>
+                  <p class="help-visual-text">닿으면 연료가 감소합니다.</p>
+                </div>
+              </div>
+            </div>
+            <div class="help-fuel-ui-preview">
+              <div class="help-fuel-gauge-card">
+                <div class="help-fuel-header">
+                  <p class="help-fuel-title">FUEL LEVEL</p>
+                  <p class="help-fuel-percent">65% REMAINING</p>
+                </div>
+                <svg
+                  class="help-fuel-gauge-svg"
+                  viewBox="0 0 200 120"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M 20 100 A 80 80 0 0 1 180 100"
+                    stroke="#2a3a4a"
+                    stroke-width="12"
+                    fill="none"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M 20 100 A 80 80 0 0 1 180 100"
+                    stroke="#FFC857"
+                    stroke-width="12"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-dasharray="163 251.3"
+                  />
+                  <line
+                    x1="100"
+                    y1="100"
+                    x2="100"
+                    y2="38"
+                    stroke="#EAF4FF"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                    transform="rotate(27 100 100)"
+                  />
+                  <circle cx="100" cy="100" r="8" fill="#FFC857" />
+                  <text x="20" y="118" fill="#8e9baa" font-size="12">E</text>
+                  <text x="172" y="118" fill="#8e9baa" font-size="12">F</text>
+                </svg>
+              </div>
+              <div class="help-fuel-copy">
+                <p class="help-visual-name">Fuel Gauge</p>
+                <p class="help-visual-text">
+                  현재 남은 연료를 보여줍니다. 25% 이하로 떨어지면 경고 상태가 되며, 0%가 되면 임무가 실패합니다.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section class="help-section">
+            <p class="help-section-title">MISSION OBJECTIVE</p>
+            <ul class="help-list">
+              <li>공을 튕겨 화면 위쪽의 모든 블록을 파괴하면 스테이지가 클리어됩니다.</li>
+              <li>스테이지가 올라갈수록 블록 체력, 증식 속도, 공 속도가 더 강해집니다.</li>
+              <li>연료가 0이 되면 게임 오버입니다. 발사와 실수, 스킬 사용은 연료를 소모합니다.</li>
+            </ul>
+          </section>
+          <section class="help-section">
+            <p class="help-section-title">CONTROL</p>
+            <div class="help-control-grid">
+              <div class="help-control-item">
+                <span class="help-key">Mouse Move</span>
+                <p>마우스 또는 터치 포인터를 움직여 Hail Mary를 좌우로 이동합니다.</p>
+              </div>
+              <div class="help-control-item">
+                <span class="help-key">Click / Tap</span>
+                <p>패들에 붙어 있는 공을 발사합니다. 발사 시 연료 5가 소모됩니다.</p>
+              </div>
+              <div class="help-control-item">
+                <span class="help-key">ESC</span>
+                <p>플레이 중 일시 정지 화면을 엽니다.</p>
+              </div>
+            </div>
+          </section>
+          <section class="help-section">
+            <p class="help-section-title">FUEL & ITEMS</p>
+            <ul class="help-list">
+              <li>파란 연료 아이템을 획득하면 연료가 20 회복됩니다.</li>
+              <li>회색 우주 잔해를 획득하면 연료가 15 감소합니다.</li>
+              <li>공을 놓치면 연료가 30 감소하고, 남은 연료가 있으면 새 공이 패들 위에 생성됩니다.</li>
+            </ul>
+          </section>
+          <section class="help-section">
+            <p class="help-section-title">SKILLS</p>
+            <div class="help-control-grid">
+              <div class="help-control-item">
+                <span class="help-key" data-help-skill-key="slow">S</span>
+                <p>Time Slow. 4초 동안 공 속도를 낮춥니다. 연료 15를 소모합니다.</p>
+              </div>
+              <div class="help-control-item">
+                <span class="help-key" data-help-skill-key="laser">R</span>
+                <p>Laser. 패들 중앙 위쪽의 블록을 관통 공격합니다. 연료 20을 소모합니다.</p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
       <div id="credit-box" class="main-menu-modal">
