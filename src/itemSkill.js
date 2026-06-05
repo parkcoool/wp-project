@@ -132,10 +132,12 @@ document.addEventListener("keydown", (e) => {
     if (!GameState.balls.some((b) => b.isLaunched)) return;
     if (!GameState.unlockedSkills.includes("laser")) return;
     if (GameState.fuel.current <= FUEL_COSTS.skillLaser) return;
-    if (GameState.activeSkills.laser) return;
+    if (GameState.activeSkills.laser || Date.now() < GameState.activeSkills.laserCooldownEnd)
+      return;
     onSkillUse("laser");
     GameState.activeSkills.laser = true;
     GameState.activeSkills.laserStartTime = Date.now();
+    GameState.activeSkills.laserCooldownEnd = Date.now() + 8000;
     addSystemLog("Laser Fired!", "warning");
 
     // 쿨타임 오버레이 추가
@@ -144,7 +146,7 @@ document.addEventListener("keydown", (e) => {
     overlay.className = "skill-cooldown-overlay";
     ring?.appendChild(overlay);
 
-    const totalTime = 4000;
+    const totalTime = 8000;
     const startTime = Date.now();
 
     // 쿨타임 게이지 업데이트
@@ -154,7 +156,10 @@ document.addEventListener("keydown", (e) => {
 			transparent ${progress * 360}deg,
 			rgba(0,0,0,0.6) ${progress * 360}deg
 			)`;
-      if (progress >= 1) clearInterval(interval);
+      if (progress >= 1) {
+        clearInterval(interval);
+        overlay?.remove();
+      }
     }, 50);
 
     const paddle = GameState.paddle;

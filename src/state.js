@@ -225,6 +225,7 @@ export const GameState = {
     slow: false,
     laser: false,
     laserStartTime: 0,
+    laserCooldownEnd: 0,
   },
 
   // 증식 타이머 핸들 (내부용)
