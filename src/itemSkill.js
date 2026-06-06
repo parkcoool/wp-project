@@ -1,8 +1,8 @@
-import { GameState, FUEL_COSTS } from "./state.js";
-import { onFuelItemPickup, onDebrisPickup, onSkillUse } from "./fuelSystem.js";
-import { addSystemLog } from "./stageManager.js";
+import { GameState, FUEL_COSTS } from './state.js';
+import { onFuelItemPickup, onDebrisPickup, onSkillUse } from './fuelSystem.js';
+import { addSystemLog } from './stageManager.js';
 
-window.onBrickDestroyed = function (brick) {
+window.onBrickDestroyed = (brick) => {
   const roll = Math.random();
   const stage = GameState.currentStage;
 
@@ -12,7 +12,7 @@ window.onBrickDestroyed = function (brick) {
       x: brick.x + brick.w / 2 - 12,
       y: brick.y,
       vy: 2,
-      type: "fuel",
+      type: 'fuel',
       alive: true,
       w: brick.w,
       h: brick.h,
@@ -22,7 +22,7 @@ window.onBrickDestroyed = function (brick) {
       x: brick.x + brick.w / 2 - 12,
       y: brick.y,
       vy: 2,
-      type: "debris",
+      type: 'debris',
       alive: true,
       w: brick.w,
       h: brick.h,
@@ -30,9 +30,9 @@ window.onBrickDestroyed = function (brick) {
   }
 };
 
-const canvas = document.getElementById("game-canvas");
+const canvas = document.getElementById('game-canvas');
 
-export function updateItems() {
+export const updateItems = () => {
   const paddle = GameState.paddle;
 
   GameState.items.forEach((item) => {
@@ -45,7 +45,7 @@ export function updateItems() {
       item.y < paddle.y + paddle.h
     ) {
       item.alive = false;
-      if (item.type === "fuel") {
+      if (item.type === 'fuel') {
         onFuelItemPickup();
       } else {
         onDebrisPickup();
@@ -57,22 +57,22 @@ export function updateItems() {
     }
   });
   GameState.items = GameState.items.filter((i) => i.alive);
-}
+};
 
-document.addEventListener("keydown", (e) => {
-  if (GameState.status !== "playing") return;
+document.addEventListener('keydown', (e) => {
+  if (GameState.status !== 'playing') return;
   const key = e.key.toUpperCase();
 
-  if (key === (GameState.skillKeys.slow ?? "S")) {
+  if (key === (GameState.skillKeys.slow ?? 'S')) {
     if (!GameState.balls.some((b) => b.isLaunched)) return;
-    if (!GameState.unlockedSkills.includes("slow")) return;
+    if (!GameState.unlockedSkills.includes('slow')) return;
     if (GameState.fuel.current <= FUEL_COSTS.skillSlow) return;
     if (GameState.activeSkills.slow) return;
 
     // 쿨타임 오버레이 추가
-    const ring = document.getElementById("skill-ring-slow");
-    const overlay = document.createElement("div");
-    overlay.className = "skill-cooldown-overlay";
+    const ring = document.getElementById('skill-ring-slow');
+    const overlay = document.createElement('div');
+    overlay.className = 'skill-cooldown-overlay';
     ring?.appendChild(overlay);
 
     const totalTime = 8000;
@@ -95,12 +95,12 @@ document.addEventListener("keydown", (e) => {
       b.vy *= 0.5;
       b.vx *= 0.5;
     });
-    onSkillUse("slow");
+    onSkillUse('slow');
     GameState.activeSkills.slow = true;
-    addSystemLog("Time Slow Active", "warning");
+    addSystemLog('Time Slow Active', 'warning');
 
-    const screenEffect = document.getElementById("slow-screen-effect");
-    screenEffect?.classList.add("active");
+    const screenEffect = document.getElementById('slow-screen-effect');
+    screenEffect?.classList.add('active');
 
     // 4초 후 슬로우 효과 해제
     setTimeout(() => {
@@ -118,8 +118,8 @@ document.addEventListener("keydown", (e) => {
         b.originVx = undefined;
         b.originVy = undefined;
       });
-      addSystemLog("Time Slow Ended", "normal");
-      screenEffect?.classList.remove("active");
+      addSystemLog('Time Slow Ended', 'normal');
+      screenEffect?.classList.remove('active');
     }, 4000);
 
     // 8초 후 쿨타임 해제
@@ -128,22 +128,25 @@ document.addEventListener("keydown", (e) => {
       overlay?.remove();
     }, 8000);
   }
-  if (key === (GameState.skillKeys.laser ?? "R")) {
+  if (key === (GameState.skillKeys.laser ?? 'R')) {
     if (!GameState.balls.some((b) => b.isLaunched)) return;
-    if (!GameState.unlockedSkills.includes("laser")) return;
+    if (!GameState.unlockedSkills.includes('laser')) return;
     if (GameState.fuel.current <= FUEL_COSTS.skillLaser) return;
-    if (GameState.activeSkills.laser || Date.now() < GameState.activeSkills.laserCooldownEnd)
+    if (
+      GameState.activeSkills.laser ||
+      Date.now() < GameState.activeSkills.laserCooldownEnd
+    )
       return;
-    onSkillUse("laser");
+    onSkillUse('laser');
     GameState.activeSkills.laser = true;
     GameState.activeSkills.laserStartTime = Date.now();
     GameState.activeSkills.laserCooldownEnd = Date.now() + 8000;
-    addSystemLog("Laser Fired!", "warning");
+    addSystemLog('Laser Fired!', 'warning');
 
     // 쿨타임 오버레이 추가
-    const ring = document.getElementById("skill-ring-laser");
-    const overlay = document.createElement("div");
-    overlay.className = "skill-cooldown-overlay";
+    const ring = document.getElementById('skill-ring-laser');
+    const overlay = document.createElement('div');
+    overlay.className = 'skill-cooldown-overlay';
     ring?.appendChild(overlay);
 
     const totalTime = 8000;
@@ -169,7 +172,10 @@ document.addEventListener("keydown", (e) => {
     GameState.bricks.forEach((brick, index) => {
       if (!brick.alive) return;
 
-      if (brick.x + brick.w > centerX - laserWidth / 2 && brick.x < centerX + laserWidth / 2) {
+      if (
+        brick.x + brick.w > centerX - laserWidth / 2 &&
+        brick.x < centerX + laserWidth / 2
+      ) {
         for (let i = 0; i < brick.maxHp; i++) {
           window.gameAPI.onBrickHit(index);
         }
@@ -181,7 +187,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-export function drawItems(ctx) {
+export const drawItems = (ctx) => {
   GameState.items.forEach((item) => {
     if (!item.alive) return;
 
@@ -189,14 +195,14 @@ export function drawItems(ctx) {
     const cy = item.y + item.h / 2;
     const r = item.w / 2;
 
-    if (item.type === "fuel") {
+    if (item.type === 'fuel') {
       // 파란 빛나는 원
       const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      gradient.addColorStop(0, "#ffffff");
-      gradient.addColorStop(0.3, "#59C3FF");
-      gradient.addColorStop(1, "#0066ff");
+      gradient.addColorStop(0, '#ffffff');
+      gradient.addColorStop(0.3, '#59C3FF');
+      gradient.addColorStop(1, '#0066ff');
 
-      ctx.shadowColor = "#59C3FF";
+      ctx.shadowColor = '#59C3FF';
       ctx.shadowBlur = 20;
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -205,9 +211,9 @@ export function drawItems(ctx) {
       ctx.shadowBlur = 0;
     } else {
       // 회색 불규칙한 형태
-      ctx.shadowColor = "#888888";
+      ctx.shadowColor = '#888888';
       ctx.shadowBlur = 8;
-      ctx.fillStyle = "#666666";
+      ctx.fillStyle = '#666666';
       ctx.beginPath();
       ctx.moveTo(cx, cy - r);
       ctx.lineTo(cx + r * 0.6, cy - r * 0.4);
@@ -220,11 +226,11 @@ export function drawItems(ctx) {
       ctx.fill();
 
       // 하이라이트
-      ctx.fillStyle = "rgba(255,255,255,0.15)";
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
       ctx.beginPath();
       ctx.arc(cx - r * 0.2, cy - r * 0.3, r * 0.3, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
     }
   });
-}
+};

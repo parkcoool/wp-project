@@ -3,7 +3,7 @@
  * @description 스테이지 초기화, 벽돌 배치, 게임 흐름(오버/클리어), 시스템 로그, 점수 UI를 담당.
  */
 
-import { GameState, STAGE_CONFIG, CANVAS_LAYOUT } from "./state.js";
+import { GameState, STAGE_CONFIG, CANVAS_LAYOUT } from './state.js';
 import {
   resetFuelUI,
   registerFuelCallbacks,
@@ -14,9 +14,9 @@ import {
   onFuelItemPickup,
   onDebrisPickup,
   onSkillUse,
-} from "./fuelSystem.js";
-import { showScreen } from "./screen.js";
-import { playSoundEffect } from "./audio.js";
+} from './fuelSystem.js';
+import { showScreen } from './screen.js';
+import { playSoundEffect } from './audio.js';
 
 // ─────────────────────────────────────────────
 // 스테이지 초기화
@@ -26,7 +26,7 @@ import { playSoundEffect } from "./audio.js";
  * 특정 스테이지를 초기화하고 인트로 화면을 표시.
  * @param {number} stageNum - 1 | 2 | 3
  */
-export function initStage(stageNum) {
+export const initStage = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
   if (!config) return;
 
@@ -34,7 +34,7 @@ export function initStage(stageNum) {
   registerFuelCallbacks({ addSystemLog, triggerGameOver });
 
   // 상태 초기화
-  GameState.status = "intro";
+  GameState.status = 'intro';
   GameState.currentStage = stageNum;
   GameState.score = 0;
   GameState.systemLog = [];
@@ -55,12 +55,12 @@ export function initStage(stageNum) {
   _clearProliferateTimer();
 
   // 게임 화면으로 전환
-  showScreen("game-screen");
+  showScreen('game-screen');
   window.resizeCanvas?.(); //resize 전에는 게임 화면이 display:none이므로 캔버스 크기가 0이었음. 강제 resize로 초기화.
   GameState.bricks = _generateBricks(stageNum); //캔버스 크기를 확정한 후 벽돌 생성하도록 수정(canvas.width가 0이어서 벽돌 너비가 이상하게 계산되는 문제 해결)
 
   // 스테이지별 배경 클래스 교체
-  const gameScreen = document.getElementById("game-screen");
+  const gameScreen = document.getElementById('game-screen');
   gameScreen.className = `screen game-screen active ${config.backgroundClass}`;
 
   // 좌측 패널 텍스트 업데이트
@@ -70,22 +70,22 @@ export function initStage(stageNum) {
   resetFuelUI();
 
   // 버프 화면 이펙트 초기화
-  const _multiballEl = document.getElementById("multiball-screen-effect");
-  if (_multiballEl) _multiballEl.classList.remove("flash");
+  const _multiballEl = document.getElementById('multiball-screen-effect');
+  if (_multiballEl) _multiballEl.classList.remove('flash');
 
   // 점수 초기화
   _updateScoreUI();
 
   // 시스템 로그 초기화
-  const logList = document.querySelector(".system-log-list");
-  if (logList) logList.innerHTML = "";
+  const logList = document.querySelector('.system-log-list');
+  if (logList) logList.innerHTML = '';
 
   // 스킬 패널 업데이트
   _updateSkillsUI(stageNum);
 
   // 인트로 오버레이 표시
   _showIntroOverlay(stageNum);
-}
+};
 
 // ─────────────────────────────────────────────
 // 벽돌 생성
@@ -96,12 +96,13 @@ export function initStage(stageNum) {
  * @param {number} stageNum
  * @returns {Array}
  */
-function _generateBricks(stageNum) {
+const _generateBricks = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
-  const { brickOffsetX, brickOffsetY, brickHeight, brickGapX, brickGapY } = CANVAS_LAYOUT;
+  const { brickOffsetX, brickOffsetY, brickHeight, brickGapX, brickGapY } =
+    CANVAS_LAYOUT;
   const { rows, cols, rowHp } = config;
 
-  const canvas = document.getElementById("game-canvas");
+  const canvas = document.getElementById('game-canvas');
   const brickAreaWidth = canvas.width - brickOffsetX * 2; //하드 코딩되었던 brickAreaWidth를 캔버스 크기에 맞게 동적으로 계산하도록 수정
 
   const brickW = (brickAreaWidth - brickGapX * (cols - 1)) / cols; // ≈ 56.4px
@@ -109,7 +110,7 @@ function _generateBricks(stageNum) {
   const bricks = [];
   for (let row = 0; row < rows; row++) {
     const hp = rowHp[row] ?? 1;
-    const type = hp >= 3 ? "armored" : hp === 2 ? "tough" : "normal";
+    const type = hp >= 3 ? 'armored' : hp === 2 ? 'tough' : 'normal';
 
     for (let col = 0; col < cols; col++) {
       bricks.push({
@@ -127,7 +128,7 @@ function _generateBricks(stageNum) {
     }
   }
   return bricks;
-}
+};
 
 // ─────────────────────────────────────────────
 // 별돌 피격/파괴
@@ -138,53 +139,53 @@ function _generateBricks(stageNum) {
  * @param {number} brickIndex - GameState.bricks 배열 인덱스
  * @returns {boolean} 벽돌이 파괴되었으면 true
  */
-export function onBrickHit(brickIndex) {
+export const onBrickHit = (brickIndex) => {
   const brick = GameState.bricks[brickIndex];
   if (!brick || !brick.alive) return false;
 
   brick.hp -= 1;
-  addSystemLog("Astrophage Hit!", "normal");
+  addSystemLog('Astrophage Hit!', 'normal');
 
   if (brick.hp <= 0) {
-    playSoundEffect("crashAstrophage");
+    playSoundEffect('crashAstrophage');
     brick.alive = false;
     GameState.score += _getScoreForBrick(brick);
     _updateScoreUI();
-    addSystemLog("Astrophage Destroyed!", "positive");
+    addSystemLog('Astrophage Destroyed!', 'positive');
 
     if (
       GameState.currentStage >= 2 &&
       !GameState.paddle.hasXenonite &&
-      (brick.type === "tough" || brick.type === "armored")
+      (brick.type === 'tough' || brick.type === 'armored')
     ) {
       GameState.paddle.widthBoost = 1.4;
       GameState.paddle.w *= GameState.paddle.widthBoost;
       GameState.paddle.h *= GameState.paddle.widthBoost;
       GameState.paddle.hasXenonite = true;
-      addSystemLog("Xenonite Buff Activation", "positive");
+      addSystemLog('Xenonite Buff Activation', 'positive');
     }
 
     // 아이템 드롭 (외부 등록 콜백)
-    if (typeof window.onBrickDestroyed === "function") {
+    if (typeof window.onBrickDestroyed === 'function') {
       window.onBrickDestroyed(brick);
     }
 
     _checkStageClear();
     return true;
   }
-  playSoundEffect("hitAstrophage");
+  playSoundEffect('hitAstrophage');
   return false;
-}
+};
 
 /**
  * 벽돌 타입과 스테이지에 따라 파괴 점수를 계산.
  * @param {{ type: string }} brick
  * @returns {number}
  */
-function _getScoreForBrick(brick) {
+const _getScoreForBrick = (brick) => {
   const base = { normal: 10, tough: 20, armored: 30 };
   return (base[brick.type] ?? 10) * GameState.currentStage;
-}
+};
 
 // ─────────────────────────────────────────────
 // 스테이지 클리어 / 게임 오버
@@ -193,33 +194,33 @@ function _getScoreForBrick(brick) {
 /**
  * 살아있는 벽돌이 없으면 스테이지 또는 미션 클리어를 판정.
  */
-function _checkStageClear() {
+const _checkStageClear = () => {
   const aliveCount = GameState.bricks.filter((b) => b.alive).length;
   if (aliveCount > 0) return;
 
   _clearProliferateTimer();
 
   if (GameState.currentStage < 3) {
-    GameState.status = "stageclear";
-    addSystemLog("Stage Clear!", "positive");
-    _showOverlay("stage-clear-overlay");
+    GameState.status = 'stageclear';
+    addSystemLog('Stage Clear!', 'positive');
+    _showOverlay('stage-clear-overlay');
   } else {
-    GameState.status = "clear";
-    addSystemLog("Mission Complete! Earth is saved.", "positive");
-    _showOverlay("mission-clear-overlay");
+    GameState.status = 'clear';
+    addSystemLog('Mission Complete! Earth is saved.', 'positive');
+    _showOverlay('mission-clear-overlay');
   }
-}
+};
 
 /**
  * 게임 오버를 트리거. 연료 고갈 시 fuelSystem에서 호출.
  */
-export function triggerGameOver() {
-  if (GameState.status === "gameover") return;
-  GameState.status = "gameover";
+export const triggerGameOver = () => {
+  if (GameState.status === 'gameover') return;
+  GameState.status = 'gameover';
   _clearProliferateTimer();
-  addSystemLog("Mission Failed..", "danger");
-  _showOverlay("game-over-overlay");
-}
+  addSystemLog('Mission Failed..', 'danger');
+  _showOverlay('game-over-overlay');
+};
 
 // ─────────────────────────────────────────────
 // 스테이지 3 증식 기믹
@@ -228,28 +229,31 @@ export function triggerGameOver() {
 /**
  * 스테이지 설정에 증식(proliferate)가 활성화된 경우 증식 타이머를 시작.
  */
-function _startProliferateTimer() {
+const _startProliferateTimer = () => {
   const config = STAGE_CONFIG[GameState.currentStage];
   if (!config.proliferate) return;
 
-  GameState._proliferateTimer = setInterval(_proliferateAstrophage, config.proliferateInterval);
-}
+  GameState._proliferateTimer = setInterval(
+    _proliferateAstrophage,
+    config.proliferateInterval,
+  );
+};
 
 /**
  * 증식 타이머를 정리.
  */
-function _clearProliferateTimer() {
+const _clearProliferateTimer = () => {
   if (GameState._proliferateTimer) {
     clearInterval(GameState._proliferateTimer);
     GameState._proliferateTimer = null;
   }
-}
+};
 
 /**
  * 파괴된 벽돌 중 1~2개를 무작위로 부활시켜 아스트로파지 증식을 구현.
  */
-function _proliferateAstrophage() {
-  if (GameState.status !== "playing") return;
+const _proliferateAstrophage = () => {
+  if (GameState.status !== 'playing') return;
 
   const config = STAGE_CONFIG[GameState.currentStage];
   const deadBricks = GameState.bricks.filter((b) => !b.alive);
@@ -258,18 +262,21 @@ function _proliferateAstrophage() {
   if (deadBricks.length === 0 || aliveCount >= config.maxAliveBricks) return;
 
   // 1~2개 랜덤 부활
-  const reviveCount = Math.min(Math.floor(Math.random() * 2) + 1, deadBricks.length);
+  const reviveCount = Math.min(
+    Math.floor(Math.random() * 2) + 1,
+    deadBricks.length,
+  );
 
   for (let i = 0; i < reviveCount; i++) {
     const idx = Math.floor(Math.random() * deadBricks.length);
     const brick = deadBricks.splice(idx, 1)[0];
     brick.hp = 1;
     brick.maxHp = 1;
-    brick.type = "normal";
+    brick.type = 'normal';
     brick.alive = true;
-    addSystemLog("Astrophage Proliferating!", "warning");
+    addSystemLog('Astrophage Proliferating!', 'warning');
   }
-}
+};
 
 // ─────────────────────────────────────────────
 // 게임 시작 (인트로 → playing)
@@ -278,47 +285,47 @@ function _proliferateAstrophage() {
 /**
  * 인트로 오버레이에서 "임무 시작" 버튼 클릭 시 호출. 게임 상태를 playing으로 전환.
  */
-export function startPlaying() {
-  GameState.status = "playing";
+export const startPlaying = () => {
+  GameState.status = 'playing';
 
-  _hideOverlay("stage-intro-overlay");
-  _hideOverlay("pause-overlay");
+  _hideOverlay('stage-intro-overlay');
+  _hideOverlay('pause-overlay');
 
   // 스테이지 2+ 증식 타이머 시작
   _startProliferateTimer();
 
-  addSystemLog("Mission Start", "normal");
+  addSystemLog('Mission Start', 'normal');
 
   // 게임 루프 시작 (외부 등록 콜백)
-  if (typeof window.startGameLoop === "function") {
+  if (typeof window.startGameLoop === 'function') {
     window.startGameLoop();
   }
-}
+};
 
-export function pauseGame() {
-  if (GameState.status !== "playing") return;
+export const pauseGame = () => {
+  if (GameState.status !== 'playing') return;
 
-  GameState.status = "paused";
-  _showOverlay("pause-overlay");
-}
+  GameState.status = 'paused';
+  _showOverlay('pause-overlay');
+};
 
-export function resumeGame() {
-  if (GameState.status !== "paused") return;
+export const resumeGame = () => {
+  if (GameState.status !== 'paused') return;
 
-  GameState.status = "playing";
-  _hideOverlay("pause-overlay");
-}
+  GameState.status = 'playing';
+  _hideOverlay('pause-overlay');
+};
 
-export function exitGameToMenu() {
-  GameState.status = "idle";
+export const exitGameToMenu = () => {
+  GameState.status = 'idle';
   _clearProliferateTimer();
-  _hideOverlay("pause-overlay");
-  _hideOverlay("stage-intro-overlay");
-  _hideOverlay("game-over-overlay");
-  _hideOverlay("stage-clear-overlay");
-  _hideOverlay("mission-clear-overlay");
-  showScreen("menu-screen");
-}
+  _hideOverlay('pause-overlay');
+  _hideOverlay('stage-intro-overlay');
+  _hideOverlay('game-over-overlay');
+  _hideOverlay('stage-clear-overlay');
+  _hideOverlay('mission-clear-overlay');
+  showScreen('menu-screen');
+};
 
 // ─────────────────────────────────────────────
 // 다음 스테이지 진행
@@ -327,11 +334,11 @@ export function exitGameToMenu() {
 /**
  * 현재 스테이지의 다음 스테이지를 초기화. 스테이지 3 이후에는 아무 동작 없음.
  */
-export function goToNextStage() {
+export const goToNextStage = () => {
   const next = GameState.currentStage + 1;
   if (next > 3) return;
   initStage(next);
-}
+};
 
 // ─────────────────────────────────────────────
 // 시스템 로그
@@ -342,14 +349,14 @@ export function goToNextStage() {
  * @param {string} message
  * @param {'normal'|'warning'|'danger'|'positive'} type
  */
-export function addSystemLog(message, type = "normal") {
+export const addSystemLog = (message, type = 'normal') => {
   const entry = { message, type, time: Date.now() };
   GameState.systemLog.push(entry);
 
-  const logList = document.querySelector(".system-log-list");
+  const logList = document.querySelector('.system-log-list');
   if (!logList) return;
 
-  const p = document.createElement("p");
+  const p = document.createElement('p');
   p.className = `log-entry log-${type}`;
   p.textContent = `> ${message}`;
   logList.appendChild(p);
@@ -359,7 +366,7 @@ export function addSystemLog(message, type = "normal") {
     logList.removeChild(logList.firstChild);
   }
   logList.scrollTop = logList.scrollHeight;
-}
+};
 
 // ─────────────────────────────────────────────
 // UI 업데이트 헬퍼
@@ -368,37 +375,45 @@ export function addSystemLog(message, type = "normal") {
 /**
  * 현재 점수를 7자리 0-패딩 형식으로 UI에 갱신.
  */
-function _updateScoreUI() {
-  const el = document.querySelector(".score-value");
-  if (el) el.textContent = String(GameState.score).padStart(7, "0");
-}
+const _updateScoreUI = () => {
+  const el = document.querySelector('.score-value');
+  if (el) el.textContent = String(GameState.score).padStart(7, '0');
+};
 
 /**
  * 좌측 사이드바의 스테이지 번호·이름을 갱신.
  * @param {number} stageNum
  */
-function _updateSidebarUI(stageNum) {
+const _updateSidebarUI = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
-  const numEl = document.querySelector(".game-stage-number");
-  const nameEl = document.querySelector(".game-stage-name");
+  const numEl = document.querySelector('.game-stage-number');
+  const nameEl = document.querySelector('.game-stage-name');
   if (numEl) numEl.textContent = `STAGE 0${stageNum}`;
   if (nameEl) nameEl.textContent = config.name;
-}
+};
 
 /**
  * 스킬 패널을 해당 스테이지의 해금 스킬로 갱신.
  * @param {number} stageNum
  */
-function _updateSkillsUI(stageNum) {
+const _updateSkillsUI = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
-  const skillsContainer = document.querySelector(".skills-list");
+  const skillsContainer = document.querySelector('.skills-list');
   if (!skillsContainer) return;
 
-  skillsContainer.innerHTML = "";
+  skillsContainer.innerHTML = '';
 
   const skillMeta = {
-    slow: { label: "슬로우", key: `[${GameState.skillKeys.slow ?? "S"}]`, color: "#59C3FF" },
-    laser: { label: "레이저", key: `[${GameState.skillKeys.laser ?? "R"}]`, color: "#FF7A1A" },
+    slow: {
+      label: '슬로우',
+      key: `[${GameState.skillKeys.slow ?? 'S'}]`,
+      color: '#59C3FF',
+    },
+    laser: {
+      label: '레이저',
+      key: `[${GameState.skillKeys.laser ?? 'R'}]`,
+      color: '#FF7A1A',
+    },
   };
 
   if (config.unlockedSkills.length === 0) {
@@ -409,8 +424,8 @@ function _updateSkillsUI(stageNum) {
   config.unlockedSkills.forEach((skillId) => {
     const meta = skillMeta[skillId];
     if (!meta) return;
-    const item = document.createElement("div");
-    item.className = "skill-item";
+    const item = document.createElement('div');
+    item.className = 'skill-item';
     item.innerHTML = `
       <div class="skill-icon-ring" id="skill-ring-${skillId}">
         <span class="skill-key" style="color:${meta.color}">${meta.key}</span>
@@ -419,9 +434,9 @@ function _updateSkillsUI(stageNum) {
     `;
     skillsContainer.appendChild(item);
   });
-}
+};
 
-document.addEventListener("skillkeyschange", () => {
+document.addEventListener('skillkeyschange', () => {
   _updateSkillsUI(GameState.currentStage);
 });
 
@@ -429,41 +444,42 @@ document.addEventListener("skillkeyschange", () => {
  * 스테이지 인트로 오버레이를 텍스트와 함께 표시.
  * @param {number} stageNum
  */
-function _showIntroOverlay(stageNum) {
+const _showIntroOverlay = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
-  const overlay = document.getElementById("stage-intro-overlay");
+  const overlay = document.getElementById('stage-intro-overlay');
   if (!overlay) return;
 
-  overlay.querySelector(".intro-stage-label").textContent = `STAGE 0${stageNum}`;
-  overlay.querySelector(".intro-text").textContent = config.introText;
+  overlay.querySelector('.intro-stage-label').textContent =
+    `STAGE 0${stageNum}`;
+  overlay.querySelector('.intro-text').textContent = config.introText;
 
-  const skillLine = overlay.querySelector(".intro-skill-unlock");
+  const skillLine = overlay.querySelector('.intro-skill-unlock');
   if (skillLine) {
-    const skillUnlockText = (config.skillUnlockText ?? "")
-      .replace("[S]", `[${GameState.skillKeys.slow ?? "S"}]`)
-      .replace("[R]", `[${GameState.skillKeys.laser ?? "R"}]`);
+    const skillUnlockText = (config.skillUnlockText ?? '')
+      .replace('[S]', `[${GameState.skillKeys.slow ?? 'S'}]`)
+      .replace('[R]', `[${GameState.skillKeys.laser ?? 'R'}]`);
     skillLine.textContent = skillUnlockText;
-    skillLine.style.display = skillUnlockText ? "block" : "none";
+    skillLine.style.display = skillUnlockText ? 'block' : 'none';
   }
 
-  overlay.classList.add("active");
-}
+  overlay.classList.add('active');
+};
 
 /**
  * 지정한 오버레이를 표시.
  * @param {string} id - 오버레이 요소의 id
  */
-function _showOverlay(id) {
-  document.getElementById(id)?.classList.add("active");
-}
+const _showOverlay = (id) => {
+  document.getElementById(id)?.classList.add('active');
+};
 
 /**
  * 지정한 오버레이를 숨김.
  * @param {string} id - 오버레이 요소의 id
  */
-function _hideOverlay(id) {
-  document.getElementById(id)?.classList.remove("active");
-}
+const _hideOverlay = (id) => {
+  document.getElementById(id)?.classList.remove('active');
+};
 
 // ─────────────────────────────────────────────
 // 전역 API

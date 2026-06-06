@@ -5,55 +5,57 @@ export const audioSettings = {
 };
 
 const soundEffectSources = {
-  pulseShot: "./assets/music/pulse-shot.mp3",
-  hitAstrophage: "./assets/music/hit-astrophage.mp3",
-  crashAstrophage: "./assets/music/crash-astrophage.mp3",
+  pulseShot: './assets/music/pulse-shot.mp3',
+  hitAstrophage: './assets/music/hit-astrophage.mp3',
+  crashAstrophage: './assets/music/crash-astrophage.mp3',
 };
 
 const soundEffects = Object.fromEntries(
   Object.entries(soundEffectSources).map(([name, src]) => {
     const audio = new Audio(src);
-    audio.preload = "auto";
+    audio.preload = 'auto';
     return [name, audio];
   }),
 );
 
-export const backgroundMusicAudio = new Audio("./assets/music/background/cosmos.mp3");
+export const backgroundMusicAudio = new Audio(
+  './assets/music/background/cosmos.mp3',
+);
 backgroundMusicAudio.loop = true;
-backgroundMusicAudio.preload = "auto";
+backgroundMusicAudio.preload = 'auto';
 
 let hasUserActivatedAudio = false;
 
 export const clampVolume = (value) => Math.min(Math.max(value, 0), 1);
 
-export function getEffectiveAudioVolume(control) {
+export const getEffectiveAudioVolume = (control) => {
   const setting = audioSettings[control];
   if (!setting || setting.muted) return 0;
 
   return clampVolume(setting.volume);
-}
+};
 
-export function getEffectiveEffectsVolume() {
+export const getEffectiveEffectsVolume = () => {
   return clampVolume(
-    getEffectiveAudioVolume("master") * getEffectiveAudioVolume("effects"),
+    getEffectiveAudioVolume('master') * getEffectiveAudioVolume('effects'),
   );
-}
+};
 
-export function applyAudioVolumes() {
+export const applyAudioVolumes = () => {
   backgroundMusicAudio.volume = clampVolume(
-    getEffectiveAudioVolume("master") * getEffectiveAudioVolume("music"),
+    getEffectiveAudioVolume('master') * getEffectiveAudioVolume('music'),
   );
-}
+};
 
-export function playBackgroundMusic() {
+export const playBackgroundMusic = () => {
   if (!hasUserActivatedAudio || backgroundMusicAudio.volume === 0) return;
 
   backgroundMusicAudio.play().catch(() => {
     // Browsers can still block audio until a direct user gesture is accepted.
   });
-}
+};
 
-export function setBackgroundMusicSource(src) {
+export const setBackgroundMusicSource = (src) => {
   if (!src) return;
 
   const nextSrc = new URL(src, window.location.href).href;
@@ -69,16 +71,16 @@ export function setBackgroundMusicSource(src) {
   if (shouldResume || hasUserActivatedAudio) {
     playBackgroundMusic();
   }
-}
+};
 
-export function enableAudioAfterGesture() {
+export const enableAudioAfterGesture = () => {
   if (hasUserActivatedAudio) return;
 
   hasUserActivatedAudio = true;
   playBackgroundMusic();
-}
+};
 
-export function playSoundEffect(name) {
+export const playSoundEffect = (name) => {
   const baseAudio = soundEffects[name];
   const volume = getEffectiveEffectsVolume();
   if (!baseAudio || volume === 0) return;
@@ -88,4 +90,4 @@ export function playSoundEffect(name) {
   audio.play().catch(() => {
     // Ignore play interruptions so rapid collisions never break gameplay.
   });
-}
+};

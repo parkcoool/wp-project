@@ -1,8 +1,13 @@
-import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT, STAGE_CONFIG } from "./state.js";
-import { onBrickHit, addSystemLog } from "./stageManager.js";
-import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
-import { playSoundEffect } from "./audio.js";
-import { updateItems, drawItems } from "./itemSkill.js";
+import {
+  APPEARANCE_PRESETS,
+  GameState,
+  CANVAS_LAYOUT,
+  STAGE_CONFIG,
+} from './state.js';
+import { onBrickHit, addSystemLog } from './stageManager.js';
+import { onBallLaunch, onBallMiss } from './fuelSystem.js';
+import { playSoundEffect } from './audio.js';
+import { updateItems, drawItems } from './itemSkill.js';
 
 let canvas;
 let ctx;
@@ -33,15 +38,18 @@ const BRICK_TYPE_STYLES = {
   },
 };
 const paddleImage = new Image();
-paddleImage.src = new URL("../assets/images/sprites/hail-mary.png", import.meta.url).href;
-
-const paddleImageXenonite = new Image();
-paddleImageXenonite.src = new URL(
-  "../assets/images/sprites/hail-mary_xenonite.png",
+paddleImage.src = new URL(
+  '../assets/images/sprites/hail-mary.png',
   import.meta.url,
 ).href;
 
-function drawRoundedRect(ctx, x, y, w, h, radius) {
+const paddleImageXenonite = new Image();
+paddleImageXenonite.src = new URL(
+  '../assets/images/sprites/hail-mary_xenonite.png',
+  import.meta.url,
+).href;
+
+const drawRoundedRect = (ctx, x, y, w, h, radius) => {
   const r = Math.min(radius, w / 2, h / 2);
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -54,9 +62,9 @@ function drawRoundedRect(ctx, x, y, w, h, radius) {
   ctx.lineTo(x, y + r);
   ctx.quadraticCurveTo(x, y, x + r, y);
   ctx.closePath();
-}
+};
 
-function getBrickStyle(brick) {
+const getBrickStyle = (brick) => {
   const typeStyle = BRICK_TYPE_STYLES[brick.type] ?? BRICK_TYPE_STYLES.normal;
   const skin =
     APPEARANCE_PRESETS.bricks[GameState.appearance.brickSkin] ??
@@ -73,33 +81,33 @@ function getBrickStyle(brick) {
     stroke: `rgba(${strokeR}, ${strokeG}, ${strokeB}, ${0.26 + damageRatio * 0.22})`,
     glow: `rgba(${glowR}, ${glowG}, ${glowB}, ${0.12 + damageRatio * 0.12})`,
   };
-}
+};
 
-function getTransparentColor(hexColor) {
-  const hex = hexColor.replace("#", "");
+const getTransparentColor = (hexColor) => {
+  const hex = hexColor.replace('#', '');
   const r = parseInt(hex.slice(0, 2), 16);
   const g = parseInt(hex.slice(2, 4), 16);
   const b = parseInt(hex.slice(4, 6), 16);
 
   return `rgba(${r}, ${g}, ${b}, 0)`;
-}
+};
 
-function randomBetween(min, max) {
+const randomBetween = (min, max) => {
   return min + Math.random() * (max - min);
-}
+};
 
-function clamp(value, min, max) {
+const clamp = (value, min, max) => {
   return Math.min(Math.max(value, min), max);
-}
+};
 
-function colorWithAlpha(color, alpha) {
+const colorWithAlpha = (color, alpha) => {
   return color.replace(/rgba?\(([^)]+)\)/, (_, values) => {
-    const parts = values.split(",").map((part) => part.trim());
+    const parts = values.split(',').map((part) => part.trim());
     return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
   });
-}
+};
 
-function createShardPoints(w, h, chip) {
+const createShardPoints = (w, h, chip) => {
   const inset = chip ? 0.12 : 0.18;
   const left = -w / 2;
   const right = w / 2;
@@ -107,9 +115,18 @@ function createShardPoints(w, h, chip) {
   const bottom = h / 2;
 
   return [
-    { x: left + randomBetween(-w * 0.08, w * inset), y: top + randomBetween(-h * 0.08, h * inset) },
-    { x: right - randomBetween(0, w * inset), y: top + randomBetween(-h * 0.12, h * 0.22) },
-    { x: right + randomBetween(-w * 0.1, w * 0.08), y: bottom - randomBetween(0, h * inset) },
+    {
+      x: left + randomBetween(-w * 0.08, w * inset),
+      y: top + randomBetween(-h * 0.08, h * inset),
+    },
+    {
+      x: right - randomBetween(0, w * inset),
+      y: top + randomBetween(-h * 0.12, h * 0.22),
+    },
+    {
+      x: right + randomBetween(-w * 0.1, w * 0.08),
+      y: bottom - randomBetween(0, h * inset),
+    },
     {
       x: randomBetween(left + w * 0.2, right - w * 0.08),
       y: bottom + randomBetween(-h * 0.08, h * 0.12),
@@ -119,9 +136,9 @@ function createShardPoints(w, h, chip) {
       y: randomBetween(top + h * 0.25, bottom - h * 0.08),
     },
   ];
-}
+};
 
-function createBrickShards(brick, style, impactX, impactY) {
+const createBrickShards = (brick, style, impactX, impactY) => {
   const cols = 5;
   const rows = 3;
   const shardW = brick.w / cols;
@@ -130,7 +147,7 @@ function createBrickShards(brick, style, impactX, impactY) {
   const centerY = brick.y + brick.h / 2;
   const impactAngle = Math.atan2(centerY - impactY, centerX - impactX);
   const highlight = colorWithAlpha(style.stroke, 0.62);
-  const shadow = "rgba(6, 11, 22, 0.45)";
+  const shadow = 'rgba(6, 11, 22, 0.45)';
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
@@ -141,18 +158,34 @@ function createBrickShards(brick, style, impactX, impactY) {
       const y = brick.y + row * shardH;
       const shardCenterX = x + shardW * randomBetween(0.35, 0.65);
       const shardCenterY = y + shardH * randomBetween(0.32, 0.68);
-      const awayFromCenter = Math.atan2(shardCenterY - centerY, shardCenterX - centerX);
-      const awayFromImpact = Math.atan2(shardCenterY - impactY, shardCenterX - impactX);
-      const impactDistance = Math.hypot(shardCenterX - impactX, shardCenterY - impactY);
-      const proximityBoost = clamp(1 - impactDistance / Math.max(brick.w, brick.h), 0, 1.2);
+      const awayFromCenter = Math.atan2(
+        shardCenterY - centerY,
+        shardCenterX - centerX,
+      );
+      const awayFromImpact = Math.atan2(
+        shardCenterY - impactY,
+        shardCenterX - impactX,
+      );
+      const impactDistance = Math.hypot(
+        shardCenterX - impactX,
+        shardCenterY - impactY,
+      );
+      const proximityBoost = clamp(
+        1 - impactDistance / Math.max(brick.w, brick.h),
+        0,
+        1.2,
+      );
       const speed = randomBetween(1.4, 3.4) + proximityBoost * 2.2;
-      const angle = awayFromCenter * 0.45 + awayFromImpact * 0.55 + randomBetween(-0.42, 0.42);
+      const angle =
+        awayFromCenter * 0.45 +
+        awayFromImpact * 0.55 +
+        randomBetween(-0.42, 0.42);
       const maxLife = BRICK_SHARD_LIFE + Math.floor(Math.random() * 16);
       const widthScale = randomBetween(0.72, 1.08);
       const heightScale = randomBetween(0.62, 1.04);
 
       brickShards.push({
-        type: "chunk",
+        type: 'chunk',
         x: shardCenterX,
         y: shardCenterY,
         w: Math.max(shardW * widthScale, 5),
@@ -160,7 +193,9 @@ function createBrickShards(brick, style, impactX, impactY) {
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed - randomBetween(0.4, 2.2),
         rotation: randomBetween(-0.75, 0.75),
-        spin: randomBetween(-0.18, 0.18) + proximityBoost * randomBetween(-0.05, 0.05),
+        spin:
+          randomBetween(-0.18, 0.18) +
+          proximityBoost * randomBetween(-0.05, 0.05),
         life: maxLife,
         maxLife,
         points: createShardPoints(
@@ -184,7 +219,7 @@ function createBrickShards(brick, style, impactX, impactY) {
     const maxLife = Math.floor(randomBetween(22, 42));
 
     brickShards.push({
-      type: "chip",
+      type: 'chip',
       x: impactX + randomBetween(-brick.w * 0.12, brick.w * 0.12),
       y: impactY + randomBetween(-brick.h * 0.12, brick.h * 0.12),
       w: size * randomBetween(1.1, 1.9),
@@ -210,7 +245,7 @@ function createBrickShards(brick, style, impactX, impactY) {
     const maxLife = Math.floor(randomBetween(18, 34));
 
     brickShards.push({
-      type: Math.random() < 0.28 ? "spark" : "dust",
+      type: Math.random() < 0.28 ? 'spark' : 'dust',
       x: impactX + randomBetween(-brick.w * 0.18, brick.w * 0.18),
       y: impactY + randomBetween(-brick.h * 0.18, brick.h * 0.18),
       radius: randomBetween(0.9, 2.4),
@@ -226,20 +261,21 @@ function createBrickShards(brick, style, impactX, impactY) {
       glow: style.glow,
     });
   }
-}
+};
 
-function updateBrickShards() {
+const updateBrickShards = () => {
   for (let i = brickShards.length - 1; i >= 0; i -= 1) {
     const shard = brickShards[i];
     shard.x += shard.vx;
     shard.y += shard.vy;
     const drag =
-      shard.type === "dust"
+      shard.type === 'dust'
         ? BRICK_DUST_DRAG
-        : shard.type === "spark"
+        : shard.type === 'spark'
           ? BRICK_SPARK_DRAG
           : BRICK_SHARD_DRAG;
-    const gravity = shard.type === "spark" ? BRICK_SHARD_GRAVITY * 0.42 : BRICK_SHARD_GRAVITY;
+    const gravity =
+      shard.type === 'spark' ? BRICK_SHARD_GRAVITY * 0.42 : BRICK_SHARD_GRAVITY;
     shard.vx *= drag;
     shard.vy = shard.vy * drag + gravity;
     shard.rotation += shard.spin;
@@ -251,9 +287,9 @@ function updateBrickShards() {
       brickShards.pop();
     }
   }
-}
+};
 
-function drawBrickShards() {
+const drawBrickShards = () => {
   if (brickShards.length === 0) return;
 
   ctx.save();
@@ -262,7 +298,7 @@ function drawBrickShards() {
   // dust — 원형, shadow 없음, transform 없음 (한 번에 배치 처리)
   for (let i = 0; i < brickShards.length; i += 1) {
     const shard = brickShards[i];
-    if (shard.type !== "dust") continue;
+    if (shard.type !== 'dust') continue;
     const alpha = shard.life / shard.maxLife;
     ctx.globalAlpha = alpha * 0.72;
     ctx.fillStyle = shard.fill;
@@ -275,22 +311,28 @@ function drawBrickShards() {
   ctx.lineWidth = 1.2;
   for (let i = 0; i < brickShards.length; i += 1) {
     const shard = brickShards[i];
-    if (shard.type !== "spark") continue;
+    if (shard.type !== 'spark') continue;
     const alpha = shard.life / shard.maxLife;
     ctx.globalAlpha = alpha;
     ctx.strokeStyle = shard.stroke;
     const cos = Math.cos(shard.rotation);
     const sin = Math.sin(shard.rotation);
     ctx.beginPath();
-    ctx.moveTo(shard.x + cos * (-shard.length * 0.42), shard.y + sin * (-shard.length * 0.42));
-    ctx.lineTo(shard.x + cos * (shard.length * 0.58), shard.y + sin * (shard.length * 0.58));
+    ctx.moveTo(
+      shard.x + cos * (-shard.length * 0.42),
+      shard.y + sin * (-shard.length * 0.42),
+    );
+    ctx.lineTo(
+      shard.x + cos * (shard.length * 0.58),
+      shard.y + sin * (shard.length * 0.58),
+    );
     ctx.stroke();
   }
 
   // chunk / chip — 다각형, shadow 적용, setTransform으로 save/restore 대체
   for (let i = 0; i < brickShards.length; i += 1) {
     const shard = brickShards[i];
-    if (shard.type !== "chunk" && shard.type !== "chip") continue;
+    if (shard.type !== 'chunk' && shard.type !== 'chip') continue;
     const alpha = shard.life / shard.maxLife;
     ctx.globalAlpha = alpha;
     ctx.shadowColor = shard.glow;
@@ -310,7 +352,7 @@ function drawBrickShards() {
 
     ctx.shadowBlur = 0;
     ctx.strokeStyle = shard.stroke;
-    ctx.lineWidth = shard.type === "chip" ? 0.8 : 1.1;
+    ctx.lineWidth = shard.type === 'chip' ? 0.8 : 1.1;
     ctx.stroke();
 
     ctx.beginPath();
@@ -329,9 +371,9 @@ function drawBrickShards() {
   }
 
   ctx.restore();
-}
+};
 
-function drawBallTail(ball, style) {
+const drawBallTail = (ball, style) => {
   if (!ball.isLaunched) return;
 
   const angle = Math.atan2(ball.vy, ball.vx) + Math.PI;
@@ -353,19 +395,19 @@ function drawBallTail(ball, style) {
   ctx.closePath();
   ctx.fillStyle = tailGradient;
   ctx.fill();
-}
+};
 
-function drawBall(ball) {
+const drawBall = (ball) => {
   const style =
     APPEARANCE_PRESETS.balls[GameState.appearance.ballSkin] ??
-    APPEARANCE_PRESETS.balls["pulse-energy"];
+    APPEARANCE_PRESETS.balls['pulse-energy'];
 
   ctx.save();
   ctx.shadowColor = style.glow;
-  ctx.shadowBlur = style.shape === "singularity" ? 22 : 16;
+  ctx.shadowBlur = style.shape === 'singularity' ? 22 : 16;
   drawBallTail(ball, style);
 
-  if (style.shape === "pulse") {
+  if (style.shape === 'pulse') {
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
     ctx.fillStyle = style.fill;
@@ -375,7 +417,7 @@ function drawBall(ball) {
     return;
   }
 
-  if (style.shape === "sun") {
+  if (style.shape === 'sun') {
     ctx.strokeStyle = style.glow;
     ctx.lineWidth = 2;
     for (let i = 0; i < 10; i += 1) {
@@ -402,7 +444,10 @@ function drawBall(ball) {
     ball.r,
   );
   gradient.addColorStop(0, style.core);
-  gradient.addColorStop(style.shape === "singularity" ? 0.45 : 0.28, style.fill);
+  gradient.addColorStop(
+    style.shape === 'singularity' ? 0.45 : 0.28,
+    style.fill,
+  );
   gradient.addColorStop(1, style.glow);
 
   ctx.beginPath();
@@ -410,7 +455,7 @@ function drawBall(ball) {
   ctx.fillStyle = gradient;
   ctx.fill();
 
-  if (style.shape === "core" || style.shape === "singularity") {
+  if (style.shape === 'core' || style.shape === 'singularity') {
     ctx.shadowBlur = 0;
     ctx.lineWidth = 2;
     ctx.strokeStyle = style.core;
@@ -419,19 +464,25 @@ function drawBall(ball) {
     ctx.stroke();
   }
 
-  if (style.shape === "singularity") {
+  if (style.shape === 'singularity') {
     ctx.fillStyle = style.core;
     ctx.beginPath();
-    ctx.arc(ball.x + ball.r * 0.2, ball.y - ball.r * 0.18, ball.r * 0.22, 0, Math.PI * 2);
+    ctx.arc(
+      ball.x + ball.r * 0.2,
+      ball.y - ball.r * 0.18,
+      ball.r * 0.22,
+      0,
+      Math.PI * 2,
+    );
     ctx.fill();
   }
 
   ctx.closePath();
   ctx.restore();
-}
+};
 
 // ── 분열 에너지 파동 ──
-function triggerResonanceWave(x, y) {
+const triggerResonanceWave = (x, y) => {
   for (let i = 0; i < 3; i++) {
     resonanceWaves.push({
       x,
@@ -442,68 +493,70 @@ function triggerResonanceWave(x, y) {
       alpha: 1,
     });
   }
-}
+};
 
-function updateResonanceWaves() {
+const updateResonanceWaves = () => {
   for (let i = resonanceWaves.length - 1; i >= 0; i--) {
     const w = resonanceWaves[i];
     w.r += w.speed;
     w.alpha = Math.max(0, 1 - w.r / w.maxR);
     if (w.alpha <= 0) resonanceWaves.splice(i, 1);
   }
-}
+};
 
-function drawResonanceWaves() {
+const drawResonanceWaves = () => {
   resonanceWaves.forEach((w) => {
     ctx.save();
     ctx.globalAlpha = w.alpha * 0.75;
-    ctx.strokeStyle = "#9B5CFF";
+    ctx.strokeStyle = '#9B5CFF';
     ctx.lineWidth = 2 * w.alpha + 0.5;
-    ctx.shadowColor = "#9B5CFF";
+    ctx.shadowColor = '#9B5CFF';
     ctx.shadowBlur = 18 * w.alpha;
     ctx.beginPath();
     ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
   });
-}
+};
 
-function getPaddleHeight() {
+const getPaddleHeight = () => {
   const imageRatio = paddleImage.naturalWidth
     ? paddleImage.naturalHeight / paddleImage.naturalWidth
     : 2 / 3;
   return GameState.paddle.w * imageRatio;
-}
+};
 
-function syncPaddleSize() {
+const syncPaddleSize = () => {
   GameState.paddle.h = getPaddleHeight();
-}
+};
 
-function syncPaddleWidth(canvasWidth = canvas?.width ?? 0) {
-  GameState.paddle.w = clamp(canvasWidth * 0.18, 92, 160) * (GameState.paddle.widthBoost ?? 1);
+const syncPaddleWidth = (canvasWidth = canvas?.width ?? 0) => {
+  GameState.paddle.w =
+    clamp(canvasWidth * 0.18, 92, 160) * (GameState.paddle.widthBoost ?? 1);
   syncPaddleSize();
-}
+};
 
-function getPaddleHitbox(paddle) {
+const getPaddleHitbox = (paddle) => {
   return {
     x: paddle.x,
     y: paddle.y + paddle.h * 0.36,
     w: paddle.w * 0.96,
     h: paddle.h * 0.28,
   };
-}
+};
 
-function getAttachedBallY(paddle, ballRadius) {
+const getAttachedBallY = (paddle, ballRadius) => {
   return getPaddleHitbox(paddle).y - ballRadius - 12;
-}
+};
 
-function getPaddleSensitivityMultiplier() {
+const getPaddleSensitivityMultiplier = () => {
   const sensitivity = Number(GameState.controls?.paddleSensitivity ?? 1);
-  const normalizedSensitivity = (Math.min(Math.max(sensitivity, 1), 100) - 1) / 99;
+  const normalizedSensitivity =
+    (Math.min(Math.max(sensitivity, 1), 100) - 1) / 99;
   return 1 + normalizedSensitivity * 2;
-}
+};
 
-function createResonanceBalls(sourceBall) {
+const createResonanceBalls = (sourceBall) => {
   triggerResonanceWave(sourceBall.x, sourceBall.y);
   const speed = Math.max(Math.hypot(sourceBall.vx, sourceBall.vy), 5);
   const baseAngle = Math.atan2(sourceBall.vy, sourceBall.vx);
@@ -518,19 +571,21 @@ function createResonanceBalls(sourceBall) {
     isLaunched: true,
     combo: 0,
   }));
-}
+};
 
 // 포인터(마우스/터치)로 패들을 조작합니다 (이전 키보드 입력 제거)
 
 /**
  * 물리 엔진 초기화 및 이벤트 바인딩
  */
-export function initEngine() {
-  canvas = document.getElementById("game-canvas");
-  ctx = canvas.getContext("2d");
+export const initEngine = () => {
+  canvas = document.getElementById('game-canvas');
+  ctx = canvas.getContext('2d');
   syncPaddleWidth(canvas.width);
-  paddleImage.addEventListener("load", () => syncPaddleWidth(canvas.width));
-  paddleImageXenonite.addEventListener("load", () => syncPaddleWidth(canvas.width));
+  paddleImage.addEventListener('load', () => syncPaddleWidth(canvas.width));
+  paddleImageXenonite.addEventListener('load', () =>
+    syncPaddleWidth(canvas.width),
+  );
 
   // index.js에서 호출할 수 있도록 전역 함수로 등록
   window.onCanvasResize = (w, h) => {
@@ -559,15 +614,21 @@ export function initEngine() {
     syncPaddleWidth(w);
     // 캔버스 크기가 변할 때 패들을 화면 하단 중앙에 재배치
     GameState.paddle.y = h - GameState.paddle.h - 30;
-    GameState.paddle.x = clamp(GameState.paddle.x * scaleX, 0, Math.max(w - GameState.paddle.w, 0));
+    GameState.paddle.x = clamp(
+      GameState.paddle.x * scaleX,
+      0,
+      Math.max(w - GameState.paddle.w, 0),
+    );
     previousCanvasSize = { width: w, height: h };
   };
 
   window.startGameLoop = () => {
     //lastPointerX = null;
     const rect = canvas.getBoundingClientRect();
-    const paddleCenterX = rect.left + GameState.paddle.x + GameState.paddle.w / 2;
-    const paddleCenterY = rect.top + GameState.paddle.y + GameState.paddle.h / 2;
+    const paddleCenterX =
+      rect.left + GameState.paddle.x + GameState.paddle.w / 2;
+    const paddleCenterY =
+      rect.top + GameState.paddle.y + GameState.paddle.h / 2;
     lastPointerX = paddleCenterX - rect.left;
     brickShards = [];
     resonanceWaves = [];
@@ -594,8 +655,8 @@ export function initEngine() {
   };
 
   // 포인터(마우스/터치) 이벤트 리스너 등록: 패들 이동 및 클릭으로 발사
-  canvas.addEventListener("pointermove", (e) => {
-    if (GameState.status !== "playing") {
+  canvas.addEventListener('pointermove', (e) => {
+    if (GameState.status !== 'playing') {
       lastPointerX = null;
       return;
     }
@@ -609,7 +670,8 @@ export function initEngine() {
       const pointerDelta = x - lastPointerX;
       const controlDirection = GameState.controls?.isPaddleInverted ? -1 : 1;
       lastPointerX = x;
-      GameState.paddle.x += pointerDelta * controlDirection * getPaddleSensitivityMultiplier();
+      GameState.paddle.x +=
+        pointerDelta * controlDirection * getPaddleSensitivityMultiplier();
     }
     // 경계 처리
     if (GameState.paddle.x < 0) GameState.paddle.x = 0;
@@ -617,12 +679,12 @@ export function initEngine() {
       GameState.paddle.x = canvas.width - GameState.paddle.w;
   });
 
-  canvas.addEventListener("pointerleave", () => {
+  canvas.addEventListener('pointerleave', () => {
     lastPointerX = null;
   });
 
-  canvas.addEventListener("pointerdown", (e) => {
-    if (GameState.status === "playing") {
+  canvas.addEventListener('pointerdown', (e) => {
+    if (GameState.status === 'playing') {
       GameState.balls.forEach((ball) => {
         if (!ball.isLaunched) {
           ball.isLaunched = true;
@@ -630,18 +692,18 @@ export function initEngine() {
           const speed = config?.ballSpeed ?? 7.07;
           ball.vx = 0; // 초기 x 속도
           ball.vy = -speed; // 초기 y 속도
-          playSoundEffect("pulseShot");
+          playSoundEffect('pulseShot');
           onBallLaunch();
         }
       });
     }
   });
-}
+};
 
 /**
  * 물리 연산 업데이트 (매 프레임 실행)
  */
-function updatePhysics() {
+const updatePhysics = () => {
   const { width, height } = canvas;
   const paddle = GameState.paddle;
 
@@ -684,7 +746,7 @@ function updatePhysics() {
       }
 
       // 공이 다 떨어지면 새로 생성 (임시 로직 - 나중에 생명력 개념 추가 가능)
-      if (GameState.balls.length === 0 && GameState.status === "playing") {
+      if (GameState.balls.length === 0 && GameState.status === 'playing') {
         GameState.balls.push({
           x: paddle.x + paddle.w / 2,
           y: getAttachedBallY(paddle, ball.r),
@@ -707,7 +769,8 @@ function updatePhysics() {
       ball.x - ball.r < paddleHitbox.x + paddleHitbox.w
     ) {
       // 반사 각도를 이용해 속도의 크기(에너지)를 보존하도록 조정
-      const hitPoint = (ball.x - (paddleHitbox.x + paddleHitbox.w / 2)) / (paddleHitbox.w / 2);
+      const hitPoint =
+        (ball.x - (paddleHitbox.x + paddleHitbox.w / 2)) / (paddleHitbox.w / 2);
       const maxAngle = Math.PI / 3; // 패들 끝에서 약 60도까지 각도 변경 허용
       const angle = hitPoint * maxAngle;
       const prevSpeed = Math.hypot(ball.vx, ball.vy) || 6; // 속도 보존, 0일 경우 기본값 사용
@@ -733,9 +796,11 @@ function updatePhysics() {
       ) {
         // 충돌이 발생했으면 상하/좌우 방향을 비교해 반사 방향 결정
         const overlapX =
-          Math.min(ball.x + ball.r, brick.x + brick.w) - Math.max(ball.x - ball.r, brick.x);
+          Math.min(ball.x + ball.r, brick.x + brick.w) -
+          Math.max(ball.x - ball.r, brick.x);
         const overlapY =
-          Math.min(ball.y + ball.r, brick.y + brick.h) - Math.max(ball.y - ball.r, brick.y);
+          Math.min(ball.y + ball.r, brick.y + brick.h) -
+          Math.max(ball.y - ball.r, brick.y);
 
         if (overlapX < overlapY) {
           ball.vx *= -1;
@@ -766,13 +831,15 @@ function updatePhysics() {
         ) {
           GameState.balls.push(...createResonanceBalls(ball));
           GameState.hasResonanceTriggered = true;
-          addSystemLog("Combo accomplished! Multi-ball added", "positive");
-          const _multiballEl = document.getElementById("multiball-screen-effect");
+          addSystemLog('Combo accomplished! Multi-ball added', 'positive');
+          const _multiballEl = document.getElementById(
+            'multiball-screen-effect',
+          );
           if (_multiballEl) {
-            _multiballEl.classList.remove("flash");
+            _multiballEl.classList.remove('flash');
             void _multiballEl.offsetWidth;
-            _multiballEl.classList.add("flash");
-            setTimeout(() => _multiballEl.classList.remove("flash"), 500);
+            _multiballEl.classList.add('flash');
+            setTimeout(() => _multiballEl.classList.remove('flash'), 500);
           }
         }
         if (wasDestroyed) {
@@ -781,9 +848,9 @@ function updatePhysics() {
       }
     });
   }
-}
+};
 
-function drawLaserEffect(ctx) {
+const drawLaserEffect = (ctx) => {
   if (!GameState.activeSkills.laser) return;
 
   const elapsed = Date.now() - GameState.activeSkills.laserStartTime;
@@ -802,39 +869,44 @@ function drawLaserEffect(ctx) {
     centerX + beamHalfWidth * 3,
     0,
   );
-  outerGlow.addColorStop(0, "rgba(255,122,26,0)");
-  outerGlow.addColorStop(0.3, "rgba(255,122,26,0.18)");
-  outerGlow.addColorStop(0.5, "rgba(255,122,26,0.35)");
-  outerGlow.addColorStop(0.7, "rgba(255,122,26,0.18)");
-  outerGlow.addColorStop(1, "rgba(255,122,26,0)");
+  outerGlow.addColorStop(0, 'rgba(255,122,26,0)');
+  outerGlow.addColorStop(0.3, 'rgba(255,122,26,0.18)');
+  outerGlow.addColorStop(0.5, 'rgba(255,122,26,0.35)');
+  outerGlow.addColorStop(0.7, 'rgba(255,122,26,0.18)');
+  outerGlow.addColorStop(1, 'rgba(255,122,26,0)');
   ctx.globalAlpha = alpha;
   ctx.fillStyle = outerGlow;
   ctx.fillRect(centerX - beamHalfWidth * 3, 0, beamHalfWidth * 6, paddle.y);
 
-  const midGrad = ctx.createLinearGradient(centerX - beamHalfWidth, 0, centerX + beamHalfWidth, 0);
-  midGrad.addColorStop(0, "rgba(255,122,26,0)");
-  midGrad.addColorStop(0.2, "rgba(255,122,26,0.7)");
-  midGrad.addColorStop(0.5, "rgba(255,200,80,0.95)");
-  midGrad.addColorStop(0.8, "rgba(255,122,26,0.7)");
-  midGrad.addColorStop(1, "rgba(255,122,26,0)");
-  ctx.shadowColor = "#FF7A1A";
+  const midGrad = ctx.createLinearGradient(
+    centerX - beamHalfWidth,
+    0,
+    centerX + beamHalfWidth,
+    0,
+  );
+  midGrad.addColorStop(0, 'rgba(255,122,26,0)');
+  midGrad.addColorStop(0.2, 'rgba(255,122,26,0.7)');
+  midGrad.addColorStop(0.5, 'rgba(255,200,80,0.95)');
+  midGrad.addColorStop(0.8, 'rgba(255,122,26,0.7)');
+  midGrad.addColorStop(1, 'rgba(255,122,26,0)');
+  ctx.shadowColor = '#FF7A1A';
   ctx.shadowBlur = 20;
   ctx.fillStyle = midGrad;
   ctx.fillRect(centerX - beamHalfWidth, 0, beamHalfWidth * 2, paddle.y);
 
   const coreGrad = ctx.createLinearGradient(centerX - 2, 0, centerX + 2, 0);
-  coreGrad.addColorStop(0, "rgba(255,255,240,0)");
-  coreGrad.addColorStop(0.5, "rgba(255,255,255,0.98)");
-  coreGrad.addColorStop(1, "rgba(255,255,240,0)");
-  ctx.shadowColor = "#FFFFFF";
+  coreGrad.addColorStop(0, 'rgba(255,255,240,0)');
+  coreGrad.addColorStop(0.5, 'rgba(255,255,255,0.98)');
+  coreGrad.addColorStop(1, 'rgba(255,255,240,0)');
+  ctx.shadowColor = '#FFFFFF';
   ctx.shadowBlur = 10;
   ctx.fillStyle = coreGrad;
   ctx.fillRect(centerX - 2, 0, 4, paddle.y);
 
   ctx.restore();
-}
+};
 
-function drawLaserFlash(ctx) {
+const drawLaserFlash = (ctx) => {
   if (!GameState.activeSkills.laser) return;
 
   const elapsed = Date.now() - GameState.activeSkills.laserStartTime;
@@ -857,16 +929,16 @@ function drawLaserFlash(ctx) {
     paddle.y,
     canvas.width * 0.6,
   );
-  flashGrad.addColorStop(0, "rgba(255,240,200,1)");
-  flashGrad.addColorStop(0.15, "rgba(255,180,80,0.8)");
-  flashGrad.addColorStop(0.5, "rgba(255,122,26,0.3)");
-  flashGrad.addColorStop(1, "rgba(255,122,26,0)");
+  flashGrad.addColorStop(0, 'rgba(255,240,200,1)');
+  flashGrad.addColorStop(0.15, 'rgba(255,180,80,0.8)');
+  flashGrad.addColorStop(0.5, 'rgba(255,122,26,0.3)');
+  flashGrad.addColorStop(1, 'rgba(255,122,26,0)');
 
   ctx.fillStyle = flashGrad;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.restore();
-}
+};
 
 /**
  * 렌더링 (매 프레임 화면 그리기)
@@ -877,15 +949,17 @@ function draw() {
   // 1. 패들(헤일메리호) 그리기
   const p = GameState.paddle;
   syncPaddleSize();
-  const currentPaddleImage = GameState.paddle.hasXenonite ? paddleImageXenonite : paddleImage;
+  const currentPaddleImage = GameState.paddle.hasXenonite
+    ? paddleImageXenonite
+    : paddleImage;
   if (currentPaddleImage.complete) {
     ctx.save();
-    ctx.shadowColor = "rgba(0, 255, 157, 0.85)";
+    ctx.shadowColor = 'rgba(0, 255, 157, 0.85)';
     ctx.shadowBlur = 8;
     ctx.drawImage(currentPaddleImage, p.x, p.y, p.w, p.h);
     ctx.restore();
   } else {
-    ctx.fillStyle = "#e94560";
+    ctx.fillStyle = '#e94560';
     ctx.fillRect(p.x, p.y, p.w, p.h);
   }
 
@@ -915,7 +989,7 @@ function draw() {
         brick.h - 2,
         Math.max(radius - 2, 0),
       );
-      ctx.strokeStyle = "rgba(6, 11, 22, 0.32)";
+      ctx.strokeStyle = 'rgba(6, 11, 22, 0.32)';
       ctx.stroke();
       ctx.restore();
     }
@@ -943,8 +1017,8 @@ function draw() {
 /**
  * 메인 루프
  */
-function loop() {
-  if (GameState.status === "playing") {
+const loop = () => {
+  if (GameState.status === 'playing') {
     updatePhysics();
     updateItems();
     updateResonanceWaves();
@@ -954,4 +1028,4 @@ function loop() {
   // 상태와 무관하게 화면은 계속 렌더링 (일시정지 화면 등을 위해)
   draw();
   animationId = requestAnimationFrame(loop);
-}
+};
