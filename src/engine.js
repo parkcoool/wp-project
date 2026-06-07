@@ -1,13 +1,8 @@
-import {
-  APPEARANCE_PRESETS,
-  GameState,
-  CANVAS_LAYOUT,
-  STAGE_CONFIG,
-} from './state.js';
-import { onBrickHit, addSystemLog } from './stageManager.js';
-import { onBallLaunch, onBallMiss } from './fuelSystem.js';
-import { playSoundEffect } from './audio.js';
-import { updateItems, drawItems } from './itemSkill.js';
+import { APPEARANCE_PRESETS, GameState, CANVAS_LAYOUT, STAGE_CONFIG } from "./state.js";
+import { onBrickHit, addSystemLog } from "./stageManager.js";
+import { onBallLaunch, onBallMiss } from "./fuelSystem.js";
+import { playSoundEffect } from "./audio.js";
+import { updateItems, drawItems } from "./itemSkill.js";
 
 let canvas;
 let ctx;
@@ -38,14 +33,11 @@ const BRICK_TYPE_STYLES = {
   },
 };
 const paddleImage = new Image();
-paddleImage.src = new URL(
-  '../assets/images/sprites/hail-mary.png',
-  import.meta.url,
-).href;
+paddleImage.src = new URL("../assets/images/sprites/hail-mary.png", import.meta.url).href;
 
 const paddleImageXenonite = new Image();
 paddleImageXenonite.src = new URL(
-  '../assets/images/sprites/hail-mary_xenonite.png',
+  "../assets/images/sprites/hail-mary_xenonite.png",
   import.meta.url,
 ).href;
 
@@ -84,7 +76,7 @@ const getBrickStyle = (brick) => {
 };
 
 const getTransparentColor = (hexColor) => {
-  const hex = hexColor.replace('#', '');
+  const hex = hexColor.replace("#", "");
   const r = parseInt(hex.slice(0, 2), 16);
   const g = parseInt(hex.slice(2, 4), 16);
   const b = parseInt(hex.slice(4, 6), 16);
@@ -102,7 +94,7 @@ const clamp = (value, min, max) => {
 
 const colorWithAlpha = (color, alpha) => {
   return color.replace(/rgba?\(([^)]+)\)/, (_, values) => {
-    const parts = values.split(',').map((part) => part.trim());
+    const parts = values.split(",").map((part) => part.trim());
     return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${alpha})`;
   });
 };
@@ -147,7 +139,7 @@ const createBrickShards = (brick, style, impactX, impactY) => {
   const centerY = brick.y + brick.h / 2;
   const impactAngle = Math.atan2(centerY - impactY, centerX - impactX);
   const highlight = colorWithAlpha(style.stroke, 0.62);
-  const shadow = 'rgba(6, 11, 22, 0.45)';
+  const shadow = "rgba(6, 11, 22, 0.45)";
 
   for (let row = 0; row < rows; row += 1) {
     for (let col = 0; col < cols; col += 1) {
@@ -158,34 +150,18 @@ const createBrickShards = (brick, style, impactX, impactY) => {
       const y = brick.y + row * shardH;
       const shardCenterX = x + shardW * randomBetween(0.35, 0.65);
       const shardCenterY = y + shardH * randomBetween(0.32, 0.68);
-      const awayFromCenter = Math.atan2(
-        shardCenterY - centerY,
-        shardCenterX - centerX,
-      );
-      const awayFromImpact = Math.atan2(
-        shardCenterY - impactY,
-        shardCenterX - impactX,
-      );
-      const impactDistance = Math.hypot(
-        shardCenterX - impactX,
-        shardCenterY - impactY,
-      );
-      const proximityBoost = clamp(
-        1 - impactDistance / Math.max(brick.w, brick.h),
-        0,
-        1.2,
-      );
+      const awayFromCenter = Math.atan2(shardCenterY - centerY, shardCenterX - centerX);
+      const awayFromImpact = Math.atan2(shardCenterY - impactY, shardCenterX - impactX);
+      const impactDistance = Math.hypot(shardCenterX - impactX, shardCenterY - impactY);
+      const proximityBoost = clamp(1 - impactDistance / Math.max(brick.w, brick.h), 0, 1.2);
       const speed = randomBetween(1.4, 3.4) + proximityBoost * 2.2;
-      const angle =
-        awayFromCenter * 0.45 +
-        awayFromImpact * 0.55 +
-        randomBetween(-0.42, 0.42);
+      const angle = awayFromCenter * 0.45 + awayFromImpact * 0.55 + randomBetween(-0.42, 0.42);
       const maxLife = BRICK_SHARD_LIFE + Math.floor(Math.random() * 16);
       const widthScale = randomBetween(0.72, 1.08);
       const heightScale = randomBetween(0.62, 1.04);
 
       brickShards.push({
-        type: 'chunk',
+        type: "chunk",
         x: shardCenterX,
         y: shardCenterY,
         w: Math.max(shardW * widthScale, 5),
@@ -193,9 +169,7 @@ const createBrickShards = (brick, style, impactX, impactY) => {
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed - randomBetween(0.4, 2.2),
         rotation: randomBetween(-0.75, 0.75),
-        spin:
-          randomBetween(-0.18, 0.18) +
-          proximityBoost * randomBetween(-0.05, 0.05),
+        spin: randomBetween(-0.18, 0.18) + proximityBoost * randomBetween(-0.05, 0.05),
         life: maxLife,
         maxLife,
         points: createShardPoints(
@@ -219,7 +193,7 @@ const createBrickShards = (brick, style, impactX, impactY) => {
     const maxLife = Math.floor(randomBetween(22, 42));
 
     brickShards.push({
-      type: 'chip',
+      type: "chip",
       x: impactX + randomBetween(-brick.w * 0.12, brick.w * 0.12),
       y: impactY + randomBetween(-brick.h * 0.12, brick.h * 0.12),
       w: size * randomBetween(1.1, 1.9),
@@ -245,7 +219,7 @@ const createBrickShards = (brick, style, impactX, impactY) => {
     const maxLife = Math.floor(randomBetween(18, 34));
 
     brickShards.push({
-      type: Math.random() < 0.28 ? 'spark' : 'dust',
+      type: Math.random() < 0.28 ? "spark" : "dust",
       x: impactX + randomBetween(-brick.w * 0.18, brick.w * 0.18),
       y: impactY + randomBetween(-brick.h * 0.18, brick.h * 0.18),
       radius: randomBetween(0.9, 2.4),
@@ -269,20 +243,19 @@ const updateBrickShards = () => {
     shard.x += shard.vx;
     shard.y += shard.vy;
     const drag =
-      shard.type === 'dust'
+      shard.type === "dust"
         ? BRICK_DUST_DRAG
-        : shard.type === 'spark'
+        : shard.type === "spark"
           ? BRICK_SPARK_DRAG
           : BRICK_SHARD_DRAG;
-    const gravity =
-      shard.type === 'spark' ? BRICK_SHARD_GRAVITY * 0.42 : BRICK_SHARD_GRAVITY;
+    const gravity = shard.type === "spark" ? BRICK_SHARD_GRAVITY * 0.42 : BRICK_SHARD_GRAVITY;
     shard.vx *= drag;
     shard.vy = shard.vy * drag + gravity;
     shard.rotation += shard.spin;
     shard.life -= 1;
 
     if (shard.life <= 0) {
-      // swap-and-pop: O(1) 제거, splice O(n) 대비 성능 개선
+      // splice 쓰면 느려서 swap-pop으로 제거
       brickShards[i] = brickShards[brickShards.length - 1];
       brickShards.pop();
     }
@@ -295,10 +268,10 @@ const drawBrickShards = () => {
   ctx.save();
   ctx.shadowBlur = 0;
 
-  // dust — 원형, shadow 없음, transform 없음 (한 번에 배치 처리)
+  // dust 타입: 원형 파티클
   for (let i = 0; i < brickShards.length; i += 1) {
     const shard = brickShards[i];
-    if (shard.type !== 'dust') continue;
+    if (shard.type !== "dust") continue;
     const alpha = shard.life / shard.maxLife;
     ctx.globalAlpha = alpha * 0.72;
     ctx.fillStyle = shard.fill;
@@ -307,32 +280,26 @@ const drawBrickShards = () => {
     ctx.fill();
   }
 
-  // spark — 선분, shadow 없음, setTransform 대신 수동 좌표 계산
+  // spark 타입: 선분
   ctx.lineWidth = 1.2;
   for (let i = 0; i < brickShards.length; i += 1) {
     const shard = brickShards[i];
-    if (shard.type !== 'spark') continue;
+    if (shard.type !== "spark") continue;
     const alpha = shard.life / shard.maxLife;
     ctx.globalAlpha = alpha;
     ctx.strokeStyle = shard.stroke;
     const cos = Math.cos(shard.rotation);
     const sin = Math.sin(shard.rotation);
     ctx.beginPath();
-    ctx.moveTo(
-      shard.x + cos * (-shard.length * 0.42),
-      shard.y + sin * (-shard.length * 0.42),
-    );
-    ctx.lineTo(
-      shard.x + cos * (shard.length * 0.58),
-      shard.y + sin * (shard.length * 0.58),
-    );
+    ctx.moveTo(shard.x + cos * (-shard.length * 0.42), shard.y + sin * (-shard.length * 0.42));
+    ctx.lineTo(shard.x + cos * (shard.length * 0.58), shard.y + sin * (shard.length * 0.58));
     ctx.stroke();
   }
 
-  // chunk / chip — 다각형, shadow 적용, setTransform으로 save/restore 대체
+  // chunk / chip 타입: 다각형 파편
   for (let i = 0; i < brickShards.length; i += 1) {
     const shard = brickShards[i];
-    if (shard.type !== 'chunk' && shard.type !== 'chip') continue;
+    if (shard.type !== "chunk" && shard.type !== "chip") continue;
     const alpha = shard.life / shard.maxLife;
     ctx.globalAlpha = alpha;
     ctx.shadowColor = shard.glow;
@@ -352,7 +319,7 @@ const drawBrickShards = () => {
 
     ctx.shadowBlur = 0;
     ctx.strokeStyle = shard.stroke;
-    ctx.lineWidth = shard.type === 'chip' ? 0.8 : 1.1;
+    ctx.lineWidth = shard.type === "chip" ? 0.8 : 1.1;
     ctx.stroke();
 
     ctx.beginPath();
@@ -400,14 +367,14 @@ const drawBallTail = (ball, style) => {
 const drawBall = (ball) => {
   const style =
     APPEARANCE_PRESETS.balls[GameState.appearance.ballSkin] ??
-    APPEARANCE_PRESETS.balls['pulse-energy'];
+    APPEARANCE_PRESETS.balls["pulse-energy"];
 
   ctx.save();
   ctx.shadowColor = style.glow;
-  ctx.shadowBlur = style.shape === 'singularity' ? 22 : 16;
+  ctx.shadowBlur = style.shape === "singularity" ? 22 : 16;
   drawBallTail(ball, style);
 
-  if (style.shape === 'pulse') {
+  if (style.shape === "pulse") {
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
     ctx.fillStyle = style.fill;
@@ -417,7 +384,7 @@ const drawBall = (ball) => {
     return;
   }
 
-  if (style.shape === 'sun') {
+  if (style.shape === "sun") {
     ctx.strokeStyle = style.glow;
     ctx.lineWidth = 2;
     for (let i = 0; i < 10; i += 1) {
@@ -444,10 +411,7 @@ const drawBall = (ball) => {
     ball.r,
   );
   gradient.addColorStop(0, style.core);
-  gradient.addColorStop(
-    style.shape === 'singularity' ? 0.45 : 0.28,
-    style.fill,
-  );
+  gradient.addColorStop(style.shape === "singularity" ? 0.45 : 0.28, style.fill);
   gradient.addColorStop(1, style.glow);
 
   ctx.beginPath();
@@ -455,7 +419,7 @@ const drawBall = (ball) => {
   ctx.fillStyle = gradient;
   ctx.fill();
 
-  if (style.shape === 'core' || style.shape === 'singularity') {
+  if (style.shape === "core" || style.shape === "singularity") {
     ctx.shadowBlur = 0;
     ctx.lineWidth = 2;
     ctx.strokeStyle = style.core;
@@ -464,16 +428,10 @@ const drawBall = (ball) => {
     ctx.stroke();
   }
 
-  if (style.shape === 'singularity') {
+  if (style.shape === "singularity") {
     ctx.fillStyle = style.core;
     ctx.beginPath();
-    ctx.arc(
-      ball.x + ball.r * 0.2,
-      ball.y - ball.r * 0.18,
-      ball.r * 0.22,
-      0,
-      Math.PI * 2,
-    );
+    ctx.arc(ball.x + ball.r * 0.2, ball.y - ball.r * 0.18, ball.r * 0.22, 0, Math.PI * 2);
     ctx.fill();
   }
 
@@ -481,7 +439,6 @@ const drawBall = (ball) => {
   ctx.restore();
 };
 
-// ── 분열 에너지 파동 ──
 const triggerResonanceWave = (x, y) => {
   for (let i = 0; i < 3; i++) {
     resonanceWaves.push({
@@ -508,9 +465,9 @@ const drawResonanceWaves = () => {
   resonanceWaves.forEach((w) => {
     ctx.save();
     ctx.globalAlpha = w.alpha * 0.75;
-    ctx.strokeStyle = '#9B5CFF';
+    ctx.strokeStyle = "#9B5CFF";
     ctx.lineWidth = 2 * w.alpha + 0.5;
-    ctx.shadowColor = '#9B5CFF';
+    ctx.shadowColor = "#9B5CFF";
     ctx.shadowBlur = 18 * w.alpha;
     ctx.beginPath();
     ctx.arc(w.x, w.y, w.r, 0, Math.PI * 2);
@@ -531,8 +488,7 @@ const syncPaddleSize = () => {
 };
 
 const syncPaddleWidth = (canvasWidth = canvas?.width ?? 0) => {
-  GameState.paddle.w =
-    clamp(canvasWidth * 0.18, 92, 160) * (GameState.paddle.widthBoost ?? 1);
+  GameState.paddle.w = clamp(canvasWidth * 0.18, 92, 160) * (GameState.paddle.widthBoost ?? 1);
   syncPaddleSize();
 };
 
@@ -551,8 +507,7 @@ const getAttachedBallY = (paddle, ballRadius) => {
 
 const getPaddleSensitivityMultiplier = () => {
   const sensitivity = Number(GameState.controls?.paddleSensitivity ?? 1);
-  const normalizedSensitivity =
-    (Math.min(Math.max(sensitivity, 1), 100) - 1) / 99;
+  const normalizedSensitivity = (Math.min(Math.max(sensitivity, 1), 100) - 1) / 99;
   return 1 + normalizedSensitivity * 2;
 };
 
@@ -573,21 +528,14 @@ const createResonanceBalls = (sourceBall) => {
   }));
 };
 
-// 포인터(마우스/터치)로 패들을 조작합니다 (이전 키보드 입력 제거)
-
-/**
- * 물리 엔진 초기화 및 이벤트 바인딩
- */
 export const initEngine = () => {
-  canvas = document.getElementById('game-canvas');
-  ctx = canvas.getContext('2d');
+  canvas = document.getElementById("game-canvas");
+  ctx = canvas.getContext("2d");
   syncPaddleWidth(canvas.width);
-  paddleImage.addEventListener('load', () => syncPaddleWidth(canvas.width));
-  paddleImageXenonite.addEventListener('load', () =>
-    syncPaddleWidth(canvas.width),
-  );
+  paddleImage.addEventListener("load", () => syncPaddleWidth(canvas.width));
+  paddleImageXenonite.addEventListener("load", () => syncPaddleWidth(canvas.width));
 
-  // index.js에서 호출할 수 있도록 전역 함수로 등록
+  // 전역으로 등록 (index.js에서 호출)
   window.onCanvasResize = (w, h) => {
     const previousWidth = previousCanvasSize.width || w;
     const previousHeight = previousCanvasSize.height || h;
@@ -614,21 +562,15 @@ export const initEngine = () => {
     syncPaddleWidth(w);
     // 캔버스 크기가 변할 때 패들을 화면 하단 중앙에 재배치
     GameState.paddle.y = h - GameState.paddle.h - 30;
-    GameState.paddle.x = clamp(
-      GameState.paddle.x * scaleX,
-      0,
-      Math.max(w - GameState.paddle.w, 0),
-    );
+    GameState.paddle.x = clamp(GameState.paddle.x * scaleX, 0, Math.max(w - GameState.paddle.w, 0));
     previousCanvasSize = { width: w, height: h };
   };
 
   window.startGameLoop = () => {
     //lastPointerX = null;
     const rect = canvas.getBoundingClientRect();
-    const paddleCenterX =
-      rect.left + GameState.paddle.x + GameState.paddle.w / 2;
-    const paddleCenterY =
-      rect.top + GameState.paddle.y + GameState.paddle.h / 2;
+    const paddleCenterX = rect.left + GameState.paddle.x + GameState.paddle.w / 2;
+    const paddleCenterY = rect.top + GameState.paddle.y + GameState.paddle.h / 2;
     lastPointerX = paddleCenterX - rect.left;
     brickShards = [];
     resonanceWaves = [];
@@ -654,9 +596,9 @@ export const initEngine = () => {
     }
   };
 
-  // 포인터(마우스/터치) 이벤트 리스너 등록: 패들 이동 및 클릭으로 발사
-  canvas.addEventListener('pointermove', (e) => {
-    if (GameState.status !== 'playing') {
+  // 마우스/터치로 패들 이동, 클릭으로 발사
+  canvas.addEventListener("pointermove", (e) => {
+    if (GameState.status !== "playing") {
       lastPointerX = null;
       return;
     }
@@ -670,8 +612,7 @@ export const initEngine = () => {
       const pointerDelta = x - lastPointerX;
       const controlDirection = GameState.controls?.isPaddleInverted ? -1 : 1;
       lastPointerX = x;
-      GameState.paddle.x +=
-        pointerDelta * controlDirection * getPaddleSensitivityMultiplier();
+      GameState.paddle.x += pointerDelta * controlDirection * getPaddleSensitivityMultiplier();
     }
     // 경계 처리
     if (GameState.paddle.x < 0) GameState.paddle.x = 0;
@@ -679,12 +620,12 @@ export const initEngine = () => {
       GameState.paddle.x = canvas.width - GameState.paddle.w;
   });
 
-  canvas.addEventListener('pointerleave', () => {
+  canvas.addEventListener("pointerleave", () => {
     lastPointerX = null;
   });
 
-  canvas.addEventListener('pointerdown', (e) => {
-    if (GameState.status === 'playing') {
+  canvas.addEventListener("pointerdown", (e) => {
+    if (GameState.status === "playing") {
       GameState.balls.forEach((ball) => {
         if (!ball.isLaunched) {
           ball.isLaunched = true;
@@ -692,7 +633,7 @@ export const initEngine = () => {
           const speed = config?.ballSpeed ?? 7.07;
           ball.vx = 0; // 초기 x 속도
           ball.vy = -speed; // 초기 y 속도
-          playSoundEffect('pulseShot');
+          playSoundEffect("pulseShot");
           onBallLaunch();
         }
       });
@@ -700,18 +641,15 @@ export const initEngine = () => {
   });
 };
 
-/**
- * 물리 연산 업데이트 (매 프레임 실행)
- */
 const updatePhysics = () => {
   const { width, height } = canvas;
   const paddle = GameState.paddle;
 
-  // 1. 패들 위치 경계 처리 (포인터로 직접 설정됨)
+  // 패들 경계 처리
   if (paddle.x < 0) paddle.x = 0;
   if (paddle.x + paddle.w > width) paddle.x = width - paddle.w;
 
-  // 2. 공 이동 및 충돌 처리
+  // 공 이동 및 충돌
   for (let i = GameState.balls.length - 1; i >= 0; i--) {
     const ball = GameState.balls[i];
     const paddleHitbox = getPaddleHitbox(paddle);
@@ -745,8 +683,8 @@ const updatePhysics = () => {
         onBallMiss();
       }
 
-      // 공이 다 떨어지면 새로 생성 (임시 로직 - 나중에 생명력 개념 추가 가능)
-      if (GameState.balls.length === 0 && GameState.status === 'playing') {
+      // 공이 다 떨어지면 새로 생성
+      if (GameState.balls.length === 0 && GameState.status === "playing") {
         GameState.balls.push({
           x: paddle.x + paddle.w / 2,
           y: getAttachedBallY(paddle, ball.r),
@@ -768,9 +706,8 @@ const updatePhysics = () => {
       ball.x + ball.r > paddleHitbox.x &&
       ball.x - ball.r < paddleHitbox.x + paddleHitbox.w
     ) {
-      // 반사 각도를 이용해 속도의 크기(에너지)를 보존하도록 조정
-      const hitPoint =
-        (ball.x - (paddleHitbox.x + paddleHitbox.w / 2)) / (paddleHitbox.w / 2);
+      // 맞은 위치에 따라 반사 각도 계산 (속도 크기는 유지)
+      const hitPoint = (ball.x - (paddleHitbox.x + paddleHitbox.w / 2)) / (paddleHitbox.w / 2);
       const maxAngle = Math.PI / 3; // 패들 끝에서 약 60도까지 각도 변경 허용
       const angle = hitPoint * maxAngle;
       const prevSpeed = Math.hypot(ball.vx, ball.vy) || 6; // 속도 보존, 0일 경우 기본값 사용
@@ -794,13 +731,11 @@ const updatePhysics = () => {
         ball.y + ball.r > brick.y &&
         ball.y - ball.r < brick.y + brick.h
       ) {
-        // 충돌이 발생했으면 상하/좌우 방향을 비교해 반사 방향 결정
+        // 겹침 정도로 반사 방향 결정
         const overlapX =
-          Math.min(ball.x + ball.r, brick.x + brick.w) -
-          Math.max(ball.x - ball.r, brick.x);
+          Math.min(ball.x + ball.r, brick.x + brick.w) - Math.max(ball.x - ball.r, brick.x);
         const overlapY =
-          Math.min(ball.y + ball.r, brick.y + brick.h) -
-          Math.max(ball.y - ball.r, brick.y);
+          Math.min(ball.y + ball.r, brick.y + brick.h) - Math.max(ball.y - ball.r, brick.y);
 
         if (overlapX < overlapY) {
           ball.vx *= -1;
@@ -831,15 +766,13 @@ const updatePhysics = () => {
         ) {
           GameState.balls.push(...createResonanceBalls(ball));
           GameState.hasResonanceTriggered = true;
-          addSystemLog('Combo accomplished! Multi-ball added', 'positive');
-          const _multiballEl = document.getElementById(
-            'multiball-screen-effect',
-          );
+          addSystemLog("Combo accomplished! Multi-ball added", "positive");
+          const _multiballEl = document.getElementById("multiball-screen-effect");
           if (_multiballEl) {
-            _multiballEl.classList.remove('flash');
+            _multiballEl.classList.remove("flash");
             void _multiballEl.offsetWidth;
-            _multiballEl.classList.add('flash');
-            setTimeout(() => _multiballEl.classList.remove('flash'), 500);
+            _multiballEl.classList.add("flash");
+            setTimeout(() => _multiballEl.classList.remove("flash"), 500);
           }
         }
         if (wasDestroyed) {
@@ -869,36 +802,31 @@ const drawLaserEffect = (ctx) => {
     centerX + beamHalfWidth * 3,
     0,
   );
-  outerGlow.addColorStop(0, 'rgba(255,122,26,0)');
-  outerGlow.addColorStop(0.3, 'rgba(255,122,26,0.18)');
-  outerGlow.addColorStop(0.5, 'rgba(255,122,26,0.35)');
-  outerGlow.addColorStop(0.7, 'rgba(255,122,26,0.18)');
-  outerGlow.addColorStop(1, 'rgba(255,122,26,0)');
+  outerGlow.addColorStop(0, "rgba(255,122,26,0)");
+  outerGlow.addColorStop(0.3, "rgba(255,122,26,0.18)");
+  outerGlow.addColorStop(0.5, "rgba(255,122,26,0.35)");
+  outerGlow.addColorStop(0.7, "rgba(255,122,26,0.18)");
+  outerGlow.addColorStop(1, "rgba(255,122,26,0)");
   ctx.globalAlpha = alpha;
   ctx.fillStyle = outerGlow;
   ctx.fillRect(centerX - beamHalfWidth * 3, 0, beamHalfWidth * 6, paddle.y);
 
-  const midGrad = ctx.createLinearGradient(
-    centerX - beamHalfWidth,
-    0,
-    centerX + beamHalfWidth,
-    0,
-  );
-  midGrad.addColorStop(0, 'rgba(255,122,26,0)');
-  midGrad.addColorStop(0.2, 'rgba(255,122,26,0.7)');
-  midGrad.addColorStop(0.5, 'rgba(255,200,80,0.95)');
-  midGrad.addColorStop(0.8, 'rgba(255,122,26,0.7)');
-  midGrad.addColorStop(1, 'rgba(255,122,26,0)');
-  ctx.shadowColor = '#FF7A1A';
+  const midGrad = ctx.createLinearGradient(centerX - beamHalfWidth, 0, centerX + beamHalfWidth, 0);
+  midGrad.addColorStop(0, "rgba(255,122,26,0)");
+  midGrad.addColorStop(0.2, "rgba(255,122,26,0.7)");
+  midGrad.addColorStop(0.5, "rgba(255,200,80,0.95)");
+  midGrad.addColorStop(0.8, "rgba(255,122,26,0.7)");
+  midGrad.addColorStop(1, "rgba(255,122,26,0)");
+  ctx.shadowColor = "#FF7A1A";
   ctx.shadowBlur = 20;
   ctx.fillStyle = midGrad;
   ctx.fillRect(centerX - beamHalfWidth, 0, beamHalfWidth * 2, paddle.y);
 
   const coreGrad = ctx.createLinearGradient(centerX - 2, 0, centerX + 2, 0);
-  coreGrad.addColorStop(0, 'rgba(255,255,240,0)');
-  coreGrad.addColorStop(0.5, 'rgba(255,255,255,0.98)');
-  coreGrad.addColorStop(1, 'rgba(255,255,240,0)');
-  ctx.shadowColor = '#FFFFFF';
+  coreGrad.addColorStop(0, "rgba(255,255,240,0)");
+  coreGrad.addColorStop(0.5, "rgba(255,255,255,0.98)");
+  coreGrad.addColorStop(1, "rgba(255,255,240,0)");
+  ctx.shadowColor = "#FFFFFF";
   ctx.shadowBlur = 10;
   ctx.fillStyle = coreGrad;
   ctx.fillRect(centerX - 2, 0, 4, paddle.y);
@@ -929,10 +857,10 @@ const drawLaserFlash = (ctx) => {
     paddle.y,
     canvas.width * 0.6,
   );
-  flashGrad.addColorStop(0, 'rgba(255,240,200,1)');
-  flashGrad.addColorStop(0.15, 'rgba(255,180,80,0.8)');
-  flashGrad.addColorStop(0.5, 'rgba(255,122,26,0.3)');
-  flashGrad.addColorStop(1, 'rgba(255,122,26,0)');
+  flashGrad.addColorStop(0, "rgba(255,240,200,1)");
+  flashGrad.addColorStop(0.15, "rgba(255,180,80,0.8)");
+  flashGrad.addColorStop(0.5, "rgba(255,122,26,0.3)");
+  flashGrad.addColorStop(1, "rgba(255,122,26,0)");
 
   ctx.fillStyle = flashGrad;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -940,30 +868,25 @@ const drawLaserFlash = (ctx) => {
   ctx.restore();
 };
 
-/**
- * 렌더링 (매 프레임 화면 그리기)
- */
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // 1. 패들(헤일메리호) 그리기
+  // 패들 그리기
   const p = GameState.paddle;
   syncPaddleSize();
-  const currentPaddleImage = GameState.paddle.hasXenonite
-    ? paddleImageXenonite
-    : paddleImage;
+  const currentPaddleImage = GameState.paddle.hasXenonite ? paddleImageXenonite : paddleImage;
   if (currentPaddleImage.complete) {
     ctx.save();
-    ctx.shadowColor = 'rgba(0, 255, 157, 0.85)';
+    ctx.shadowColor = "rgba(0, 255, 157, 0.85)";
     ctx.shadowBlur = 8;
     ctx.drawImage(currentPaddleImage, p.x, p.y, p.w, p.h);
     ctx.restore();
   } else {
-    ctx.fillStyle = '#e94560';
+    ctx.fillStyle = "#e94560";
     ctx.fillRect(p.x, p.y, p.w, p.h);
   }
 
-  // 2. 아스트로파지(벽돌) 그리기
+  // 벽돌 그리기
   GameState.bricks.forEach((brick) => {
     if (brick.alive) {
       const style = getBrickStyle(brick);
@@ -989,7 +912,7 @@ function draw() {
         brick.h - 2,
         Math.max(radius - 2, 0),
       );
-      ctx.strokeStyle = 'rgba(6, 11, 22, 0.32)';
+      ctx.strokeStyle = "rgba(6, 11, 22, 0.32)";
       ctx.stroke();
       ctx.restore();
     }
@@ -998,34 +921,31 @@ function draw() {
   // 레이저 빔 이펙트 (벽돌 위, 공 아래)
   drawLaserEffect(ctx);
 
-  // 3. 공(에너지 펄스/타우메바) 그리기
+  // 공 그리기
   GameState.balls.forEach((ball) => {
     drawBall(ball);
   });
   drawResonanceWaves();
 
-  // 4. 파괴된 벽돌 파편 그리기
+  // 파편 그리기
   drawBrickShards();
 
-  // 5. 아이템 그리기
+  // 아이템 그리기
   drawItems(ctx);
 
   // 발동 섬광 (최상단 레이어)
   drawLaserFlash(ctx);
 }
 
-/**
- * 메인 루프
- */
 const loop = () => {
-  if (GameState.status === 'playing') {
+  if (GameState.status === "playing") {
     updatePhysics();
     updateItems();
     updateResonanceWaves();
   }
   updateBrickShards();
 
-  // 상태와 무관하게 화면은 계속 렌더링 (일시정지 화면 등을 위해)
+  // 일시정지 중에도 화면은 계속 그림
   draw();
   animationId = requestAnimationFrame(loop);
 };

@@ -1,8 +1,3 @@
-/**
- * @module stageManager
- * @description 스테이지 초기화, 벽돌 배치, 게임 흐름(오버/클리어), 시스템 로그, 점수 UI를 담당.
- */
-
 import { GameState, STAGE_CONFIG, CANVAS_LAYOUT } from './state.js';
 import {
   resetFuelUI,
@@ -18,19 +13,11 @@ import {
 import { showScreen } from './screen.js';
 import { playSoundEffect } from './audio.js';
 
-// ─────────────────────────────────────────────
-// 스테이지 초기화
-// ─────────────────────────────────────────────
-
-/**
- * 특정 스테이지를 초기화하고 인트로 화면을 표시.
- * @param {number} stageNum - 1 | 2 | 3
- */
 export const initStage = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
   if (!config) return;
 
-  // 연료 콜백 주입 (순환 참조 방지용)
+  // 연료 콜백 주입
   registerFuelCallbacks({ addSystemLog, triggerGameOver });
 
   // 상태 초기화
@@ -87,15 +74,6 @@ export const initStage = (stageNum) => {
   _showIntroOverlay(stageNum);
 };
 
-// ─────────────────────────────────────────────
-// 벽돌 생성
-// ─────────────────────────────────────────────
-
-/**
- * 스테이지 설정에 따라 bricks 배열을 생성.
- * @param {number} stageNum
- * @returns {Array}
- */
 const _generateBricks = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
   const { brickOffsetX, brickOffsetY, brickHeight, brickGapX, brickGapY } =
@@ -130,15 +108,6 @@ const _generateBricks = (stageNum) => {
   return bricks;
 };
 
-// ─────────────────────────────────────────────
-// 별돌 피격/파괴
-// ─────────────────────────────────────────────
-
-/**
- * 공이 벽돌에 맞았을 때 물리 레이어에서 호출.
- * @param {number} brickIndex - GameState.bricks 배열 인덱스
- * @returns {boolean} 벽돌이 파괴되었으면 true
- */
 export const onBrickHit = (brickIndex) => {
   const brick = GameState.bricks[brickIndex];
   if (!brick || !brick.alive) return false;
@@ -177,23 +146,11 @@ export const onBrickHit = (brickIndex) => {
   return false;
 };
 
-/**
- * 벽돌 타입과 스테이지에 따라 파괴 점수를 계산.
- * @param {{ type: string }} brick
- * @returns {number}
- */
 const _getScoreForBrick = (brick) => {
   const base = { normal: 10, tough: 20, armored: 30 };
   return (base[brick.type] ?? 10) * GameState.currentStage;
 };
 
-// ─────────────────────────────────────────────
-// 스테이지 클리어 / 게임 오버
-// ─────────────────────────────────────────────
-
-/**
- * 살아있는 벽돌이 없으면 스테이지 또는 미션 클리어를 판정.
- */
 const _checkStageClear = () => {
   const aliveCount = GameState.bricks.filter((b) => b.alive).length;
   if (aliveCount > 0) return;
@@ -211,9 +168,6 @@ const _checkStageClear = () => {
   }
 };
 
-/**
- * 게임 오버를 트리거. 연료 고갈 시 fuelSystem에서 호출.
- */
 export const triggerGameOver = () => {
   if (GameState.status === 'gameover') return;
   GameState.status = 'gameover';
@@ -222,13 +176,6 @@ export const triggerGameOver = () => {
   _showOverlay('game-over-overlay');
 };
 
-// ─────────────────────────────────────────────
-// 스테이지 3 증식 기믹
-// ─────────────────────────────────────────────
-
-/**
- * 스테이지 설정에 증식(proliferate)가 활성화된 경우 증식 타이머를 시작.
- */
 const _startProliferateTimer = () => {
   const config = STAGE_CONFIG[GameState.currentStage];
   if (!config.proliferate) return;
@@ -239,9 +186,6 @@ const _startProliferateTimer = () => {
   );
 };
 
-/**
- * 증식 타이머를 정리.
- */
 const _clearProliferateTimer = () => {
   if (GameState._proliferateTimer) {
     clearInterval(GameState._proliferateTimer);
@@ -249,9 +193,7 @@ const _clearProliferateTimer = () => {
   }
 };
 
-/**
- * 파괴된 벽돌 중 1~2개를 무작위로 부활시켜 아스트로파지 증식을 구현.
- */
+// 파괴된 벽돌 1~2개를 랜덤으로 부활시킴
 const _proliferateAstrophage = () => {
   if (GameState.status !== 'playing') return;
 
@@ -261,7 +203,6 @@ const _proliferateAstrophage = () => {
 
   if (deadBricks.length === 0 || aliveCount >= config.maxAliveBricks) return;
 
-  // 1~2개 랜덤 부활
   const reviveCount = Math.min(
     Math.floor(Math.random() * 2) + 1,
     deadBricks.length,
@@ -278,25 +219,16 @@ const _proliferateAstrophage = () => {
   }
 };
 
-// ─────────────────────────────────────────────
-// 게임 시작 (인트로 → playing)
-// ─────────────────────────────────────────────
-
-/**
- * 인트로 오버레이에서 "임무 시작" 버튼 클릭 시 호출. 게임 상태를 playing으로 전환.
- */
 export const startPlaying = () => {
   GameState.status = 'playing';
 
   _hideOverlay('stage-intro-overlay');
   _hideOverlay('pause-overlay');
 
-  // 스테이지 2+ 증식 타이머 시작
   _startProliferateTimer();
 
   addSystemLog('Mission Start', 'normal');
 
-  // 게임 루프 시작 (외부 등록 콜백)
   if (typeof window.startGameLoop === 'function') {
     window.startGameLoop();
   }
@@ -327,28 +259,12 @@ export const exitGameToMenu = () => {
   showScreen('menu-screen');
 };
 
-// ─────────────────────────────────────────────
-// 다음 스테이지 진행
-// ─────────────────────────────────────────────
-
-/**
- * 현재 스테이지의 다음 스테이지를 초기화. 스테이지 3 이후에는 아무 동작 없음.
- */
 export const goToNextStage = () => {
   const next = GameState.currentStage + 1;
   if (next > 3) return;
   initStage(next);
 };
 
-// ─────────────────────────────────────────────
-// 시스템 로그
-// ─────────────────────────────────────────────
-
-/**
- * 시스템 로그에 메시지 추가.
- * @param {string} message
- * @param {'normal'|'warning'|'danger'|'positive'} type
- */
 export const addSystemLog = (message, type = 'normal') => {
   const entry = { message, type, time: Date.now() };
   GameState.systemLog.push(entry);
@@ -368,22 +284,11 @@ export const addSystemLog = (message, type = 'normal') => {
   logList.scrollTop = logList.scrollHeight;
 };
 
-// ─────────────────────────────────────────────
-// UI 업데이트 헬퍼
-// ─────────────────────────────────────────────
-
-/**
- * 현재 점수를 7자리 0-패딩 형식으로 UI에 갱신.
- */
 const _updateScoreUI = () => {
   const el = document.querySelector('.score-value');
   if (el) el.textContent = String(GameState.score).padStart(7, '0');
 };
 
-/**
- * 좌측 사이드바의 스테이지 번호·이름을 갱신.
- * @param {number} stageNum
- */
 const _updateSidebarUI = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
   const numEl = document.querySelector('.game-stage-number');
@@ -392,10 +297,6 @@ const _updateSidebarUI = (stageNum) => {
   if (nameEl) nameEl.textContent = config.name;
 };
 
-/**
- * 스킬 패널을 해당 스테이지의 해금 스킬로 갱신.
- * @param {number} stageNum
- */
 const _updateSkillsUI = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
   const skillsContainer = document.querySelector('.skills-list');
@@ -440,10 +341,6 @@ document.addEventListener('skillkeyschange', () => {
   _updateSkillsUI(GameState.currentStage);
 });
 
-/**
- * 스테이지 인트로 오버레이를 텍스트와 함께 표시.
- * @param {number} stageNum
- */
 const _showIntroOverlay = (stageNum) => {
   const config = STAGE_CONFIG[stageNum];
   const overlay = document.getElementById('stage-intro-overlay');
@@ -465,30 +362,14 @@ const _showIntroOverlay = (stageNum) => {
   overlay.classList.add('active');
 };
 
-/**
- * 지정한 오버레이를 표시.
- * @param {string} id - 오버레이 요소의 id
- */
 const _showOverlay = (id) => {
   document.getElementById(id)?.classList.add('active');
 };
 
-/**
- * 지정한 오버레이를 숨김.
- * @param {string} id - 오버레이 요소의 id
- */
 const _hideOverlay = (id) => {
   document.getElementById(id)?.classList.remove('active');
 };
 
-// ─────────────────────────────────────────────
-// 전역 API
-// ─────────────────────────────────────────────
-
-/**
- * ES 모듈 import 없이 접근할 수 있는 전역 게임 API.
- * ES 모듈로 직접 import하는 방식을 권장.
- */
 window.gameAPI = {
   getState: () => GameState,
   getBricks: () => GameState.bricks,

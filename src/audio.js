@@ -51,7 +51,7 @@ export const playBackgroundMusic = () => {
   if (!hasUserActivatedAudio || backgroundMusicAudio.volume === 0) return;
 
   backgroundMusicAudio.play().catch(() => {
-    // Browsers can still block audio until a direct user gesture is accepted.
+    // 브라우저 자동재생 정책으로 막힐 수 있음
   });
 };
 
@@ -88,6 +88,6 @@ export const playSoundEffect = (name) => {
   const audio = baseAudio.cloneNode();
   audio.volume = volume;
   audio.play().catch(() => {
-    // Ignore play interruptions so rapid collisions never break gameplay.
+    // 연속 충돌 시 재생 실패해도 그냥 무시
   });
 };

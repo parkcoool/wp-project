@@ -1,8 +1,3 @@
-/**
- * @module index
- * @description 애플리케이션 진입점. 메뉴 이벤트 바인딩, 화면 전환, 캔버스 리사이즈를 담당.
- */
-
 import {
   initStage,
   startPlaying,
@@ -42,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initStage(1);
   });
 
-  // ── 메인 메뉴 모달 열기/닫기 ──
+  // 메뉴 모달
   const modalOpenBtn = document.querySelectorAll('.main-menu-btn');
   const modalBoxes = document.querySelectorAll('.main-menu-modal');
   modalOpenBtn.forEach((btn, index) => {
@@ -58,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── 설정 메뉴 선택 → 설정 컨텐츠 전환 ──
+  // 설정 탭 전환
   const settingsMenuBtns = document.querySelectorAll('.settings-menu-btn');
   const settingsContents = document.querySelectorAll('.settings-content');
   settingsMenuBtns.forEach((btn, index) => {
@@ -75,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── 스테이지 선택 → 게임 시작 ──
   const audioSettingSliders = document.querySelectorAll(
     '.audio-setting-slider',
   );
@@ -335,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── 인트로 오버레이: MISSION START 버튼 ──
   document.getElementById('intro-start-btn')?.addEventListener('click', () => {
     startPlaying();
   });
@@ -350,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     exitGameToMenu();
   });
 
-  // ── 게임 오버 버튼 ──
+  // 게임 오버 버튼
   document.getElementById('retry-btn')?.addEventListener('click', () => {
     document.getElementById('game-over-overlay').classList.remove('active');
     initStage(window.gameAPI?.getState().currentStage ?? 1);
@@ -362,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       exitGameToMenu();
     });
 
-  // ── 스테이지 클리어 버튼 ──
+  // 스테이지 클리어 버튼
   document.getElementById('next-stage-btn')?.addEventListener('click', () => {
     document.getElementById('stage-clear-overlay').classList.remove('active');
     goToNextStage();
@@ -374,14 +367,13 @@ document.addEventListener('DOMContentLoaded', () => {
       exitGameToMenu();
     });
 
-  // ── 미션 클리어 버튼 ──
+  // 미션 클리어 버튼
   document
     .getElementById('mission-clear-menu-btn')
     ?.addEventListener('click', () => {
       exitGameToMenu();
     });
 
-  // ── 캔버스 크기 동적 설정 ──
   _resizeCanvas();
   window.addEventListener('resize', _resizeCanvas);
 });
@@ -456,10 +448,6 @@ const typeMainSystemDescription = () => {
 
 export { showScreen } from './screen.js';
 
-/**
- * 게임 캔버스를 .game-canvas-container 크기에 맞게 리사이즈.
- * 윈도우 resize 이벤트마다 호출.
- */
 const _resizeCanvas = () => {
   const container = document.querySelector('.game-canvas-container');
   const canvas = document.getElementById('game-canvas');
@@ -468,10 +456,9 @@ const _resizeCanvas = () => {
   canvas.width = container.clientWidth;
   canvas.height = container.clientHeight;
 
-  // 게임 루프에 리사이즈 알림 (외부 등록 콜백)
   if (typeof window.onCanvasResize === 'function') {
     window.onCanvasResize(canvas.width, canvas.height);
   }
 };
 
-window.resizeCanvas = _resizeCanvas; // 외부에서 호출할 수 있도록 전역 함수로 등록
+window.resizeCanvas = _resizeCanvas;
